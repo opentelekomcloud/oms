@@ -7,6 +7,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@types/lodash": "^4.14.161",
+    "@yarnpkg/plugin-node-modules": "^2.1.1",
     "@yarnpkg/pnpify": "^2.2.1",
     "browserify": "^16.5.2",
     "intern": "^4.8.7",

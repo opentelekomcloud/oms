@@ -554,6 +554,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/semver@npm:^7.1.0":
+  version: 7.3.4
+  resolution: "@types/semver@npm:7.3.4"
+  checksum: 7e8588aa55ecb344eda6954674b83a3c568d97d478e70e4617bd3ab22902590ac416ccf2cea48b58fb2f0fbd80f9ad1896332c9b3c3189ffd24e4350ff22094a
+  languageName: node
+  linkType: hard
+
 "@types/serve-static@npm:*":
   version: 1.13.5
   resolution: "@types/serve-static@npm:1.13.5"
@@ -650,7 +657,61 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@yarnpkg/pnp@npm:^2.2.1":
+"@yarnpkg/plugin-node-modules@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "@yarnpkg/plugin-node-modules@npm:2.1.1"
+  dependencies:
+    "@yarnpkg/fslib": ^2.2.0
+    "@yarnpkg/libzip": ^2.2.0
+    "@yarnpkg/parsers": ^2.2.0
+    "@yarnpkg/plugin-pnp": ^2.2.0
+    "@yarnpkg/pnp": ^2.2.0
+    "@yarnpkg/pnpify": ^2.2.0
+    "@zkochan/cmd-shim": ^4.3.0
+    clipanion: ^2.4.4
+    micromatch: ^4.0.2
+    tslib: ^1.13.0
+  peerDependencies:
+    "@yarnpkg/cli": ^2.2.0
+    "@yarnpkg/core": ^2.2.0
+  checksum: dd3bcb20a19d969ce203b37d033c2b90e9ba7c90cf056d207db12de0e69ceebd7dd2c06d247d8c61c8be1a0231587fea4a05d9fb680aca1fd9fc80a1c49ede15
+  languageName: node
+  linkType: hard
+
+"@yarnpkg/plugin-pnp@npm:^2.2.0":
+  version: 2.2.1
+  resolution: "@yarnpkg/plugin-pnp@npm:2.2.1"
+  dependencies:
+    "@types/semver": ^7.1.0
+    "@yarnpkg/fslib": ^2.2.1
+    "@yarnpkg/plugin-stage": ^2.1.1
+    "@yarnpkg/pnp": ^2.2.1
+    clipanion: ^2.4.4
+    micromatch: ^4.0.2
+    semver: ^7.1.2
+    tslib: ^1.13.0
+  peerDependencies:
+    "@yarnpkg/cli": ^2.2.1
+    "@yarnpkg/core": ^2.2.1
+  checksum: b9cb4c91304f794f95f0773c79da2479bd2e65e5b9100a1eaa55badceae7a7449f1186f1a10827d1806520b4744138837cc121292fbcd613cc468734871574db
+  languageName: node
+  linkType: hard
+
+"@yarnpkg/plugin-stage@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "@yarnpkg/plugin-stage@npm:2.1.1"
+  dependencies:
+    "@yarnpkg/fslib": ^2.2.0
+    clipanion: ^2.4.4
+    tslib: ^1.13.0
+  peerDependencies:
+    "@yarnpkg/cli": ^2.2.0
+    "@yarnpkg/core": ^2.2.0
+  checksum: a0c6d62fc54bd84cb907db0aaf36efc2aab09471dbb058be58f6f3c061bf642e99500ce70ce3a03087e9fcc804d2158298295d1f0274c3b0cf9213c49b564af4
+  languageName: node
+  linkType: hard
+
+"@yarnpkg/pnp@npm:^2.2.0, @yarnpkg/pnp@npm:^2.2.1":
   version: 2.2.1
   resolution: "@yarnpkg/pnp@npm:2.2.1"
   dependencies:
@@ -661,7 +722,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@yarnpkg/pnpify@npm:^2.2.1":
+"@yarnpkg/pnpify@npm:^2.2.0, @yarnpkg/pnpify@npm:^2.2.1":
   version: 2.2.1
   resolution: "@yarnpkg/pnpify@npm:2.2.1"
   dependencies:
@@ -701,6 +762,16 @@ __metadata:
   bin:
     shell: ./lib/cli.js
   checksum: 23a26955caf2c3435a1c2dbd960a36a898c001159d36aabf93029c2e19fbb3c0161ada53f6167bcb26a28a038ade347c101bd98771adb7fa1fc5e1aa3542ea32
+  languageName: node
+  linkType: hard
+
+"@zkochan/cmd-shim@npm:^4.3.0":
+  version: 4.3.0
+  resolution: "@zkochan/cmd-shim@npm:4.3.0"
+  dependencies:
+    is-windows: ^1.0.2
+    make-dir: ^3.0.0
+  checksum: 63f13d275579980128220b39bbd635e9e365c83c59302c413a460cc5d9ba850c3ae87e08d02542d003fe480168fe897797edc202e19db7b643bf51ce3a96fa0e
   languageName: node
   linkType: hard
 
@@ -4031,6 +4102,7 @@ __metadata:
   dependencies:
     "@types/lodash": ^4.14.161
     "@types/node": ^14.11.1
+    "@yarnpkg/plugin-node-modules": ^2.1.1
     "@yarnpkg/pnpify": ^2.2.1
     axios: ^0.20.0
     browserify: ^16.5.2
