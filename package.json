@@ -1,0 +1,9 @@
+{
+  "name": "oms",
+  "version": "0.0.1",
+  "description": "Micro SDK for OpenTelekomCloud",
+  "main": "index.js",
+  "repository": "https://github.com/opentelekomcloud/oms",
+  "author": "Anton Kachurin <anton.kachurin@t-systems.com>",
+  "license": "Apache-2.0"
+}
