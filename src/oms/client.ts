@@ -69,8 +69,8 @@ export default class Client {
     async _authToken() {
         let token = this.token
         if (!token) {
-            const keystone = this.getService('identity', '3') as Keystone
-            this.token = await keystone.getToken(this.authOptions)
+            const identity = this.getService(Keystone.type, Keystone.version) as Keystone
+            this.token = await identity.getToken(this.authOptions)
         }
         this.httpClient.interceptors.request.use((config: AxiosRequestConfig) => {
             config = setUserAgent(config)

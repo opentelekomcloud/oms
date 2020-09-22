@@ -1,6 +1,8 @@
 /// <reference types="jest" />
-import {CloudConfigHelper} from "../../src/oms/core/types";
+import {CloudConfigHelper, Service} from "../../src/oms/core/types";
 import {randomString} from "../utils/helpers";
+import _ from "underscore";
+import axios from "axios";
 
 test("CloudConfigHelper_basic", () => {
     const authUrl = randomString(5)
@@ -46,4 +48,24 @@ test("CloudConfigHelper_ak/sk", () => {
     const auth = cc.simpleAkSkConfig(ak, sk).auth
     expect(auth.ak).toEqual(ak)
     expect(auth.sk).toEqual(sk)
+})
+
+test("Service_basic", () => {
+    const type = randomString(5)
+    const version = _.random(1, 10).toString()
+    const url = randomString(10)
+    const httpClient = axios.create({})
+    const serv = new Service(type, version, url, httpClient)
+    expect(serv.type).toEqual(type)
+    expect(serv.version).toEqual(version)
+    expect(serv.httpClient).toBeDefined()
+    expect(serv.httpClient!.defaults.baseURL).toEqual(url)
+})
+
+test("Service_noClient", () => {
+    const type = randomString(5)
+    const version = _.random(1, 10).toString()
+    const url = randomString(10)
+    const serv = new Service(type, version, url)
+    expect(serv.httpClient).toBeDefined()
 })
