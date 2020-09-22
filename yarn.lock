@@ -858,6 +858,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/underscore@npm:^1":
+  version: 1.10.23
+  resolution: "@types/underscore@npm:1.10.23"
+  checksum: f48e1fc5e6f19c8ea54517c463f28d30ae3e94a60cd6a17749f0d4d7c6c6555fd083b5a6335c814d93a3f855f29576fc859f014eda2d42a48c87227688f93d30
+  languageName: node
+  linkType: hard
+
 "@types/yargs-parser@npm:*":
   version: 15.0.0
   resolution: "@types/yargs-parser@npm:15.0.0"
@@ -5654,6 +5661,7 @@ fsevents@^2.1.2:
   dependencies:
     "@types/node": ^14.11.1
     "@types/systemjs": ^6
+    "@types/underscore": ^1
     "@yarnpkg/plugin-node-modules": ^2.1.1
     "@yarnpkg/pnpify": ^2.2.1
     axios: ^0.20.0
@@ -5671,6 +5679,7 @@ fsevents@^2.1.2:
     ts-node: ^9.0.0
     tsify: ^5.0.2
     typescript: ^4.0.3
+    underscore: ^1.11.0
     yarn: ^1.22.5
   languageName: unknown
   linkType: soft
@@ -7615,7 +7624,7 @@ typescript@^4.0.3:
   languageName: node
   linkType: hard
 
-"underscore@npm:^1.7.0":
+"underscore@npm:^1.11.0, underscore@npm:^1.7.0":
   version: 1.11.0
   resolution: "underscore@npm:1.11.0"
   checksum: 5276f866a68b1bc6b4b889409d9186754ee695ccfd6d4fcc723fc1834b9c018a2d5ec9cf2fc8c7271e21f5fbff350c3ac5ee8b3e261635151e8c7c8dcf696c5c

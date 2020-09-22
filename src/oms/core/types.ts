@@ -64,6 +64,13 @@ export class CloudConfigHelper {
         cc.auth.token = token
         return cc
     }
+
+    simpleAkSkConfig(ak: string, sk: string) {
+        const cc = this.baseCfg()
+        cc.auth.ak = ak
+        cc.auth.sk = sk
+        return cc
+    }
 }
 
 /**

@@ -21,26 +21,30 @@ class authRequestData {
     }
 
     constructor(credentials: AuthOptions) {
-        this.auth.identity.password.user.id = credentials.userID
         this.auth.identity.password.user.name = credentials.username
         if (!credentials.password) {
             throw 'Password has to be provided'
         }
-        this.auth.identity.password.user.password = credentials.password
-        this.auth.identity.password.user.domain.id = credentials.domainID
-        this.auth.identity.password.user.domain.name = credentials.domainName
-        if (credentials.projectName || credentials.projectID) {
+        this.auth.identity.password.user = {
+            name: credentials.username,
+            password: credentials.password,
+            domain: {
+                id: credentials.domain_id,
+                name: credentials.domain_name
+            }
+        }
+        if (credentials.project_name || credentials.project_id) {
             this.auth.scope = {
                 project: {
-                    id: credentials.projectID,
-                    name: credentials.projectName,
+                    id: credentials.project_id,
+                    name: credentials.project_name,
                 }
             }
         } else {
             this.auth.scope = {
                 domain: {
-                    id: credentials.domainID,
-                    name: credentials.domainName,
+                    id: credentials.domain_id,
+                    name: credentials.domain_name,
                 }
             }
         }
@@ -61,8 +65,11 @@ class Token {
 }
 
 export class Keystone extends Service {
+    static type = 'identity'
+    static version = '3'
+
     constructor(url: string, client: AxiosInstance) {
-        super('keystone', 'identity', '3', url, client)
+        super(Keystone.type, Keystone.version, url, client)
     }
 
     /**

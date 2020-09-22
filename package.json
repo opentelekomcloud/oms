@@ -8,6 +8,7 @@
   "type": "module",
   "devDependencies": {
     "@types/systemjs": "^6",
+    "@types/underscore": "^1",
     "@yarnpkg/plugin-node-modules": "^2.1.1",
     "@yarnpkg/pnpify": "^2.2.1",
     "babel-register": "^6.26.0",
@@ -21,7 +22,11 @@
     "yarn": "^1.22.5"
   },
   "jest": {
-    "preset": "ts-jest"
+    "preset": "ts-jest",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*.ts"
+    ]
   },
   "scripts": {
     "test": "jest",
@@ -36,6 +41,7 @@
     "require.js": "^1.0.0",
     "systemjs": "^6.6.1",
     "ts-node": "^9.0.0",
-    "tsify": "^5.0.2"
+    "tsify": "^5.0.2",
+    "underscore": "^1.11.0"
   }
 }
