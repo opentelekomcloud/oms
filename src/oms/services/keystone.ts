@@ -1,5 +1,4 @@
-import {Service} from "../client";
-import {AuthOptions, NameOrID} from "../types";
+import {AuthOptions, NameOrID, Service} from "../core/types";
 import {AxiosInstance} from "axios";
 
 class authRequestData {
@@ -24,6 +23,9 @@ class authRequestData {
     constructor(credentials: AuthOptions) {
         this.auth.identity.password.user.id = credentials.userID
         this.auth.identity.password.user.name = credentials.username
+        if (!credentials.password) {
+            throw 'Password has to be provided'
+        }
         this.auth.identity.password.user.password = credentials.password
         this.auth.identity.password.user.domain.id = credentials.domainID
         this.auth.identity.password.user.domain.name = credentials.domainName
@@ -70,7 +72,7 @@ export class Keystone extends Service {
      */
     async getToken(credentials: AuthOptions): Promise<string> {
         const data = new authRequestData(credentials)
-        let resp = await this.httpClient.post<Token>('/auth/tokens/', data)
+        let resp = await this.httpClient!.post<Token>('/auth/tokens/', data)
         return resp.headers['X-Subject-Token']
     }
 

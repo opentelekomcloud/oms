@@ -1,5 +1,5 @@
 import axios, {AxiosInstance, AxiosRequestConfig} from "axios";
-import {AuthOptions} from "./types";
+import {AuthOptions} from "./core/types";
 import {akskInterceptor, SetUserAgent} from "./core/signer";
 import {Keystone} from "./services/keystone";
 
@@ -8,7 +8,7 @@ const defaultAuthURL = 'https://iam.eu-de.otc.t-systems.com/v3'
 /**
  * Client is base provider client
  */
-export class Client {
+export default class Client {
 
     authURL = defaultAuthURL
     httpClient: AxiosInstance
@@ -40,24 +40,5 @@ export class Client {
             config.headers['X-Auth-Token'] = token
             return config
         })
-    }
-}
-
-
-/**
- * Service represents single service client
- */
-export class Service {
-    name: string
-    type: string
-    version: string
-    httpClient: AxiosInstance
-
-    constructor(name: string, type: string, version: string, url: string, httpClient: AxiosInstance) {
-        this.name = name
-        this.type = type
-        this.version = version
-        this.httpClient = axios.create({baseURL: url})
-        this.httpClient.interceptors = httpClient.interceptors // auth is done using interceptors
     }
 }

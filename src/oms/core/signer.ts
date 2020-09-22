@@ -1,7 +1,7 @@
 import {AxiosRequestConfig} from 'axios';
 import {sha256} from "js-sha256";
 
-const algorithm = 'AWS4-HMAC-SHA256'
+// const algorithm = 'AWS4-HMAC-SHA256'
 
 // Build a CanonicalRequest from a regular request string
 //
@@ -22,8 +22,19 @@ function canonicalRequest(config: AxiosRequestConfig): string {
     const signedHeaders = Object.keys(config.headers).sort((a: string, b: string): number => {
         return a[0].toLowerCase() < b[0].toLowerCase() ? -1 : 1;
     }).join(';')
-    const hash = sha256(JSON.stringify(config.data))
-    return `${config.method}\n${url.pathname}\n${queryString}\n${canonHeaders}\n${signedHeaders}\n`
+    const hash = hexEncode(sha256(JSON.stringify(config.data)))
+    return `${config.method}\n${url.pathname}\n${queryString}\n${canonHeaders}\n${signedHeaders}\n${hash}`
+}
+
+function hexEncode(s: string) {
+    let hex, i;
+    let result = "";
+    for (i = 0; i < s.length; i++) {
+        hex = s.charCodeAt(i).toString(16);
+        result += ("000" + hex).slice(-4);
+    }
+
+    return result
 }
 
 export function SetUserAgent(config: AxiosRequestConfig): AxiosRequestConfig {
@@ -39,7 +50,7 @@ export function akskInterceptor(access: string, secret: string): (config: AxiosR
         const datetime = new Date().toISOString().replace(/[:\-]|\.\d{3}/, '')
         config.headers['X-Amz-Date'] = datetime
         config.headers['Authorization'] = ''
-
+        config.headers['shit'] = canonicalRequest(config)
         return config
     }
 }

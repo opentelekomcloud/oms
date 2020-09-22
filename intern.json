@@ -1,3 +1,8 @@
 {
-  "suites": "tests/unit/**/*.js"
+  "environments": "node",
+  "suites": "./tests/unit/**/*.ts",
+  "coverage": "src/**/*.js",
+  "node": {
+    "plugins": "node_modules/babel-register/lib/node.js"
+  }
 }
