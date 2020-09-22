@@ -29,7 +29,8 @@
     ]
   },
   "scripts": {
-    "test": "jest",
+    "test": "jest ./tests/unit",
+    "functional": "jest ./tests/functional",
     "build": "tsc -p ./src",
     "clean": "rm -rf ./dist"
   },

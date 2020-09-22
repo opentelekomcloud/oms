@@ -1,7 +1,7 @@
 import axios, {AxiosInstance, AxiosRequestConfig} from "axios";
 import {AuthOptions, CloudConfig, Service} from "./core/types";
 import {setUserAgent, signRequest} from "./core/signer";
-import {Keystone} from "./services/keystone";
+import {IdentityV3} from "./services/identity";
 
 function _get_service_key(type: string, version: string): string {
     return `${type}/${version}`
@@ -30,8 +30,8 @@ export default class Client {
         this.authOptions = cloud.auth
         this.httpClient = this.newHttpClient()
 
-        // register identity service with unauthorized client
-        this.registerService(new Keystone(this.authOptions.auth_url, this.httpClient))
+        // register identity service
+        this.registerService(new IdentityV3(this.authOptions.auth_url, this.httpClient))
     }
 
     _services: Map<string, Service> = new Map<string, Service>()
@@ -69,7 +69,7 @@ export default class Client {
     async _authToken() {
         let token = this.token
         if (!token) {
-            const identity = this.getService(Keystone.type, Keystone.version) as Keystone
+            const identity = this.getService(IdentityV3.type, IdentityV3.version) as IdentityV3
             this.token = await identity.getToken(this.authOptions)
         }
         this.httpClient.interceptors.request.use((config: AxiosRequestConfig) => {

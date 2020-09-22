@@ -1,5 +1,5 @@
 /// <reference types="jest" />
-import {CloudConfigHelper, Service} from "../../src/oms/core/types";
+import {bareUrl, CloudConfigHelper, Service} from "../../src/oms/core/types";
 import {randomString} from "../utils/helpers";
 import _ from "underscore";
 import axios from "axios";
@@ -68,4 +68,9 @@ test("Service_noClient", () => {
     const url = randomString(10)
     const serv = new Service(type, version, url)
     expect(serv.httpClient).toBeDefined()
+})
+
+test("bareUrl", () => {
+    const url = 'https://vpc.eu-de.otc.t-systems.com/v2.0/totallyrandomprojectid'
+    expect(bareUrl(url)).toEqual('https://vpc.eu-de.otc.t-systems.com/')
 })
