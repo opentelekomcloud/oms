@@ -37,20 +37,20 @@ function hexEncode(s: string) {
     return result
 }
 
-export function SetUserAgent(config: AxiosRequestConfig): AxiosRequestConfig {
+export function setUserAgent(config: AxiosRequestConfig): AxiosRequestConfig {
     config.headers['user-agent'] = 'OpenTelekomCloud JS/0.1'
     return config
 }
 
-
-export function akskInterceptor(access: string, secret: string): (config: AxiosRequestConfig) => AxiosRequestConfig {
+export function signRequest(access: string, secret: string): (config: AxiosRequestConfig) => AxiosRequestConfig {
     return function (config: AxiosRequestConfig): AxiosRequestConfig {
-        config = SetUserAgent(config)
+        config = setUserAgent(config)
 
-        const datetime = new Date().toISOString().replace(/[:\-]|\.\d{3}/, '')
-        config.headers['X-Amz-Date'] = datetime
-        config.headers['Authorization'] = ''
-        config.headers['shit'] = canonicalRequest(config)
+        config.headers['X-Amz-Date'] = new Date()
+            .toISOString()
+            .replace(/[:\-]|\.\d{3}/, '')
+        // FIXME: this is not a real signing but just a stub
+        config.headers['Authorization'] = canonicalRequest(config)
         return config
     }
 }

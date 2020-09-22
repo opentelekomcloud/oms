@@ -5,36 +5,81 @@ export class NameOrID {
     name?: string
 }
 
-
+/**
+ * Simple implementation of OpenStack auth options
+ */
 export class AuthOptions {
+    auth_url!: string
     token?: string
-
-    domainID?: string
-    domainName?: string
     username?: string
-    userID?: string
     password?: string
-    projectName?: string
-    projectID?: string
+    domain_name?: string
+    domain_id?: string
+    project_name?: string
+    project_id?: string
 
-    accessKey?: string
-    secretKey?: string
+    ak?: string
+    sk?: string
+}
+
+/**
+ * OpenTelekomCloud cloud configuration
+ */
+export class CloudConfig {
+    auth: AuthOptions
+
+    constructor() {
+        this.auth = new (AuthOptions)
+    }
+}
+
+/**
+ * CloudConfigHelper provides helper functions to get cloud configurations
+ */
+export class CloudConfigHelper {
+    authUrl: string
+
+    constructor(authUrl: string) {
+        this.authUrl = authUrl
+    }
+
+    baseCfg(): CloudConfig {
+        const cc = new (CloudConfig)
+        cc.auth.auth_url = this.authUrl
+        return cc
+    }
+
+
+    simplePasswordConfig(domainName: string, username: string, password: string, projectName: string) {
+        const cc = this.baseCfg()
+        cc.auth.domain_name = domainName
+        cc.auth.username = username
+        cc.auth.password = password
+        cc.auth.project_name = projectName
+        return cc
+    }
+
+    simpleTokenConfig(token: string) {
+        const cc = this.baseCfg()
+        cc.auth.token = token
+        return cc
+    }
 }
 
 /**
  * Service represents single service client
  */
 export class Service {
-    name: string
     type: string
     version: string
     httpClient?: AxiosInstance
 
-    constructor(name: string, type: string, version: string, url: string, httpClient: AxiosInstance) {
-        this.name = name
+    constructor(type: string, version: string, url: string, httpClient?: AxiosInstance) {
         this.type = type
         this.version = version
         this.httpClient = axios.create({baseURL: url})
-        this.httpClient.interceptors = httpClient.interceptors // auth is done using interceptors
+        if (httpClient) {
+            this.httpClient.interceptors = httpClient.interceptors // auth is done using interceptors
+        }
     }
 }
