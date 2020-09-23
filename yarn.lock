@@ -800,6 +800,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash@npm:^4":
+  version: 4.14.161
+  resolution: "@types/lodash@npm:4.14.161"
+  checksum: c3657517dab1a23059d86ae379c4e7538212f05ba9c3e108ab694167f086118a5b44ed04bcb6e5cd0a89778c29909668302a755df576e3597df16fda8b603443
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:*, @types/node@npm:^14.11.1":
   version: 14.11.1
   resolution: "@types/node@npm:14.11.1"
@@ -855,13 +862,6 @@ __metadata:
   version: 6.1.0
   resolution: "@types/systemjs@npm:6.1.0"
   checksum: 9277767d48e0fe78a09822a0f4e27745e561254f19147aafaf0d208d77dcdd7113b8bcee21193363051bcbbe21f7fa7afc399f3cce224489e0c09675fe7235c8
-  languageName: node
-  linkType: hard
-
-"@types/underscore@npm:^1":
-  version: 1.10.23
-  resolution: "@types/underscore@npm:1.10.23"
-  checksum: f48e1fc5e6f19c8ea54517c463f28d30ae3e94a60cd6a17749f0d4d7c6c6555fd083b5a6335c814d93a3f855f29576fc859f014eda2d42a48c87227688f93d30
   languageName: node
   linkType: hard
 
@@ -5043,7 +5043,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.4":
+"lodash@npm:^4.17.15, lodash@npm:^4.17.19, lodash@npm:^4.17.20, lodash@npm:^4.17.4":
   version: 4.17.20
   resolution: "lodash@npm:4.17.20"
   checksum: c62101d2500c383b5f174a7e9e6fe8098149ddd6e9ccfa85f36d4789446195f5c4afd3cfba433026bcaf3da271256566b04a2bf2618e5a39f6e67f8c12030cb6
@@ -5659,9 +5659,9 @@ fsevents@^2.1.2:
   version: 0.0.0-use.local
   resolution: "oms@workspace:."
   dependencies:
+    "@types/lodash": ^4
     "@types/node": ^14.11.1
     "@types/systemjs": ^6
-    "@types/underscore": ^1
     "@yarnpkg/plugin-node-modules": ^2.1.1
     "@yarnpkg/pnpify": ^2.2.1
     axios: ^0.20.0
@@ -5669,6 +5669,7 @@ fsevents@^2.1.2:
     browserify: ^16.5.2
     jest: ^26.4.2
     js-sha256: ^0.9.0
+    lodash: ^4.17.20
     normalize-url: 4
     nyc: ^15.1.0
     require.js: ^1.0.0
@@ -5679,7 +5680,6 @@ fsevents@^2.1.2:
     ts-node: ^9.0.0
     tsify: ^5.0.2
     typescript: ^4.0.3
-    underscore: ^1.11.0
     yarn: ^1.22.5
   languageName: unknown
   linkType: soft
@@ -7624,7 +7624,7 @@ typescript@^4.0.3:
   languageName: node
   linkType: hard
 
-"underscore@npm:^1.11.0, underscore@npm:^1.7.0":
+"underscore@npm:^1.7.0":
   version: 1.11.0
   resolution: "underscore@npm:1.11.0"
   checksum: 5276f866a68b1bc6b4b889409d9186754ee695ccfd6d4fcc723fc1834b9c018a2d5ec9cf2fc8c7271e21f5fbff350c3ac5ee8b3e261635151e8c7c8dcf696c5c

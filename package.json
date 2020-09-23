@@ -7,8 +7,8 @@
   "license": "Apache-2.0",
   "type": "module",
   "devDependencies": {
+    "@types/lodash": "^4",
     "@types/systemjs": "^6",
-    "@types/underscore": "^1",
     "@yarnpkg/plugin-node-modules": "^2.1.1",
     "@yarnpkg/pnpify": "^2.2.1",
     "babel-register": "^6.26.0",
@@ -26,7 +26,8 @@
     "collectCoverage": true,
     "collectCoverageFrom": [
       "src/**/*.ts"
-    ]
+    ],
+    "testEnvironment": "node"
   },
   "scripts": {
     "test": "jest ./tests/unit",
@@ -38,11 +39,11 @@
     "@types/node": "^14.11.1",
     "axios": "^0.20.0",
     "js-sha256": "^0.9.0",
+    "lodash": "^4.17.20",
     "normalize-url": "4",
     "require.js": "^1.0.0",
     "systemjs": "^6.6.1",
     "ts-node": "^9.0.0",
-    "tsify": "^5.0.2",
-    "underscore": "^1.11.0"
+    "tsify": "^5.0.2"
   }
 }

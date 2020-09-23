@@ -1,7 +1,7 @@
 /// <reference types="jest" />
 import {bareUrl, CloudConfigHelper, Service} from "../../src/oms/core/types";
 import {randomString} from "../utils/helpers";
-import _ from "underscore";
+import _ from "lodash";
 import axios from "axios";
 
 test("CloudConfigHelper_basic", () => {
