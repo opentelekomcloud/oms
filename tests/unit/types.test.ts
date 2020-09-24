@@ -65,5 +65,5 @@ test("Service_basic", () => {
 
 test("bareUrl", () => {
     const url = 'https://vpc.eu-de.otc.t-systems.com/v2.0/totallyrandomprojectid'
-    expect(bareUrl(url)).toEqual('https://vpc.eu-de.otc.t-systems.com/')
+    expect(bareUrl(url)).toEqual('https://vpc.eu-de.otc.t-systems.com')
 })

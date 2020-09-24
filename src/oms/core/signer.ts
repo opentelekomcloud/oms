@@ -1,5 +1,5 @@
-import {AxiosRequestConfig} from 'axios';
-import {sha256} from "js-sha256";
+import {Message, sha256} from "js-sha256";
+import {RequestConfig} from "./http";
 
 // const algorithm = 'AWS4-HMAC-SHA256'
 
@@ -13,8 +13,8 @@ import {sha256} from "js-sha256";
 //  CanonicalHeaders + '\n' +
 //  SignedHeaders + '\n' +
 //  HexEncode(Hash(RequestPayload))
-function canonicalRequest(config: AxiosRequestConfig): string {
-    const url = new URL(<string>config.url, config.baseURL)
+function canonicalRequest(config: RequestConfig): string {
+    const url = new URL(config.url, config.baseURL)
     const queryString = url.search.substring(1)
     const canonHeaders = Object.entries(config.headers).map((e: any) => {
         return `${e[0].toLowerCase()}:${e[1].trim()}\n`
@@ -22,7 +22,7 @@ function canonicalRequest(config: AxiosRequestConfig): string {
     const signedHeaders = Object.keys(config.headers).sort((a: string, b: string): number => {
         return a[0].toLowerCase() < b[0].toLowerCase() ? -1 : 1;
     }).join(';')
-    const hash = hexEncode(sha256(JSON.stringify(config.data)))
+    const hash = hexEncode(sha256(<Message>config.body))
     return `${config.method}\n${url.pathname}\n${queryString}\n${canonHeaders}\n${signedHeaders}\n${hash}`
 }
 
@@ -37,20 +37,21 @@ function hexEncode(s: string) {
     return result
 }
 
-export function setUserAgent(config: AxiosRequestConfig): AxiosRequestConfig {
-    config.headers['user-agent'] = 'OpenTelekomCloud JS/0.1'
+export function setUserAgent(config: RequestConfig): RequestConfig {
+    config.headers.append('user-agent', 'OpenTelekomCloud JS/0.1')
     return config
 }
 
-export function signRequest(access: string, secret: string): (config: AxiosRequestConfig) => AxiosRequestConfig {
-    return function (config: AxiosRequestConfig): AxiosRequestConfig {
+export function signRequest(access: string, secret: string) {
+    return function (config: RequestConfig): RequestConfig {
         config = setUserAgent(config)
 
-        config.headers['X-Amz-Date'] = new Date()
+        config.headers.set('X-Amz-Date', new Date()
             .toISOString()
             .replace(/[:\-]|\.\d{3}/, '')
+        )
         // FIXME: this is not a real signing but just a stub
-        config.headers['Authorization'] = canonicalRequest(config)
+        config.headers.set('Authorization', canonicalRequest(config))
         return config
     }
 }

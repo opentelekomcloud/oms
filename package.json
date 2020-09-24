@@ -9,6 +9,7 @@
   "devDependencies": {
     "@types/lodash": "^4",
     "@types/node": "^14.11.2",
+    "@types/systemjs": "^6.1.0",
     "@types/whatwg-fetch": "^0.0.33",
     "@yarnpkg/plugin-node-modules": "^2.1.1",
     "@yarnpkg/pnpify": "^2.2.1",
@@ -19,6 +20,7 @@
     "systemjs-plugin-babel": "^0.0.25",
     "ts-jest": "^26.4.0",
     "ts-loader": "^8.0.4",
+    "ts-node": "^9.0.0",
     "typescript": "^4.0.3",
     "whatwg-fetch": "^3.4.1",
     "yarn": "^1.22.5"
@@ -40,8 +42,6 @@
   "dependencies": {
     "js-sha256": "^0.9.0",
     "lodash": "^4.17.20",
-    "ts-node": "^9.0.0",
-    "tsify": "^5.0.2",
     "xhr2": "^0.2.0"
   }
 }

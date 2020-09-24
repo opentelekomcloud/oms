@@ -9,14 +9,18 @@ global.XMLHttpRequest = require('xhr2');
 
 const _absUrlRe = /^https?:\/\/.+/
 
-class RequestConfig implements RequestInit {
+export class RequestConfig implements RequestInit {
+    baseURL: string
+    url: string
     headers: Headers
     body?: BodyInit
     method?: string
 
-    constructor(base: RequestInit) {
+    constructor(baseURL: string, url: string, base: RequestInit) {
+        this.url = url
+        this.baseURL = baseURL
         this.headers = new Headers(base.headers)
-        this.body = base.body ? base.body : ''
+        this.body = base.body ? base.body : undefined
         this.method = base.method
     }
 }
@@ -69,7 +73,7 @@ export default class HttpClient {
      * @param handler - pre-request request configuration handler, will be used before other handlers
      */
     async request<T>(method: string, url: string, headers?: Headers, body?: string, handler?: RequestConfigHandler): Promise<HttpResponse<T>> {
-        let config = new RequestConfig(this.baseConfig)
+        let config = new RequestConfig(this.baseURL, url, this.baseConfig)
         // merge headers
         let requestHeaders = new Headers(config.headers)
         if (headers) {
@@ -86,7 +90,7 @@ export default class HttpClient {
             config = b(config)
         }
         if (!url.match(_absUrlRe)) {
-            url = new URL(url, this.baseURL).href
+            url = new URL(config.url, config.baseURL).href
         }
         let response = await fetch(url, config) as HttpResponse<T>
         if (response.ok) {

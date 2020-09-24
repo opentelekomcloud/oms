@@ -865,6 +865,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/systemjs@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "@types/systemjs@npm:6.1.0"
+  checksum: 9277767d48e0fe78a09822a0f4e27745e561254f19147aafaf0d208d77dcdd7113b8bcee21193363051bcbbe21f7fa7afc399f3cce224489e0c09675fe7235c8
+  languageName: node
+  linkType: hard
+
 "@types/whatwg-fetch@npm:^0.0.33":
   version: 0.0.33
   resolution: "@types/whatwg-fetch@npm:0.0.33"
@@ -1225,7 +1232,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"any-promise@npm:^1.1.0, any-promise@npm:^1.3.0, any-promise@npm:~1.3.0":
+"any-promise@npm:^1.1.0, any-promise@npm:~1.3.0":
   version: 1.3.0
   resolution: "any-promise@npm:1.3.0"
   checksum: e829425e4aef532fb9063c638de4693feaf285dae8ba84bcabd9c6d49446264650d1e16b73af8a25ae1e4480f9a4dc7cae364b4c4d4753b57dd1900cdfab8183
@@ -2345,7 +2352,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"convert-source-map@npm:^1.1.0, convert-source-map@npm:^1.4.0, convert-source-map@npm:^1.5.1, convert-source-map@npm:^1.6.0, convert-source-map@npm:^1.7.0":
+"convert-source-map@npm:^1.4.0, convert-source-map@npm:^1.5.1, convert-source-map@npm:^1.6.0, convert-source-map@npm:^1.7.0":
   version: 1.7.0
   resolution: "convert-source-map@npm:1.7.0"
   dependencies:
@@ -2863,7 +2870,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"error-ex@npm:^1.2.0, error-ex@npm:^1.3.1":
+"error-ex@npm:^1.3.1":
   version: 1.3.2
   resolution: "error-ex@npm:1.3.2"
   dependencies:
@@ -4099,13 +4106,6 @@ fsevents@^2.1.2:
   version: 1.0.0
   resolution: "is-typedarray@npm:1.0.0"
   checksum: 4e21156e7360a5916eded35c5938adf6278299a8055640864eebb251e4351cd605beccddf9af27477e19f753d453412fe0c21379bb54b55cfdf5add263076959
-  languageName: node
-  linkType: hard
-
-"is-utf8@npm:^0.2.0":
-  version: 0.2.1
-  resolution: "is-utf8@npm:0.2.1"
-  checksum: c72f604d72b72f6a57f9b2e22c9b6f480e869b3f0efe141bd1dfbc36655225043ca8c1316ff8e343ef641cf80868c9e4a37345492f31402abd5ab68e09367977
   languageName: node
   linkType: hard
 
@@ -5661,6 +5661,7 @@ fsevents@^2.1.2:
   dependencies:
     "@types/lodash": ^4
     "@types/node": ^14.11.2
+    "@types/systemjs": ^6.1.0
     "@types/whatwg-fetch": ^0.0.33
     "@yarnpkg/plugin-node-modules": ^2.1.1
     "@yarnpkg/pnpify": ^2.2.1
@@ -5674,7 +5675,6 @@ fsevents@^2.1.2:
     ts-jest: ^26.4.0
     ts-loader: ^8.0.4
     ts-node: ^9.0.0
-    tsify: ^5.0.2
     typescript: ^4.0.3
     whatwg-fetch: ^3.4.1
     xhr2: ^0.2.0
@@ -5847,15 +5847,6 @@ fsevents@^2.1.2:
     pbkdf2: ^3.0.3
     safe-buffer: ^5.1.1
   checksum: aa3f44d62837eedab98601c04c872a48c57be039e3e37ffafd53fd1a0415540f05b8800d3f70cea35c65cfdee0656d98ea1b4a77a96903a480afda8f91e4a4c3
-  languageName: node
-  linkType: hard
-
-"parse-json@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "parse-json@npm:2.2.0"
-  dependencies:
-    error-ex: ^1.2.0
-  checksum: 920582196a8edebb3d3c4623b2f057987218272b35ae4d2d310c00bc1bd7e89b87c79358d7e009d54f047ca2eea82eab8d7e1b14e1f7cbbb345ef29fcda29731
   languageName: node
   linkType: hard
 
@@ -6592,7 +6583,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"semver@npm:^6.0.0, semver@npm:^6.1.0, semver@npm:^6.3.0":
+"semver@npm:^6.0.0, semver@npm:^6.3.0":
   version: 6.3.0
   resolution: "semver@npm:6.3.0"
   bin:
@@ -7096,15 +7087,6 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"strip-bom@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "strip-bom@npm:2.0.0"
-  dependencies:
-    is-utf8: ^0.2.0
-  checksum: d488310c44b2a089d1d2ff54e90198eb8d32e6d2016ae811c732b1a6472dea15ae72dc21ee35ee6729cf71e9b663b3216d3e48cd1e5fba3b6093fd0b19ae7d0b
-  languageName: node
-  linkType: hard
-
 "strip-bom@npm:^4.0.0":
   version: 4.0.0
   resolution: "strip-bom@npm:4.0.0"
@@ -7123,13 +7105,6 @@ fsevents@^2.1.2:
   version: 2.0.0
   resolution: "strip-final-newline@npm:2.0.0"
   checksum: 74dbd8a602409706748db730200efab53ba739ed7888310e74e45697efbd760981df6d6f0fa34b23e973135fb07d3b22adae6e6d58898f692a094e49692c6c33
-  languageName: node
-  linkType: hard
-
-"strip-json-comments@npm:^2.0.0":
-  version: 2.0.1
-  resolution: "strip-json-comments@npm:2.0.1"
-  checksum: e60d99aa2849c27a04dce0620334f45822197df6b83664dd3746971e9a0a766d989dbb8d87f9cb7350725d2b5df401a2343222ad06e36a1ba7d62c6633267fcb
   languageName: node
   linkType: hard
 
@@ -7442,35 +7417,6 @@ fsevents@^2.1.2:
     ts-node-transpile-only: dist/bin-transpile.js
     ts-script: dist/bin-script-deprecated.js
   checksum: 49d2ab087fc4b93f0a292e426ea6d242a80d1a4809ac008758bb0170aea1a85cd4182792c1d70889285fe5328cd8bd1ffb1e5108d1c4f31c39dbe9151ea4cabe
-  languageName: node
-  linkType: hard
-
-"tsconfig@npm:^5.0.3":
-  version: 5.0.3
-  resolution: "tsconfig@npm:5.0.3"
-  dependencies:
-    any-promise: ^1.3.0
-    parse-json: ^2.2.0
-    strip-bom: ^2.0.0
-    strip-json-comments: ^2.0.0
-  checksum: cf3cc9ba94832277ceaa15f0e3922ca2fbd7539815312aa483a762f6c5fe60e6e147c68d268eff25fc17b0b036d2064609cea026a8cb965e8e882f646e777ca5
-  languageName: node
-  linkType: hard
-
-"tsify@npm:^5.0.2":
-  version: 5.0.2
-  resolution: "tsify@npm:5.0.2"
-  dependencies:
-    convert-source-map: ^1.1.0
-    fs.realpath: ^1.0.0
-    object-assign: ^4.1.0
-    semver: ^6.1.0
-    through2: ^2.0.0
-    tsconfig: ^5.0.3
-  peerDependencies:
-    browserify: ">= 10.x"
-    typescript: ">= 2.8"
-  checksum: 2cb62e47bc6570d203bd915b679e37367c73408f52d4a702d3a7b2b74f7b7bb22efeca7ac32ef3a6e127b48f8b0b2ab1b10219a92a141c6a08e3a9744712f2e5
   languageName: node
   linkType: hard
 
