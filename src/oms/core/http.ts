@@ -4,8 +4,7 @@
  */
 import _ from "lodash";
 
-require('whatwg-fetch')
-global.XMLHttpRequest = require('xhr2');
+require('isomorphic-fetch')
 
 const _absUrlRe = /^https?:\/\/.+/
 
@@ -52,6 +51,8 @@ export default class HttpClient {
     constructor(baseURL?: string, baseConfig?: RequestInit) {
         this.baseURL = baseURL ? baseURL : ''
         this.baseConfig = baseConfig ? _.cloneDeep(baseConfig) : {}
+        this.baseConfig.headers = new Headers(this.baseConfig.headers)
+        this.baseConfig.headers.set('User-Agent', 'OpenTelekomCloud JS/v1.0')
     }
 
     /**
@@ -75,7 +76,7 @@ export default class HttpClient {
     async request<T>(method: string, url: string, headers?: Headers, body?: string, handler?: RequestConfigHandler): Promise<HttpResponse<T>> {
         let config = new RequestConfig(this.baseURL, url, this.baseConfig)
         // merge headers
-        let requestHeaders = new Headers(config.headers)
+        let requestHeaders = new Headers(this.baseConfig.headers)
         if (headers) {
             headers.forEach((v, k) => requestHeaders.append(k, v))
         }

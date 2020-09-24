@@ -1,5 +1,5 @@
 import {AuthOptions, CloudConfig} from "./core/types";
-import {setUserAgent, signRequest} from "./core/signer";
+import {signRequest} from "./core/signer";
 import {IdentityV3} from "./services/identity";
 import {Service} from "./services/base";
 import HttpClient from "./core/http";
@@ -105,7 +105,6 @@ export default class Client {
         }
         const token = this.token
         this.httpClient.injectPreProcessor(config => {
-            config = setUserAgent(config)
             config.headers.set('X-Auth-Token', token)
             return config
         })

@@ -37,15 +37,8 @@ function hexEncode(s: string) {
     return result
 }
 
-export function setUserAgent(config: RequestConfig): RequestConfig {
-    config.headers.append('user-agent', 'OpenTelekomCloud JS/0.1')
-    return config
-}
-
 export function signRequest(access: string, secret: string) {
     return function (config: RequestConfig): RequestConfig {
-        config = setUserAgent(config)
-
         config.headers.set('X-Amz-Date', new Date()
             .toISOString()
             .replace(/[:\-]|\.\d{3}/, '')
