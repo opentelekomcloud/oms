@@ -1,5 +1,3 @@
-import axios, {AxiosInstance} from "axios";
-
 export class NameOrID {
     id?: string
     name?: string
@@ -71,32 +69,5 @@ export class CloudConfigHelper {
         cc.auth.sk = sk
         return cc
     }
-}
-
-/**
- * Service represents single service client
- */
-export class Service {
-    type: string
-    version: string
-    httpClient: AxiosInstance
-
-    constructor(type: string, version: string, url: string, httpClient?: AxiosInstance) {
-        this.type = type
-        this.version = version
-        this.httpClient = axios.create({baseURL: url})
-        if (httpClient) {
-            this.httpClient.interceptors = httpClient.interceptors // auth is done using interceptors
-        }
-    }
-}
-
-/**
- * Return base service url, e.g. https://iam.eu-de.otc.t-systems.com/
- * @param serviceUrl - url from service catalog
- */
-export function bareUrl(serviceUrl: string): string {
-    const url = new URL(serviceUrl)
-    return `${url.protocol}//${url.host}/`
 }
 

@@ -1,8 +1,9 @@
 /// <reference types="jest" />
-import {bareUrl, CloudConfigHelper, Service} from "../../src/oms/core/types";
+import {CloudConfigHelper} from "../../src/oms/core/types";
 import {randomString} from "../utils/helpers";
 import _ from "lodash";
-import axios from "axios";
+import {bareUrl, Service} from "../../src/oms/services/base";
+import HttpClient from "../../src/oms/core/http";
 
 test("CloudConfigHelper_basic", () => {
     const authUrl = randomString(5)
@@ -54,20 +55,12 @@ test("Service_basic", () => {
     const type = randomString(5)
     const version = _.random(1, 10).toString()
     const url = randomString(10)
-    const httpClient = axios.create({})
+    const httpClient = new HttpClient()
     const serv = new Service(type, version, url, httpClient)
     expect(serv.type).toEqual(type)
     expect(serv.version).toEqual(version)
-    expect(serv.httpClient).toBeDefined()
-    expect(serv.httpClient!.defaults.baseURL).toEqual(url)
-})
-
-test("Service_noClient", () => {
-    const type = randomString(5)
-    const version = _.random(1, 10).toString()
-    const url = randomString(10)
-    const serv = new Service(type, version, url)
-    expect(serv.httpClient).toBeDefined()
+    expect(serv.client).toBeDefined()
+    expect(serv.client!.baseURL).toEqual(url)
 })
 
 test("bareUrl", () => {

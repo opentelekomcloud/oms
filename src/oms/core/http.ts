@@ -4,12 +4,27 @@
  */
 import _ from "lodash";
 
+require('whatwg-fetch')
+global.XMLHttpRequest = require('xhr2');
+
 const _absUrlRe = /^https?:\/\/.+/
 
-export type RequestInitHandler = (i: RequestInit) => RequestInit
+class RequestConfig implements RequestInit {
+    headers: Headers
+    body?: BodyInit
+    method?: string
+
+    constructor(base: RequestInit) {
+        this.headers = new Headers(base.headers)
+        this.body = base.body ? base.body : ''
+        this.method = base.method
+    }
+}
+
+export type RequestConfigHandler = (i: RequestConfig) => RequestConfig
 
 export class HttpResponse<T> extends Response {
-    data?: T
+    data!: T
 }
 
 export class HttpError extends Error {
@@ -19,27 +34,30 @@ export default class HttpClient {
     baseURL: string
     baseConfig: RequestInit
 
-    _beforeRequest: RequestInitHandler[] = []
+    _beforeRequest: RequestConfigHandler[] = []
 
     /**
      * Add pre-process request config handler
      * handlers are executed in FILO order
      * @param handler
      */
-    injectPreProcessor(handler: RequestInitHandler) {
+    injectPreProcessor(handler: RequestConfigHandler) {
         this._beforeRequest.push(handler)
     }
 
     constructor(baseURL?: string, baseConfig?: RequestInit) {
         this.baseURL = baseURL ? baseURL : ''
-        this.baseConfig = baseConfig ? _.cloneDeep(baseConfig): {}
+        this.baseConfig = baseConfig ? _.cloneDeep(baseConfig) : {}
     }
 
     /**
-     * Create new HttpClient with same configuration
+     * Create new HttpClient inheriting all client settings
      */
-    clone(): HttpClient {
-        return new HttpClient(this.baseURL, this.baseConfig)
+    child(baseURL?: string, baseConfig?: RequestInit): HttpClient {
+        const client = _.cloneDeep(this)
+        client.baseURL = baseURL ? baseURL : ''
+        client.baseConfig = baseConfig ? _.cloneDeep(baseConfig) : {}
+        return client
     }
 
     /**
@@ -50,8 +68,8 @@ export default class HttpClient {
      * @param body - request JSON body
      * @param handler - pre-request request configuration handler, will be used before other handlers
      */
-    async request<T>(method: string, url: string, headers?: Headers, body?: string, handler?: RequestInitHandler): Promise<HttpResponse<T>> {
-        let config = _.cloneDeep(this.baseConfig)
+    async request<T>(method: string, url: string, headers?: Headers, body?: string, handler?: RequestConfigHandler): Promise<HttpResponse<T>> {
+        let config = new RequestConfig(this.baseConfig)
         // merge headers
         let requestHeaders = new Headers(config.headers)
         if (headers) {
@@ -81,19 +99,19 @@ export default class HttpClient {
         return response
     }
 
-    async get<T>(url: string, headers?: Headers, handler?: RequestInitHandler): Promise<HttpResponse<T>> {
+    async get<T>(url: string, headers?: Headers, handler?: RequestConfigHandler): Promise<HttpResponse<T>> {
         return await this.request('GET', url, headers, undefined, handler)
     }
 
-    async post<T>(url: string, body?: object, headers?: Headers, handler?: RequestInitHandler): Promise<HttpResponse<T>> {
+    async post<T>(url: string, body?: object, headers?: Headers, handler?: RequestConfigHandler): Promise<HttpResponse<T>> {
         return await this.request('POST', url, headers, _jsonBody(body), handler)
     }
 
-    async put<T>(url: string, body?: object, headers?: Headers, handler?: RequestInitHandler): Promise<HttpResponse<T>> {
+    async put<T>(url: string, body?: object, headers?: Headers, handler?: RequestConfigHandler): Promise<HttpResponse<T>> {
         return await this.request('PUT', url, headers, _jsonBody(body), handler)
     }
 
-    async delete<T>(url: string, headers?: Headers, handler?: RequestInitHandler): Promise<HttpResponse<T>> {
+    async delete<T>(url: string, headers?: Headers, handler?: RequestConfigHandler): Promise<HttpResponse<T>> {
         return await this.request('DELETE', url, headers, undefined, handler)
     }
 }

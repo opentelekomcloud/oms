@@ -807,7 +807,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^14.11.1":
+"@types/node@npm:*":
   version: 14.11.1
   resolution: "@types/node@npm:14.11.1"
   checksum: f8bad278fcd5bdd3c173343967806a5601838570ee89ef96912909489df6d722ef7f4de08a31d98159293ef0005bd65353199327c65af77505d3aad2a05fd636
@@ -818,6 +818,13 @@ __metadata:
   version: 13.13.21
   resolution: "@types/node@npm:13.13.21"
   checksum: 8e88d06fa585e932d3158644d2aefb9dcd3a3e0383594d820044b5264f912126c0fe32b33cdb83e2e1d11560240c64e5b1ac72bbe5bb0f96936f3bd1bb76aeb3
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^14.11.2":
+  version: 14.11.2
+  resolution: "@types/node@npm:14.11.2"
+  checksum: 3badcce3991cd8487b549b2541c9a9809f77ded06a2846dd9c73948d12a442290b31abef2d4b0304cc7e30539614ae82ff3b70d93a4b9a82e19128b3d17a9e0f
   languageName: node
   linkType: hard
 
@@ -858,10 +865,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/systemjs@npm:^6":
-  version: 6.1.0
-  resolution: "@types/systemjs@npm:6.1.0"
-  checksum: 9277767d48e0fe78a09822a0f4e27745e561254f19147aafaf0d208d77dcdd7113b8bcee21193363051bcbbe21f7fa7afc399f3cce224489e0c09675fe7235c8
+"@types/whatwg-fetch@npm:^0.0.33":
+  version: 0.0.33
+  resolution: "@types/whatwg-fetch@npm:0.0.33"
+  dependencies:
+    "@types/whatwg-streams": "*"
+  checksum: 805bee14919bc20adfa791db76187d4c4f9e3e34332e77735b6ae308cfb3125065144e4977e5bf143bf1f7cd08e37c36ed8732e610bcfe4fa2f3081ba0e665df
+  languageName: node
+  linkType: hard
+
+"@types/whatwg-streams@npm:*":
+  version: 0.0.7
+  resolution: "@types/whatwg-streams@npm:0.0.7"
+  checksum: 6f679e1a1453bf4e1dc9d2f9601420a24d03868a3706b400122ef599a6645701e4dcc304d3e6486301d72bb9b2586c1f48fc5b74458e160fb1666c7e418ca32f
   languageName: node
   linkType: hard
 
@@ -1399,15 +1415,6 @@ __metadata:
   version: 1.10.1
   resolution: "aws4@npm:1.10.1"
   checksum: 53f2897324997542e3cfeca0b24f5960e2470eb8527f0b6587432a4607dcb8ca817955aef4297a3b429f1ca5fa688ba1b6bc57d744add41292ffcb59466392bb
-  languageName: node
-  linkType: hard
-
-"axios@npm:^0.20.0":
-  version: 0.20.0
-  resolution: "axios@npm:0.20.0"
-  dependencies:
-    follow-redirects: ^1.10.0
-  checksum: 6cf2e963176a0d18fc457d7cb71cb6cf552193619b161fc61070d9a4db3a26a87ecfe760ba36e7af174c05a6a9898dc52cfeb5c0e62e19fddd9788739553ad73
   languageName: node
   linkType: hard
 
@@ -3220,13 +3227,6 @@ __metadata:
     locate-path: ^5.0.0
     path-exists: ^4.0.0
   checksum: d612d28e02eaca6cd7128fc9bc9b456e2547a3f9875b2b2ae2dbdc6b8cec52bc2885efcb3ac6c18954e838f4c8e20565d196784b190e1d38565f9dc39aade722
-  languageName: node
-  linkType: hard
-
-"follow-redirects@npm:^1.10.0":
-  version: 1.13.0
-  resolution: "follow-redirects@npm:1.13.0"
-  checksum: f220828d3f153da30ea616fdbe9f6676e74e4e68c51d336a751037c1d556e2de34aa5918f58951fa19bb6517c9c88b4403a0a8bdfc40d3e779d37def2ac0f2c4
   languageName: node
   linkType: hard
 
@@ -5498,7 +5498,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"normalize-url@npm:4, normalize-url@npm:^4.1.0":
+"normalize-url@npm:^4.1.0":
   version: 4.5.0
   resolution: "normalize-url@npm:4.5.0"
   checksum: 09794941dbe5c7b91caf6f3cd1ae167c27f6d09793e4a03601a68b62de7e8ee9e5de21a246130cdbab98b01481de292f9556d492444a527648f9cf1220e4b0df
@@ -5660,26 +5660,24 @@ fsevents@^2.1.2:
   resolution: "oms@workspace:."
   dependencies:
     "@types/lodash": ^4
-    "@types/node": ^14.11.1
-    "@types/systemjs": ^6
+    "@types/node": ^14.11.2
+    "@types/whatwg-fetch": ^0.0.33
     "@yarnpkg/plugin-node-modules": ^2.1.1
     "@yarnpkg/pnpify": ^2.2.1
-    axios: ^0.20.0
     babel-register: ^6.26.0
     browserify: ^16.5.2
     jest: ^26.4.2
     js-sha256: ^0.9.0
     lodash: ^4.17.20
-    normalize-url: 4
     nyc: ^15.1.0
-    require.js: ^1.0.0
-    systemjs: ^6.6.1
     systemjs-plugin-babel: ^0.0.25
     ts-jest: ^26.4.0
     ts-loader: ^8.0.4
     ts-node: ^9.0.0
     tsify: ^5.0.2
     typescript: ^4.0.3
+    whatwg-fetch: ^3.4.1
+    xhr2: ^0.2.0
     yarn: ^1.22.5
   languageName: unknown
   linkType: soft
@@ -6398,13 +6396,6 @@ fsevents@^2.1.2:
   version: 2.0.0
   resolution: "require-main-filename@npm:2.0.0"
   checksum: 8d3633149a7fef67d14613146247137fe1dc4cc969bf2d1adcd40e3c28056de503229f41e78cba5efebad3a223cbfb4215fd220d879148df10c6d9a877099dbd
-  languageName: node
-  linkType: hard
-
-"require.js@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "require.js@npm:1.0.0"
-  checksum: 4b1727bb8906ffed03373557894d111b9540110100f658e6f4a2a142206be5e5a3f8c0f311f2ac581dbebc4e89c5ca74da365c63dbcbdf6242af75b6f06c829b
   languageName: node
   linkType: hard
 
@@ -7209,13 +7200,6 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"systemjs@npm:^6.6.1":
-  version: 6.6.1
-  resolution: "systemjs@npm:6.6.1"
-  checksum: 4f8de0578bdca02aa76dc9b63b12cc66295c26645a6164475a12f12924c855b70e7d7b32afaa41b821a08c75c94c10686c26dd3f3848727776846d97d73373bb
-  languageName: node
-  linkType: hard
-
 "tapable@npm:^1.0.0":
   version: 1.1.3
   resolution: "tapable@npm:1.1.3"
@@ -7818,6 +7802,13 @@ typescript@^4.0.3:
   languageName: node
   linkType: hard
 
+"whatwg-fetch@npm:^3.4.1":
+  version: 3.4.1
+  resolution: "whatwg-fetch@npm:3.4.1"
+  checksum: 82a9a6431c3e92b4b089c27a1201219b0baaa4fb98dcd504cacbc740be61ae53bf8771f400b7fd80662efb30a47287accb0ddad2a5a6ecfe7283594fed457165
+  languageName: node
+  linkType: hard
+
 "whatwg-mimetype@npm:^2.3.0":
   version: 2.3.0
   resolution: "whatwg-mimetype@npm:2.3.0"
@@ -7923,6 +7914,13 @@ typescript@^4.0.3:
     utf-8-validate:
       optional: true
   checksum: 9302f1f6658c5f3ecd6d35d1c5a38ad708d8e5404cba66ad884ead072ef7a4c948f54d728649a2cb3af1865ca0e15f903e0e2ac9df30c1a0d4dd00d00e6e0d4a
+  languageName: node
+  linkType: hard
+
+"xhr2@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "xhr2@npm:0.2.0"
+  checksum: d7c629b43e70c5671ad7fde3debf0eedaf68e65c94c3386ee174c211ab1aac51cb25e11be1109c69e724dd5a11b2ad80243101b0ba78099ce7ac46bec27bc1aa
   languageName: node
   linkType: hard
 
