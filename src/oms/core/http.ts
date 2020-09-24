@@ -12,6 +12,9 @@ export class HttpResponse<T> extends Response {
     data?: T
 }
 
+export class HttpError extends Error {
+}
+
 export default class HttpClient {
     baseURL: string
     baseConfig: RequestInit
@@ -27,19 +30,16 @@ export default class HttpClient {
         this._beforeRequest.push(handler)
     }
 
-    constructor(baseURL: string, baseConfig?: RequestInit) {
-        this.baseURL = baseURL
-        this.baseConfig = {}
-        if (baseConfig) {
-            this.baseConfig = baseConfig
-        }
+    constructor(baseURL?: string, baseConfig?: RequestInit) {
+        this.baseURL = baseURL ? baseURL : ''
+        this.baseConfig = baseConfig ? _.cloneDeep(baseConfig): {}
     }
 
     /**
      * Create new HttpClient with same configuration
      */
     clone(): HttpClient {
-        return new HttpClient(this.baseURL, _.cloneDeep(this.baseConfig))
+        return new HttpClient(this.baseURL, this.baseConfig)
     }
 
     /**
@@ -73,6 +73,10 @@ export default class HttpClient {
         let response = await fetch(url, config) as HttpResponse<T>
         if (response.ok) {
             response.data = await response.json()
+        } else {
+            throw new HttpError(
+                `HTTP error received. ${response.status} ${response.statusText}: ${await response.text()}`
+            )
         }
         return response
     }
