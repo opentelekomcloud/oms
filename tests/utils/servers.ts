@@ -102,11 +102,12 @@ const fakeVersions = () => ({
         ]
     }
 )
+export const fakeRegion = "eu-de"
 const fakeEndpoints = () => ({
     "endpoints": [
         {
             "service_id": fakeService.id,
-            "region_id": "eu-de",
+            "region_id": fakeRegion,
             "links": {
                 "next": null,
                 "previous": null,
@@ -114,7 +115,7 @@ const fakeEndpoints = () => ({
             },
             "id": "1360c0dc80654c5790c1b6d210f34746",
             "interface": "public",
-            "region": "eu-de",
+            "region": fakeRegion,
             "url": authServerUrl(),
             "enabled": true
         }

@@ -1,5 +1,5 @@
 import {CloudConfigHelper} from "../../src/oms/core/types";
-import {authServerUrl, fakeAuthServer, fakeServiceServer} from "../utils/servers"
+import {authServerUrl, fakeAuthServer, fakeRegion, fakeServiceServer} from "../utils/servers"
 import Client from "../../src/oms/client";
 
 beforeAll(() => {
@@ -14,7 +14,7 @@ afterAll(() => {
 
 test("Client_auth", async () => {
     const cfg = new CloudConfigHelper(authServerUrl())
-        .simplePasswordConfig('MYDOMAIN', 'MYNAME', '>>>Super!Secret<<<', 'eu-de')
+        .simplePasswordConfig('MYDOMAIN', 'MYNAME', '>>>Super!Secret<<<', fakeRegion)
     const client = new Client(cfg)
     await client.authenticate()
     await client.loadServiceCatalog()
