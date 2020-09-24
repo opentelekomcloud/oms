@@ -168,7 +168,7 @@ export class IdentityV3 extends Service {
             throw `Endpoint for service: ${matchingService.name}, region: ${region}, interface: ${visibility} not found`
         }
         let url = bareUrl(ep.url)
-        const fallbackUrl = `${url}v${version}`
+        const fallbackUrl = `${url}/v${version}`
         let vers: version[] = []
         try {
             const r = await this.client.get<{ versions: version[] }>(url)
