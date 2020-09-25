@@ -842,6 +842,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/query-string@npm:^6":
+  version: 6.2.0
+  resolution: "@types/query-string@npm:6.2.0"
+  checksum: 53c1ba7ee593a5d66c98195d6abf9ef3e9f5d5130aeeabfd0f028ecbb7cdc53bc8ba9e588a5bc3ce97c416eb5603a104c40d83bf122950ea082b75b6dc52b64b
+  languageName: node
+  linkType: hard
+
 "@types/responselike@npm:*, @types/responselike@npm:^1.0.0":
   version: 1.0.0
   resolution: "@types/responselike@npm:1.0.0"
@@ -5472,6 +5479,7 @@ fsevents@^2.1.2:
   dependencies:
     "@types/lodash": ^4
     "@types/node": ^14.11.2
+    "@types/query-string": ^6
     "@types/systemjs": ^6.1.0
     "@yarnpkg/plugin-node-modules": ^2.1.1
     "@yarnpkg/pnpify": ^2.2.1
@@ -5481,6 +5489,7 @@ fsevents@^2.1.2:
     jest: ^26.4.2
     js-sha256: ^0.9.0
     lodash: ^4.17.20
+    query-string: ^6.13.2
     systemjs-plugin-babel: ^0.0.25
     ts-jest: ^26.4.0
     ts-loader: ^8.0.4
@@ -5938,6 +5947,17 @@ fsevents@^2.1.2:
   version: 6.5.2
   resolution: "qs@npm:6.5.2"
   checksum: fa0410eff2c05ce3328e11f82db4015e7819c986ee056d6b62b06ae112f4929af09ea3b879ca168ff9f0338f50972bba487ad0e46c879e42bfaf63c3c2ea7f09
+  languageName: node
+  linkType: hard
+
+"query-string@npm:^6.13.2":
+  version: 6.13.2
+  resolution: "query-string@npm:6.13.2"
+  dependencies:
+    decode-uri-component: ^0.2.0
+    split-on-first: ^1.0.0
+    strict-uri-encode: ^2.0.0
+  checksum: a93a866ccc68f58b14cb8f681bc93b94aa3c98433d987ae51295d0ffc5bcb24e812fbc66e81174d60d5e8e0e94e72ab1be8ec5c29f578a82ce0806018f74601e
   languageName: node
   linkType: hard
 
@@ -6622,6 +6642,13 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
+"split-on-first@npm:^1.0.0":
+  version: 1.1.0
+  resolution: "split-on-first@npm:1.1.0"
+  checksum: 2ef26fee62665be9547e8035734b856e658b08fd13e70271a2f258147f29d1f18e12b5cb7f7670d83e113c172a9c5fe3d87d9d7c02a1d3d57824818d75d942ab
+  languageName: node
+  linkType: hard
+
 "split-string@npm:^3.0.1, split-string@npm:^3.0.2":
   version: 3.1.0
   resolution: "split-string@npm:3.1.0"
@@ -6751,6 +6778,13 @@ fsevents@^2.1.2:
     end-of-stream: ~1.1.0
     stream-to-array: ~2.3.0
   checksum: 1f26f85d571d94a308f9332c79f2652697f9893733e3a2aebca1aaaf4d2a0d0655150b8b0a88105256a50510d9e9b8a0b1e5d9139b464ee1f9285be3647c3b83
+  languageName: node
+  linkType: hard
+
+"strict-uri-encode@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "strict-uri-encode@npm:2.0.0"
+  checksum: 775012e88b9d8dff939d514bf376d615a15e8228a5dd587a94ac3c71fce41aa3635cd808aa796e2c1cd33f3f2fe2fbf89b74ee18a504a1905efa1854311e04bb
   languageName: node
   linkType: hard
 

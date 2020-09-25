@@ -1,12 +1,9 @@
 import {AuthOptions, CloudConfig} from "./core/types";
 import {signRequest} from "./core/signer";
-import {IdentityV3} from "./services/identity";
-import {Service} from "./services/base";
+import IdentityV3 from "./services/identity";
+import Service, {ServiceType} from "./services/base";
 import HttpClient from "./core/http";
 
-function _get_service_key(type: string, version: string): string {
-    return `${type}/${version}`
-}
 
 /**
  * Client is base provider client
@@ -16,22 +13,8 @@ export default class Client {
      * client provides unauthorized access to public resources
      */
     httpClient: HttpClient
-
     authOptions: AuthOptions
-
     region = 'eu-de'
-
-    /**
-     * List of used services
-     */
-    services = [
-        {type: 'identity', version: '3'},
-        {type: 'compute', version: '2'},
-        {type: 'ecs', version: '1'},
-        {type: 'image', version: '2'},
-        {type: 'network', version: '2'},
-        {type: 'vpc', version: '1'},
-    ]
 
     set token(v: string) {
         this.authOptions.token = v
@@ -43,31 +26,35 @@ export default class Client {
 
     constructor(cloud: CloudConfig) {
         this.authOptions = cloud.auth
-        this.httpClient = new HttpClient('')
-
+        this.httpClient = new HttpClient({})
         // register identity service
-        this.registerService(new IdentityV3(this.authOptions.auth_url, this.httpClient))
-    }
-
-    _services: Map<string, Service> = new Map<string, Service>()
-
-    registerService(service: Service) {
-        this._services.set(
-            _get_service_key(service.type, service.version),
-            service
+        this.registerService(
+            'identity',
+            'v3',
+            this.authOptions.auth_url,
         )
     }
 
-    getService(type: string, version: string): Service {
-        const service = this._services.get(_get_service_key(type, version))
-        if (!service) {
-            throw `Service '${service}' is not registered`
+    services = [
+        'identity/v3',
+        'image/v2',
+    ]
+    _services: Map<string, string> = new Map<string, string>()
+
+    registerService(type: string, version: string, url: string) {
+        this._services.set(_get_service_key(type, version), url)
+    }
+
+    getService<S extends Service>(serviceType: ServiceType<S>): S {
+        const serviceURL = this._services.get(_get_service_key(serviceType.type, serviceType.version))
+        if (!serviceURL) {
+            throw `Service '${serviceURL}' is not registered`
         }
-        return service
+        return new serviceType(serviceURL, this.httpClient)
     }
 
     _getIdentity(): IdentityV3 {
-        return this.getService(IdentityV3.type, IdentityV3.version) as IdentityV3
+        return this.getService(IdentityV3)
     }
 
     /**
@@ -78,15 +65,12 @@ export default class Client {
         // load catalog to catalog cache:
         await iam.loadServiceEndpointCatalog()
         let waitServices: Promise<any>[] = []
-        for (const s of this.services) {
-            // this is actually synchronous when service catalog is cached
+        for (const key of this.services) {
+            const [type, version] = key.split('/', 2)
             waitServices.push(
-                iam.getServiceUrl(s.type, s.version, this.region)
-                    .then(url =>
-                        this.registerService(
-                            new Service(s.type, s.version, url, this.httpClient)
-                        ))
-                    .catch(e => console.error(`${e}\nFailed to load URL for service ${JSON.stringify(s)}`))
+                iam.getServiceUrl(type, version, this.region)
+                    .then(url => this.registerService(type, version, url))
+                    .catch(e => console.error(`${e}\nFailed to load URL for service ${key}`))
             )
         }
         await Promise.all(waitServices)  // wait for all services to be read
@@ -119,8 +103,14 @@ export default class Client {
         } else {
             await this._authToken()
         }
-        // re-register Identity service with authorized client
-        this.registerService(new IdentityV3(this.authOptions.auth_url, this.httpClient))
         await this.loadServiceCatalog()
     }
+}
+
+function _get_service_key(type: string, version: string | number): string {
+    version = String(version)
+    if (!version.startsWith('v')) {
+        version = `v${version}`
+    }
+    return `${type}/${version}`
 }
