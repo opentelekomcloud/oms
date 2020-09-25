@@ -56,17 +56,17 @@ export class RequestOpts implements RequestOptsAbs {
         }
         this.url = abs.url
         this.headers = new Headers(abs.headers)
-        let pp: ParsedQuery = {}
-        const params = abs.params
-        if (params) {
-            Object.keys(params).forEach(k => {
-                const v = params[k]
+        const outParams: ParsedQuery = {}
+        const inParams = abs.params
+        if (inParams) {
+            Object.keys(inParams).forEach(k => {
+                const v = inParams[k]
                 if (v != undefined) {
-                    pp[k] = String(params[k])
+                    outParams[k] = String(inParams[k])
                 }
             })
         }
-        this.params = pp
+        this.params = outParams
         this.text = abs.json ? JSON.stringify(abs.json) : ''
     }
 }

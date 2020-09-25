@@ -7,7 +7,7 @@ let defaultClient: Client
 
 const authUrl = 'https://iam.eu-de.otc.t-systems.com/v3'
 
-jest.setTimeout(10000)
+jest.setTimeout(1000000)  // for debug
 
 beforeAll(() => {
     const t = process.env.OS_TOKEN
@@ -18,9 +18,26 @@ beforeAll(() => {
     defaultClient = new Client(defaultConfig)
 })
 
-test("List images", async () => {
+test("List Images: basic", async () => {
     await defaultClient.authenticate()
     const ims = defaultClient!.getService(ImageV2)
-    const images = await ims.listImages()
-    expect(images.length).toBeTruthy()
+    ims.listImages()
+})
+
+test("List Images: first page", async () => {
+    await defaultClient.authenticate()
+    const ims = defaultClient!.getService(ImageV2)
+    const pager = ims.listImages({})
+    const result = await pager.next()
+    expect(result.value.images.length).toBe(25)
+})
+
+test("List Images: pagination", async () => {
+    await defaultClient.authenticate()
+    const ims = defaultClient!.getService(ImageV2)
+    const pager = ims.listImages({created_at: {date: new Date(), operator: "lt"}})
+    for await (const page of pager) {
+        expect(page.images.length <= 25).toBeTruthy()
+        expect(page.images.length > 0).toBeTruthy()
+    }
 })
