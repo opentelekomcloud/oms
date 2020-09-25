@@ -1,5 +1,5 @@
-import {Message, sha256} from "js-sha256";
-import {RequestConfig} from "./http";
+import {sha256} from "js-sha256";
+import {RequestOpts} from "./http";
 
 // const algorithm = 'AWS4-HMAC-SHA256'
 
@@ -13,7 +13,7 @@ import {RequestConfig} from "./http";
 //  CanonicalHeaders + '\n' +
 //  SignedHeaders + '\n' +
 //  HexEncode(Hash(RequestPayload))
-function canonicalRequest(config: RequestConfig): string {
+function canonicalRequest(config: RequestOpts): string {
     const url = new URL(config.url, config.baseURL)
     const queryString = url.search.substring(1)
     const canonHeaders = Object.entries(config.headers).map((e: any) => {
@@ -22,7 +22,7 @@ function canonicalRequest(config: RequestConfig): string {
     const signedHeaders = Object.keys(config.headers).sort((a: string, b: string): number => {
         return a[0].toLowerCase() < b[0].toLowerCase() ? -1 : 1;
     }).join(';')
-    const hash = hexEncode(sha256(<Message>config.body))
+    const hash = hexEncode(sha256(config.text!))
     return `${config.method}\n${url.pathname}\n${queryString}\n${canonHeaders}\n${signedHeaders}\n${hash}`
 }
 
@@ -38,7 +38,7 @@ function hexEncode(s: string) {
 }
 
 export function signRequest(access: string, secret: string) {
-    return function (config: RequestConfig): RequestConfig {
+    return function (config: RequestOpts): RequestOpts {
         config.headers.set('X-Amz-Date', new Date()
             .toISOString()
             .replace(/[:\-]|\.\d{3}/, '')

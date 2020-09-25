@@ -1,4 +1,4 @@
-import HttpClient from "../core/http";
+import HttpClient, {RequestOptsAbs} from "../core/http";
 
 /**
  * Describes service type with type, version and constructor
@@ -29,4 +29,50 @@ export default abstract class Service {
 export function bareUrl(serviceUrl: string): string {
     const url = new URL(serviceUrl)
     return `${url.protocol}//${url.host}`
+}
+
+/**
+ * Abstract page having only default properties
+ */
+export interface Page {
+    readonly schema?: string
+    readonly next?: string
+    readonly first?: string
+}
+
+/**
+ * Pager for lazy pagination implementation. <T> describes page structure
+ */
+export class Pager<T extends Page> implements AsyncIterable<T>, AsyncIterator<T, T> {
+    // Service-bind http client
+    readonly client: HttpClient
+    readonly pageOpts: RequestOptsAbs
+
+    _firstIteration: boolean
+
+    constructor(opts: RequestOptsAbs, client: HttpClient) {
+        this.pageOpts = opts
+        this.client = client
+        this._firstIteration = true
+    }
+
+    [Symbol.asyncIterator]() {
+        return this
+    }
+
+    /**
+     * Load next paginator page
+     */
+    async next(): Promise<IteratorResult<T, T>> {
+        const resp = await this.client.get<T>(this.pageOpts)
+        if (!resp.ok) {
+            throw `HTTP error during pagination: ${resp.status} (${JSON.stringify(await resp.text())})`
+        }
+        this.pageOpts.url = resp.data.next   // change next request url
+        if (this._firstIteration) {
+            this.pageOpts.params = undefined // remove params, the are already part of `next`
+            this._firstIteration = false
+        }
+        return {value: resp.data, done: !resp.data.next}
+    }
 }

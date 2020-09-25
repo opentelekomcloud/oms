@@ -71,3 +71,13 @@ export class CloudConfigHelper {
     }
 }
 
+const msRe = /(?<=\d{2})\.\d{3}(?=Z)/
+
+export function normalizeDateTime(date?: string | Date) {
+    if (!date) {
+        return
+    }
+    return new Date(date)
+        .toISOString()
+        .replace(msRe, '')
+}
