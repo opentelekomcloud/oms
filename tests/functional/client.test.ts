@@ -4,6 +4,8 @@
  */
 import Client from '../../src/oms/client'
 import {CloudConfig, CloudConfigHelper} from "../../src/oms/core/types";
+import IdentityV3 from "../../src/oms/services/identity";
+import ImageV2 from "../../src/oms/services/image";
 
 
 let config: CloudConfig | null = null
@@ -26,21 +28,23 @@ test("Client_auth", async () => {
 test("Client_serviceCatalog", async () => {
     const client = new Client(config!)
     await client.authenticate()
-    expect(Array.from(client._services.keys())).toHaveLength(client.services.length)
-    expect(client._services.get('identity/3')!.client.baseURL).toContain('iam.')
-    expect(client._services.get('compute/2')!.client.baseURL).toContain('ecs.')
+    expect(Array.from(client._services.keys())).toHaveLength(Object.keys(client.services).length)
+    const iam = client.getService(IdentityV3)
+    expect(iam.client.baseConfig.baseURL).toContain('iam.')
+    const ims = client.getService(ImageV2)
+    expect(ims.client.baseConfig.baseURL).toContain('ims.')
 })
 
 test("Client_invalidService", async () => {
     const client = new Client(config!)
-    client.services.push({type: 'identiti', version: '3'})
+    client.services.push('identiti/v3')
     await client.authenticate()
     expect(Array.from(client._services.keys())).toHaveLength(client.services.length - 1)
 })
 
 test("Client_invalidVersion", async () => {
     const client = new Client(config!)
-    client.services.push({type: 'identity', version: '1'})
+    client.services.push('identity/v1')
     await client.authenticate()
     expect(Array.from(client._services.keys())).toHaveLength(client.services.length)
 })

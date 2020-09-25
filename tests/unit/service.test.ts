@@ -1,18 +1,19 @@
 import {randomString} from "../utils/helpers";
-import _ from "lodash";
 import HttpClient from "../../src/oms/core/http";
-import {bareUrl, Service} from "../../src/oms/services/base";
+import Service, {bareUrl} from "../../src/oms/services/base";
+
+class fakeService extends Service {
+    constructor(url: string, client: HttpClient) {
+        super(url, client)
+    }
+}
 
 test("Service_basic", () => {
-    const type = randomString(5)
-    const version = _.random(1, 10).toString()
     const url = randomString(10)
     const httpClient = new HttpClient()
-    const serv = new Service(type, version, url, httpClient)
-    expect(serv.type).toEqual(type)
-    expect(serv.version).toEqual(version)
+    const serv = new fakeService(url, httpClient)
     expect(serv.client).toBeDefined()
-    expect(serv.client!.baseURL).toEqual(url)
+    expect(serv.client.baseConfig.baseURL).toEqual(url)
 })
 
 test("bareUrl", () => {

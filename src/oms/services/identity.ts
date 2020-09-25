@@ -1,5 +1,5 @@
 import {AuthOptions, NameOrID} from "../core/types";
-import {bareUrl, Service} from "./base";
+import Service, {bareUrl} from "./base";
 import HttpClient from "../core/http";
 
 class identity {
@@ -98,12 +98,12 @@ class version {
     status!: string
 }
 
-export class IdentityV3 extends Service {
-    static type = 'identity'
-    static version = '3'
+export default class IdentityV3 extends Service {
+    static readonly type = 'identity'
+    static readonly version = 'v3'
 
     constructor(url: string, httpClient: HttpClient) {
-        super(IdentityV3.type, IdentityV3.version, bareUrl(url), httpClient)
+        super(bareUrl(url), httpClient)
     }
 
     /**
@@ -113,7 +113,7 @@ export class IdentityV3 extends Service {
     async getToken(credentials: AuthOptions): Promise<string> {
         const data = new authRequestData(credentials)
         let resp = await this.client
-            .post('/v3/auth/tokens', data)
+            .post({url:'/v3/auth/tokens', json: data})
             .catch(e => {
                 console.log(JSON.stringify(e))
                 throw e
@@ -131,7 +131,7 @@ export class IdentityV3 extends Service {
     async getServiceRefs(): Promise<serviceRef[]> {
         if (!this._endpoints.length) {
             const resp = await this.client
-                .get<{ services: serviceRef[] }>('/v3/services')
+                .get<{ services: serviceRef[] }>({url: '/v3/services'})
             this._serviceRefs = resp.data.services
         }
         return this._serviceRefs
@@ -140,7 +140,7 @@ export class IdentityV3 extends Service {
     async getEndpoints(): Promise<endpoint[]> {
         if (!this._endpoints.length) {
             const resp = await this.client
-                .get<{ endpoints: endpoint[] }>('/v3/endpoints')
+                .get<{ endpoints: endpoint[] }>({url: '/v3/endpoints'})
             this._endpoints = resp.data.endpoints
         }
         return this._endpoints
@@ -153,7 +153,11 @@ export class IdentityV3 extends Service {
         ])
     }
 
-    async getServiceUrl(type: string, version: string, region: string, visibility: string = "public"): Promise<string> {
+    async getServiceUrl(type: string, version: string | number, region: string, visibility: string = "public"): Promise<string> {
+        version = version.toString()
+        if (!version.startsWith('v')) {
+            version = `v${version}`
+        }
         await this.loadServiceEndpointCatalog()
         const matchingService = this._serviceRefs.find(e => e.type == type)
         if (!matchingService) {
@@ -168,17 +172,17 @@ export class IdentityV3 extends Service {
             throw `Endpoint for service: ${matchingService.name}, region: ${region}, interface: ${visibility} not found`
         }
         let url = bareUrl(ep.url)
-        const fallbackUrl = `${url}/v${version}`
+        const fallbackUrl = `${url}/${version}`
         let vers: version[] = []
         try {
-            const r = await this.client.get<{ versions: version[] }>(url)
+            const r = await this.client.get<{ versions: version[] }>({url: url})
             vers = r.data.versions
         } catch (e) {  // nice try, cowboy ;) openstack experience, hah?
             return fallbackUrl
         }
         const ver = vers
             .sort((a, b): number => statusPriority(a.status) - statusPriority(b.status))
-            .find(v => v.id.startsWith(`v${version}`))
+            .find(v => v.id.startsWith(`${version}`))
         if (!ver) {
             console.debug(`Failed to find version of ${type} matching '${version}*', using ${fallbackUrl}`)
             return fallbackUrl

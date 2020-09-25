@@ -1,17 +1,24 @@
 import HttpClient from "../core/http";
 
 /**
+ * Describes service type with type, version and constructor
+ */
+export interface ServiceType<T> {
+    readonly type: string
+    readonly version: string
+    new(url: string, client: HttpClient): T
+}
+
+/**
  * Service represents single service client
  */
-export class Service {
-    type: string
-    version: string
+export default abstract class Service {
+    static readonly type: string = ''
+    static readonly version: string = ''
     client: HttpClient
 
-    constructor(type: string, version: string, url: string, client: HttpClient) {
-        this.type = type
-        this.version = version
-        this.client = client.child(url)
+    protected constructor(url: string, client: HttpClient) {
+        this.client = client.child({baseURL: url})
     }
 }
 

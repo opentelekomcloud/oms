@@ -3,28 +3,13 @@
  * possibility to inject pre-request configuration handlers
  */
 import _ from "lodash";
+import {ParsedQuery, stringifyUrl} from 'query-string'
 
 require('isomorphic-fetch')
 
+export type RequestConfigHandler = (i: RequestOpts) => RequestOpts
+
 const _absUrlRe = /^https?:\/\/.+/
-
-export class RequestConfig implements RequestInit {
-    baseURL: string
-    url: string
-    headers: Headers
-    body?: BodyInit
-    method?: string
-
-    constructor(baseURL: string, url: string, base: RequestInit) {
-        this.url = url
-        this.baseURL = baseURL
-        this.headers = new Headers(base.headers)
-        this.body = base.body ? base.body : undefined
-        this.method = base.method
-    }
-}
-
-export type RequestConfigHandler = (i: RequestConfig) => RequestConfig
 
 export class HttpResponse<T> extends Response {
     data!: T
@@ -33,9 +18,56 @@ export class HttpResponse<T> extends Response {
 export class HttpError extends Error {
 }
 
+export interface QueryParams {
+    [key: string]: any
+}
+
+export interface RequestOptsAbs {
+    url?: string
+    baseURL?: string
+    method?: string
+    params?: ParsedQuery | QueryParams
+    headers?: Headers
+    json?: object
+    handler?: RequestConfigHandler
+}
+
+/**
+ * This is presentation of prepared request opts
+ */
+export class RequestOpts implements RequestOptsAbs {
+    url: string
+    baseURL?: string
+    method: string
+    params: ParsedQuery
+    headers: Headers
+    json?: object
+    handler?: RequestConfigHandler
+
+    constructor(abs: RequestOptsAbs) {
+        // check absolutely minimal requirements:
+        if (!abs.method) {
+            throw `Request without Method: ${JSON.stringify(abs)}`
+        }
+        this.method = abs.method
+        if (!abs.url) {
+            throw `Request without URL: ${JSON.stringify(abs)}`
+        }
+        this.url = abs.url
+        this.headers = new Headers(abs.headers)
+        let pp: ParsedQuery = {}
+        const params = abs.params
+        if (params) {
+            Object.keys(params).forEach(k => {
+                pp[k] = String(params[k])
+            })
+        }
+        this.params = pp
+    }
+}
+
 export default class HttpClient {
-    baseURL: string
-    baseConfig: RequestInit
+    baseConfig: RequestOptsAbs
 
     _beforeRequest: RequestConfigHandler[] = []
 
@@ -48,8 +80,7 @@ export default class HttpClient {
         this._beforeRequest.push(handler)
     }
 
-    constructor(baseURL?: string, baseConfig?: RequestInit) {
-        this.baseURL = baseURL ? baseURL : ''
+    constructor(baseConfig?: RequestOptsAbs) {
         this.baseConfig = baseConfig ? _.cloneDeep(baseConfig) : {}
         this.baseConfig.headers = new Headers(this.baseConfig.headers)
         this.baseConfig.headers.set('User-Agent', 'OpenTelekomCloud JS/v1.0')
@@ -58,42 +89,45 @@ export default class HttpClient {
     /**
      * Create new HttpClient inheriting all client settings
      */
-    child(baseURL?: string, baseConfig?: RequestInit): HttpClient {
+    child(overrideConfig?: RequestOptsAbs): HttpClient {
         const client = _.cloneDeep(this)
-        client.baseURL = baseURL ? baseURL : ''
-        client.baseConfig = baseConfig ? _.cloneDeep(baseConfig) : {}
+        client.baseConfig = overrideConfig ? _.cloneDeep(overrideConfig) : {}
         return client
     }
 
     /**
      * Base request method
-     * @param method - HTTP method to be used ('GET', 'POST', ...)
-     * @param url - resource URL, will be joined with base URL set in configuration
-     * @param headers - resource additional headers
-     * @param body - request JSON body
-     * @param handler - pre-request request configuration handler, will be used before other handlers
      */
-    async request<T>(method: string, url: string, headers?: Headers, body?: string, handler?: RequestConfigHandler): Promise<HttpResponse<T>> {
-        let config = new RequestConfig(this.baseURL, url, this.baseConfig)
-        // merge headers
-        let requestHeaders = new Headers(this.baseConfig.headers)
-        if (headers) {
-            headers.forEach((v, k) => requestHeaders.append(k, v))
+    async request<T>(opts: RequestOptsAbs): Promise<HttpResponse<T>> {
+        let merged = new RequestOpts(opts)
+        if (!merged.baseURL) {
+            merged.baseURL = this.baseConfig.baseURL
         }
-        config.headers = requestHeaders
-        config.method = method
-        config.body = body
-
-        if (handler) {
-            config = handler(config)
+        // merge headers
+        merged.headers = new Headers(this.baseConfig.headers)
+        if (opts.headers) {
+            opts.headers.forEach((v, k) => merged.headers!.append(k, v))
+        }
+        merged.baseURL = merged.baseURL ? merged.baseURL : this.baseConfig.baseURL
+        if (merged.handler) {
+            merged = merged.handler(merged)
         }
         for (const b of this._beforeRequest.reverse()) {
-            config = b(config)
+            merged = b(merged)
         }
-        if (!url.match(_absUrlRe)) {
-            url = new URL(config.url, config.baseURL).href
+
+        let url = merged.url
+        if (!url.match(_absUrlRe)) {  // use absolute URL without joining with base url
+            url = new URL(url, merged.baseURL).href
         }
-        let response = await fetch(url, config) as HttpResponse<T>
+        // append query params
+        if (merged.params) {
+            url = stringifyUrl({
+                url: url,
+                query: merged.params
+            }, {encode: true, skipNull: true})
+        }
+        let response = await fetch(url, merged) as HttpResponse<T>
         if (response.ok) {
             response.data = await response.json()
         } else {
@@ -104,27 +138,23 @@ export default class HttpClient {
         return response
     }
 
-    async get<T>(url: string, headers?: Headers, handler?: RequestConfigHandler): Promise<HttpResponse<T>> {
-        return await this.request('GET', url, headers, undefined, handler)
+    async get<T>(opts: RequestOptsAbs): Promise<HttpResponse<T>> {
+        opts.method = 'GET'
+        return await this.request(opts)
     }
 
-    async post<T>(url: string, body?: object, headers?: Headers, handler?: RequestConfigHandler): Promise<HttpResponse<T>> {
-        return await this.request('POST', url, headers, _jsonBody(body), handler)
+    async post<T>(opts: RequestOptsAbs): Promise<HttpResponse<T>> {
+        opts.method = 'POST'
+        return await this.request(opts)
     }
 
-    async put<T>(url: string, body?: object, headers?: Headers, handler?: RequestConfigHandler): Promise<HttpResponse<T>> {
-        return await this.request('PUT', url, headers, _jsonBody(body), handler)
+    async put<T>(opts: RequestOptsAbs): Promise<HttpResponse<T>> {
+        opts.method = 'PUT'
+        return await this.request(opts)
     }
 
-    async delete<T>(url: string, headers?: Headers, handler?: RequestConfigHandler): Promise<HttpResponse<T>> {
-        return await this.request('DELETE', url, headers, undefined, handler)
+    async delete<T>(opts: RequestOptsAbs): Promise<HttpResponse<T>> {
+        opts.method = 'DELETE'
+        return await this.request(opts)
     }
-}
-
-function _jsonBody(body?: object): string {
-    let bodyString = ''
-    if (body) {
-        bodyString = JSON.stringify(body)
-    }
-    return bodyString
 }
