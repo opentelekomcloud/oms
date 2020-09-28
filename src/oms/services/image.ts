@@ -1,11 +1,10 @@
-import Service, {bareUrl, Pager} from "./base";
-import HttpClient from "../core/http";
-import {normalizeDateTime} from "../core/types";
+import Service, { bareUrl, Pager } from './base';
+import HttpClient from '../core/http';
+import { normalizeDateTime } from '../core/types';
 
 class image {
 
 }
-
 
 /**
  * Specifies the image status. The value can be one of the following:
@@ -37,7 +36,6 @@ type imageStatus = 'queued' | 'saving' | 'deleted' | 'killed' | 'active'
  */
 type memberStatus = 'accepted' | 'rejected' | 'pending'
 
-
 type visibility = 'public' | 'private' | 'shared'
 type operator = 'gt' | 'gte' | 'lt' | 'lte' | 'eq' | 'neq'
 
@@ -53,6 +51,7 @@ function rangeToString(range?: timeRange): string | undefined {
     return `${range.operator}:${normalizeDateTime(range.date)}`
 }
 
+// eslint-disable-next-line camelcase
 export interface ListImageOpts {
     readonly protected?: boolean
     readonly visibility?: visibility
@@ -102,6 +101,7 @@ function toQueryParams(opts?: ListImageOpts) {
         min_disk: opts.min_disk,
         tag: opts.tag,
         member_status: opts.member_status,
+        /* eslint-disable */
         __os_type: opts.os_type,
         __os_bit: opts.os_bit,
         __platform: opts.platform,
@@ -114,6 +114,7 @@ function toQueryParams(opts?: ListImageOpts) {
         __support_kvm_gpu_type: opts.support_kvm_gpu_type,
         __support_xen_hana: opts.support_xen_hana,
         __support_kvm_infiniband: opts.support_kvm_infiniband,
+        /* eslint-enable */
         created_at: rangeToString(opts.created_at),
         updated_at: rangeToString(opts.updated_at),
     }
@@ -134,8 +135,8 @@ export default class ImageV2 extends Service {
         super(bareUrl(url), httpClient)
     }
 
-    listImages(opts?: ListImageOpts) {
+    listImages(opts?: ListImageOpts): Pager<ImagePage> {
         const params = toQueryParams(opts)
-        return new Pager<ImagePage>({url: '/v2/images', params: params}, this.client)
+        return new Pager<ImagePage>({ url: '/v2/images', params }, this.client)
     }
 }

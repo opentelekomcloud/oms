@@ -1,4 +1,4 @@
-import HttpClient, {RequestOptsAbs} from "../core/http";
+import HttpClient, { RequestOptsAbs } from '../core/http';
 
 /**
  * Describes service type with type, version and constructor
@@ -18,7 +18,7 @@ export default abstract class Service {
     client: HttpClient
 
     protected constructor(url: string, client: HttpClient) {
-        this.client = client.child({baseURL: url})
+        this.client = client.child({ baseURL: url })
     }
 }
 
@@ -48,15 +48,15 @@ export class Pager<T extends Page> implements AsyncIterable<T>, AsyncIterator<T,
     readonly client: HttpClient
     readonly pageOpts: RequestOptsAbs
 
-    _firstIteration: boolean
+    private firstIteration: boolean
 
     constructor(opts: RequestOptsAbs, client: HttpClient) {
         this.pageOpts = opts
         this.client = client
-        this._firstIteration = true
+        this.firstIteration = true
     }
 
-    [Symbol.asyncIterator]() {
+    [Symbol.asyncIterator](): Pager<T> {
         return this
     }
 
@@ -69,10 +69,10 @@ export class Pager<T extends Page> implements AsyncIterable<T>, AsyncIterator<T,
             throw `HTTP error during pagination: ${resp.status} (${JSON.stringify(await resp.text())})`
         }
         this.pageOpts.url = resp.data.next   // change next request url
-        if (this._firstIteration) {
+        if (this.firstIteration) {
             this.pageOpts.params = undefined // remove params, the are already part of `next`
-            this._firstIteration = false
+            this.firstIteration = false
         }
-        return {value: resp.data, done: !resp.data.next}
+        return { value: resp.data, done: !resp.data.next }
     }
 }

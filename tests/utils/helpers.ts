@@ -1,6 +1,6 @@
-import _ from "lodash";
+import _ from 'lodash';
 
-const defaultCharset = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".split('')
+const defaultCharset = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 
 export function randomString(size: number): string {
     const samp = _.sampleSize(defaultCharset, size) as string[]

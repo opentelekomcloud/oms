@@ -27,7 +27,7 @@ export class CloudConfig {
     auth: AuthOptions
 
     constructor() {
-        this.auth = new (AuthOptions)
+        this.auth = new (AuthOptions)()
     }
 }
 
@@ -42,13 +42,12 @@ export class CloudConfigHelper {
     }
 
     baseCfg(): CloudConfig {
-        const cc = new (CloudConfig)
+        const cc = new (CloudConfig)()
         cc.auth.auth_url = this.authUrl
         return cc
     }
 
-
-    simplePasswordConfig(domainName: string, username: string, password: string, projectName: string) {
+    simplePasswordConfig(domainName: string, username: string, password: string, projectName: string): CloudConfig {
         const cc = this.baseCfg()
         cc.auth.domain_name = domainName
         cc.auth.username = username
@@ -57,13 +56,13 @@ export class CloudConfigHelper {
         return cc
     }
 
-    simpleTokenConfig(token: string) {
+    simpleTokenConfig(token: string): CloudConfig {
         const cc = this.baseCfg()
         cc.auth.token = token
         return cc
     }
 
-    simpleAkSkConfig(ak: string, sk: string) {
+    simpleAkSkConfig(ak: string, sk: string): CloudConfig {
         const cc = this.baseCfg()
         cc.auth.ak = ak
         cc.auth.sk = sk
@@ -73,7 +72,7 @@ export class CloudConfigHelper {
 
 const msRe = /(?<=\d{2})\.\d{3}(?=Z)/
 
-export function normalizeDateTime(date?: string | Date) {
+export function normalizeDateTime(date?: string | Date): string | undefined {
     if (!date) {
         return
     }

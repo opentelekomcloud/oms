@@ -1,9 +1,10 @@
-import {AuthOptions, NameOrID} from "../core/types";
-import Service, {bareUrl} from "./base";
-import HttpClient from "../core/http";
+import { AuthOptions, NameOrID } from '../core/types';
+import Service, { bareUrl } from './base';
+import HttpClient from '../core/http';
 
 class identity {
-    static methods = ["password"]
+    static methods = ['password']
+
     password!: {
         user: {
             id?: string
@@ -18,19 +19,20 @@ class identity {
             user: {
                 id: userID,
                 name: userName,
-                password: password,
+                password,
                 domain: {
                     name: domainName,
-                    id: domainID
-                }
-            }
+                    id: domainID,
+                },
+            },
         }
     }
-
 }
 
 class authRequestData {
-    auth!: {
+    [k: string]: unknown
+
+    auth: {
         identity: identity
         scope?: {
             project?: NameOrID
@@ -48,21 +50,21 @@ class authRequestData {
                 undefined, credentials.username,
                 credentials.domain_id,
                 credentials.domain_name,
-            )
+            ),
         }
         if (credentials.project_name || credentials.project_id) {
             this.auth.scope = {
                 project: {
                     id: credentials.project_id,
                     name: credentials.project_name,
-                }
+                },
             }
         } else {
             this.auth.scope = {
                 domain: {
                     id: credentials.domain_id,
                     name: credentials.domain_name,
-                }
+                },
             }
         }
     }
@@ -84,7 +86,7 @@ class endpoint {
     id!: string
     service_id!: string
     region?: string
-    links: any
+    links: unknown
     interface!: string
     url!: string
 }
@@ -112,8 +114,8 @@ export default class IdentityV3 extends Service {
      */
     async getToken(credentials: AuthOptions): Promise<string> {
         const data = new authRequestData(credentials)
-        let resp = await this.client
-            .post({url:'/v3/auth/tokens', json: data})
+        const resp = await this.client
+            .post({ url: '/v3/auth/tokens', json: data })
             .catch(e => {
                 console.log(JSON.stringify(e))
                 throw e
@@ -125,59 +127,58 @@ export default class IdentityV3 extends Service {
         return tok
     }
 
-    _endpoints: endpoint[] = []
-    _serviceRefs: serviceRef[] = []
+    private endpoints: endpoint[] = []
+
+    private serviceRefs: serviceRef[] = []
 
     async getServiceRefs(): Promise<serviceRef[]> {
-        if (!this._endpoints.length) {
+        if (!this.endpoints.length) {
             const resp = await this.client
-                .get<{ services: serviceRef[] }>({url: '/v3/services'})
-            this._serviceRefs = resp.data.services
+                .get<{ services: serviceRef[] }>({ url: '/v3/services' })
+            this.serviceRefs = resp.data.services
         }
-        return this._serviceRefs
+        return this.serviceRefs
     }
 
     async getEndpoints(): Promise<endpoint[]> {
-        if (!this._endpoints.length) {
+        if (!this.endpoints.length) {
             const resp = await this.client
-                .get<{ endpoints: endpoint[] }>({url: '/v3/endpoints'})
-            this._endpoints = resp.data.endpoints
+                .get<{ endpoints: endpoint[] }>({ url: '/v3/endpoints' })
+            this.endpoints = resp.data.endpoints
         }
-        return this._endpoints
+        return this.endpoints
     }
 
-    async loadServiceEndpointCatalog(): Promise<any> {
+    async loadServiceEndpointCatalog(): Promise<void> {
         await Promise.all([
             this.getEndpoints(),
             this.getServiceRefs(),
         ])
     }
 
-    async getServiceUrl(type: string, version: string | number, region: string, visibility: string = "public"): Promise<string> {
+    async getServiceUrl(type: string, version: string | number, region: string, visibility = 'public'): Promise<string> {
         version = version.toString()
         if (!version.startsWith('v')) {
             version = `v${version}`
         }
         await this.loadServiceEndpointCatalog()
-        const matchingService = this._serviceRefs.find(e => e.type == type)
+        const matchingService = this.serviceRefs.find(e => e.type == type)
         if (!matchingService) {
             throw `Service of type '${type}' not found`
         }
-        const ep = this._endpoints.find(e =>
-            e.region == region &&
-            e.service_id == matchingService.id &&
-            e.interface == visibility
-        )
+        const ep = this.endpoints.find(e => e.region == region
+            && e.service_id == matchingService.id
+            && e.interface == visibility)
         if (!ep) {
             throw `Endpoint for service: ${matchingService.name}, region: ${region}, interface: ${visibility} not found`
         }
-        let url = bareUrl(ep.url)
+        const url = bareUrl(ep.url)
         const fallbackUrl = `${url}/${version}`
         let vers: version[] = []
         try {
-            const r = await this.client.get<{ versions: version[] }>({url: url})
+            const r = await this.client.get<{ versions: version[] }>({ url })
             vers = r.data.versions
-        } catch (e) {  // nice try, cowboy ;) openstack experience, hah?
+        } catch (e) { // nice try, cowboy ;) openstack experience, hah?
             return fallbackUrl
         }
         const ver = vers
@@ -201,13 +202,13 @@ export default class IdentityV3 extends Service {
  */
 function statusPriority(status: string): number {
     switch (status.toLowerCase()) {
-        case 'current':
-            return 0
-        case 'supported':
-            return 10
-        case 'deprecated':
-            return 20
-        default:
-            return 100
+    case 'current':
+        return 0
+    case 'supported':
+        return 10
+    case 'deprecated':
+        return 20
+    default:
+        return 100
     }
 }

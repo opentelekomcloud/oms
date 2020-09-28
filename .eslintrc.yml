@@ -3,7 +3,8 @@ env:
   es2021: true
   node: true
 extends:
-  - airbnb-base
+  - "plugin:@typescript-eslint/eslint-recommended"
+  - "plugin:@typescript-eslint/recommended"
 parser: '@typescript-eslint/parser'
 parserOptions:
   ecmaVersion: 12
@@ -11,20 +12,21 @@ parserOptions:
 plugins:
   - '@typescript-eslint'
 rules:
-  import/extensions: [
-     "error",
-     "ignorePackages",
-     {
-       "js": "never",
-       "jsx": "never",
-       "ts": "never",
-       "tsx": "never"
-     }
-  ]
-  indent: "off"
+  quotes: ["warn", "single"]
+  object-curly-spacing: ["warn", "always"]
+  indent: ["error", 4]
   semi: "off"
   "@typescript-eslint/semi": ["off"]
   no-console: "off"
+  "camelcase": "off"
+  "@typescript-eslint/naming-convention": [
+    "error",
+    {
+      "selector": "property",
+      "format": ["camelCase", "snake_case"],
+    }
+  ]
+  arrow-parens: ["warn", "as-needed"]
 settings:
   import/resolver:
     typescript:
