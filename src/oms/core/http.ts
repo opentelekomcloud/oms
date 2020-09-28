@@ -42,6 +42,7 @@ export class RequestOpts implements RequestOptsAbs {
     params: ParsedQuery
     headers: Headers
     json?: object
+    text: string
     handler?: RequestConfigHandler
 
     constructor(abs: RequestOptsAbs) {
@@ -55,14 +56,18 @@ export class RequestOpts implements RequestOptsAbs {
         }
         this.url = abs.url
         this.headers = new Headers(abs.headers)
-        let pp: ParsedQuery = {}
-        const params = abs.params
-        if (params) {
-            Object.keys(params).forEach(k => {
-                pp[k] = String(params[k])
+        const outParams: ParsedQuery = {}
+        const inParams = abs.params
+        if (inParams) {
+            Object.keys(inParams).forEach(k => {
+                const v = inParams[k]
+                if (v != undefined) {
+                    outParams[k] = String(inParams[k])
+                }
             })
         }
-        this.params = pp
+        this.params = outParams
+        this.text = abs.json ? JSON.stringify(abs.json) : ''
     }
 }
 
@@ -132,7 +137,8 @@ export default class HttpClient {
             response.data = await response.json()
         } else {
             throw new HttpError(
-                `HTTP error received. ${response.status} ${response.statusText}: ${await response.text()}`
+                `HTTP error received. ${response.status} ${response.statusText}: ${await response.text()}` +
+                `Request Opts:\n${JSON.stringify(opts)}`
             )
         }
         return response
