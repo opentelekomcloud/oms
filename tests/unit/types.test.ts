@@ -1,8 +1,8 @@
 /// <reference types="jest" />
-import {CloudConfigHelper} from "../../src/oms/core/types";
-import {randomString} from "../utils/helpers";
+import { CloudConfigHelper } from '../../src/oms/core/types';
+import { randomString } from '../utils/helpers';
 
-test("CloudConfigHelper_basic", () => {
+test('CloudConfigHelper_basic', () => {
     const authUrl = randomString(5)
     const cc = new CloudConfigHelper(authUrl)
     const auth = cc.baseCfg().auth
@@ -16,7 +16,7 @@ test("CloudConfigHelper_basic", () => {
     expect(auth.sk).toBeUndefined()
 })
 
-test("CloudConfigHelper_pwd", () => {
+test('CloudConfigHelper_pwd', () => {
     const cc = new CloudConfigHelper('')
     const domain = randomString(3)
     const username = randomString(3)
@@ -32,14 +32,14 @@ test("CloudConfigHelper_pwd", () => {
     expect(auth.sk).toBeUndefined()
 })
 
-test("CloudConfigHelper_token", () => {
+test('CloudConfigHelper_token', () => {
     const cc = new CloudConfigHelper('')
     const token = randomString(10)
     const auth = cc.simpleTokenConfig(token).auth
     expect(auth.token).toEqual(token)
 })
 
-test("CloudConfigHelper_ak/sk", () => {
+test('CloudConfigHelper_ak/sk', () => {
     const cc = new CloudConfigHelper('')
     const ak = randomString(5)
     const sk = randomString(10)

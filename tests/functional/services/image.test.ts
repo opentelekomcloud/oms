@@ -1,6 +1,6 @@
-import Client from "../../../src/oms/client";
-import {CloudConfig, CloudConfigHelper} from "../../../src/oms/core/types";
-import ImageV2 from "../../../src/oms/services/image";
+import Client from '../../../src/oms/client';
+import { CloudConfig, CloudConfigHelper } from '../../../src/oms/core/types';
+import ImageV2 from '../../../src/oms/services/image';
 
 let defaultConfig: CloudConfig
 let defaultClient: Client
@@ -18,13 +18,13 @@ beforeAll(() => {
     defaultClient = new Client(defaultConfig)
 })
 
-test("List Images: basic", async () => {
+test('List Images: basic', async () => {
     await defaultClient.authenticate()
     const ims = defaultClient!.getService(ImageV2)
     ims.listImages()
 })
 
-test("List Images: first page", async () => {
+test('List Images: first page', async () => {
     await defaultClient.authenticate()
     const ims = defaultClient!.getService(ImageV2)
     const pager = ims.listImages({})
@@ -32,10 +32,10 @@ test("List Images: first page", async () => {
     expect(result.value.images.length).toBe(25)
 })
 
-test("List Images: pagination", async () => {
+test('List Images: pagination', async () => {
     await defaultClient.authenticate()
     const ims = defaultClient!.getService(ImageV2)
-    const pager = ims.listImages({created_at: {date: new Date(), operator: "lt"}})
+    const pager = ims.listImages({ created_at: { date: new Date(), operator: 'lt' } })
     for await (const page of pager) {
         expect(page.images.length <= 25).toBeTruthy()
         expect(page.images.length > 0).toBeTruthy()

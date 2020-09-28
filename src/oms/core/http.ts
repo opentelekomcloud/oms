@@ -2,8 +2,8 @@
  * Simple implementation of HTTP client based on `fetch` with
  * possibility to inject pre-request configuration handlers
  */
-import _ from "lodash";
-import {ParsedQuery, stringifyUrl} from 'query-string'
+import _ from 'lodash';
+import { ParsedQuery, stringifyUrl } from 'query-string';
 
 require('isomorphic-fetch')
 
@@ -19,7 +19,7 @@ export class HttpError extends Error {
 }
 
 export interface QueryParams {
-    [key: string]: any
+    [key: string]: unknown
 }
 
 export interface RequestOptsAbs {
@@ -28,7 +28,7 @@ export interface RequestOptsAbs {
     method?: string
     params?: ParsedQuery | QueryParams
     headers?: Headers
-    json?: object
+    json?: Record<string, unknown>
     handler?: RequestConfigHandler
 }
 
@@ -41,7 +41,7 @@ export class RequestOpts implements RequestOptsAbs {
     method: string
     params: ParsedQuery
     headers: Headers
-    json?: object
+    json?: Record<string, unknown>
     text: string
     handler?: RequestConfigHandler
 
@@ -74,15 +74,15 @@ export class RequestOpts implements RequestOptsAbs {
 export default class HttpClient {
     baseConfig: RequestOptsAbs
 
-    _beforeRequest: RequestConfigHandler[] = []
+    private beforeRequest: RequestConfigHandler[] = []
 
     /**
      * Add pre-process request config handler
      * handlers are executed in FILO order
      * @param handler
      */
-    injectPreProcessor(handler: RequestConfigHandler) {
-        this._beforeRequest.push(handler)
+    injectPreProcessor(handler: RequestConfigHandler): void {
+        this.beforeRequest.push(handler)
     }
 
     constructor(baseConfig?: RequestOptsAbs) {
@@ -111,34 +111,34 @@ export default class HttpClient {
         // merge headers
         merged.headers = new Headers(this.baseConfig.headers)
         if (opts.headers) {
-            opts.headers.forEach((v, k) => merged.headers!.append(k, v))
+            opts.headers.forEach((v, k) => merged.headers.append(k, v))
         }
         merged.baseURL = merged.baseURL ? merged.baseURL : this.baseConfig.baseURL
         if (merged.handler) {
             merged = merged.handler(merged)
         }
-        for (const b of this._beforeRequest.reverse()) {
+        for (const b of this.beforeRequest.reverse()) {
             merged = b(merged)
         }
 
-        let url = merged.url
-        if (!url.match(_absUrlRe)) {  // use absolute URL without joining with base url
+        let { url } = merged
+        if (!url.match(_absUrlRe)) { // use absolute URL without joining with base url
             url = new URL(url, merged.baseURL).href
         }
         // append query params
         if (merged.params) {
             url = stringifyUrl({
-                url: url,
-                query: merged.params
-            }, {encode: true, skipNull: true})
+                url,
+                query: merged.params,
+            }, { encode: true, skipNull: true })
         }
-        let response = await fetch(url, merged) as HttpResponse<T>
+        const response = await fetch(url, merged) as HttpResponse<T>
         if (response.ok) {
             response.data = await response.json()
         } else {
             throw new HttpError(
-                `HTTP error received. ${response.status} ${response.statusText}: ${await response.text()}` +
-                `Request Opts:\n${JSON.stringify(opts)}`
+                `HTTP error received. ${response.status} ${response.statusText}: ${await response.text()}`
+                + `Request Opts:\n${JSON.stringify(opts)}`,
             )
         }
         return response

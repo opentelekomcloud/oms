@@ -1,6 +1,6 @@
-import {randomString} from "../utils/helpers";
-import HttpClient from "../../src/oms/core/http";
-import Service, {bareUrl} from "../../src/oms/services/base";
+import { randomString } from '../utils/helpers';
+import HttpClient from '../../src/oms/core/http';
+import Service, { bareUrl } from '../../src/oms/services/base';
 
 class fakeService extends Service {
     constructor(url: string, client: HttpClient) {
@@ -8,7 +8,7 @@ class fakeService extends Service {
     }
 }
 
-test("Service_basic", () => {
+test('Service_basic', () => {
     const url = randomString(10)
     const httpClient = new HttpClient()
     const serv = new fakeService(url, httpClient)
@@ -16,7 +16,7 @@ test("Service_basic", () => {
     expect(serv.client.baseConfig.baseURL).toEqual(url)
 })
 
-test("bareUrl", () => {
+test('bareUrl', () => {
     const url = 'https://vpc.eu-de.otc.t-systems.com/v2.0/totallyrandomprojectid'
     expect(bareUrl(url)).toEqual('https://vpc.eu-de.otc.t-systems.com')
 })

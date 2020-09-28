@@ -19,7 +19,6 @@
     "babel-register": "^6.26.0",
     "browserify": "^16.5.2",
     "eslint": "^7.10.0",
-    "eslint-config-airbnb-base": "^14.2.0",
     "eslint-import-resolver-typescript": "^2.3.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
@@ -40,6 +39,7 @@
     "testEnvironment": "node"
   },
   "scripts": {
+    "lint": "eslint --fix ./src/**/*.ts ./tests/**/*.ts",
     "test": "jest ./tests/unit",
     "integration": "jest ./tests/integration",
     "functional": "jest ./tests/functional",
