@@ -23,6 +23,7 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "jest": "^26.4.2",
+    "nyc": "^15.1.0",
     "systemjs-plugin-babel": "^0.0.25",
     "ts-jest": "^26.4.0",
     "ts-loader": "^8.0.4",
@@ -30,19 +31,14 @@
     "typescript": "^4.0.3",
     "yarn": "^1.22.5"
   },
-  "jest": {
-    "preset": "ts-jest",
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "src/**/*.ts"
-    ],
-    "testEnvironment": "node"
-  },
   "scripts": {
+    "cov-rename": "mv ./coverage/coverage-final.json ./coverage/coverage-$0.json",
     "lint": "eslint --fix ./src/**/*.ts ./tests/**/*.ts",
-    "test": "jest ./tests/unit",
-    "integration": "jest ./tests/integration",
-    "functional": "jest ./tests/functional",
+    "jest": "jest --config .jestrc.json",
+    "unit": "yarn jest ./tests/unit && yarn cov-rename unit",
+    "integration": "yarn jest ./tests/integration && yarn cov-rename integration",
+    "functional": "yarn jest ./tests/functional && yarn cov-rename functional",
+    "cov-report": "nyc merge coverage coverage/merged-coverage.json && nyc report -t coverage --report-dir coverage/report --reporter=html --reporter=cobertura",
     "build": "tsc -p ./src",
     "clean": "rm -rf ./dist"
   },
