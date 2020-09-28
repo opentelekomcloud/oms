@@ -6,19 +6,16 @@ export const fakeToken = randomString(20)
 
 function checkAuth(req: IncomingMessage, resp: ServerResponse): boolean {
     if (!req.headers) {
-        resp.statusCode = 400
-        resp.end()
+        resp.writeHead(400, 'Invalid headers')
         return false
     }
     const tok = req.headers['X-Auth-Token']
     if (!tok) {
-        resp.statusCode = 200
-        resp.end()
+        resp.statusCode = 401
         return false
     }
     if (tok != fakeToken) {
         resp.statusCode = 403
-        resp.end()
         return false
     }
     return true
@@ -27,29 +24,33 @@ function checkAuth(req: IncomingMessage, resp: ServerResponse): boolean {
 export const fakeAuthServer: Server = createServer((req, resp) => {
     resp.setHeader('Content-Type', 'application/json')
     switch (req.url) {
+    case '/':
+        resp.statusCode = 200
+        break
     case '/v3/auth/tokens':
         resp.setHeader('X-Subject-Token', fakeToken)
         resp.statusCode = 200
         resp.write(JSON.stringify('{}'))
-        resp.end()
-        return
+        break
     case '/v3/endpoints':
         if (!checkAuth) {
-            return
+            break
         }
         resp.statusCode = 200
         resp.write(JSON.stringify(fakeEndpoints()))
-        return
+        break
     case '/v3/services':
         if (!checkAuth) {
-            return
+            break
         }
         resp.statusCode = 200
         resp.write(JSON.stringify(fakeServices()))
-        return
+        break
     default:
-        throw `Invalid endpoint: ${req.url}`
+        resp.writeHead(404, 'Endpoint unknown')
+        break
     }
+    resp.end()
 })
 const authPort = () => (fakeAuthServer.address() as AddressInfo).port
 export const authServerUrl = (): string => `http://localhost:${authPort()}`

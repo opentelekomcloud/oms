@@ -1,8 +1,9 @@
-import { AuthOptions, CloudConfig } from './core/types';
-import { signRequest } from './core/signer';
-import IdentityV3 from './services/identity';
-import Service, { ServiceType } from './services/base';
-import HttpClient from './core/http';
+import { AuthOptions, CloudConfig } from './core/types'
+import { signRequest } from './core/signer'
+import IdentityV3 from './services/identity'
+import Service, { ServiceType } from './services/base'
+import HttpClient from './core/http'
+import _ from 'lodash'
 
 
 /**
@@ -77,7 +78,7 @@ export default class Client {
         await Promise.all(waitServices) // wait for all services to be read
     }
 
-    private authAkSk() {
+    authAkSk(): void {
         if (!this.authOptions.ak || !this.authOptions.sk) {
             throw `Missing AK/SK: ${JSON.stringify(this.authOptions)}`
         }
@@ -85,7 +86,7 @@ export default class Client {
         this.httpClient.injectPreProcessor(signRequest(this.authOptions.ak, this.authOptions.sk))
     }
 
-    private async authToken() {
+    async authToken(): Promise<void> {
         if (!this.token) {
             const identity = this.getIdentity()
             this.token = await identity.getToken(this.authOptions)
@@ -98,7 +99,7 @@ export default class Client {
     }
 
     async authenticate(): Promise<void> {
-        if (!this.authOptions) {
+        if (_.isEmpty(this.authOptions)) {
             throw new Error('Missing auth options')
         }
         if (this.authOptions.ak && this.authOptions.sk) {
