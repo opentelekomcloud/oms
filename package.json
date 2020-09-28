@@ -39,8 +39,9 @@
     "integration": "yarn jest ./tests/integration && yarn cov-rename integration",
     "functional": "yarn jest ./tests/functional && yarn cov-rename functional",
     "cov-report": "nyc merge coverage coverage/merged-coverage.json && nyc report -t coverage --report-dir coverage/report --reporter=html --reporter=cobertura",
+    "test": "yarn clean && yarn unit && yarn integration && yarn functional && yarn cov-report",
     "build": "tsc -p ./src",
-    "clean": "rm -rf ./dist"
+    "clean": "rm -rf ./dist ./coverage"
   },
   "dependencies": {
     "isomorphic-fetch": "^3.0.0",
