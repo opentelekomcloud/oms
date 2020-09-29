@@ -14,7 +14,7 @@ beforeAll(() => {
     if (!t) {
         throw 'Missing OS_TOKEN required for tests'
     }
-    defaultConfig = new CloudConfigHelper(authUrl).simpleTokenConfig(t)
+    defaultConfig = new CloudConfigHelper(authUrl).withToken(t)
     defaultClient = new Client(defaultConfig)
 })
 

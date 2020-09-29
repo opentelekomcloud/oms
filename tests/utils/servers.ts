@@ -26,6 +26,7 @@ export const fakeAuthServer: Server = createServer((req, resp) => {
     switch (req.url) {
     case '/':
         resp.statusCode = 200
+        resp.write('{}')
         break
     case '/v3/auth/tokens':
         resp.setHeader('X-Subject-Token', fakeToken)

@@ -47,7 +47,7 @@ export class CloudConfigHelper {
         return cc
     }
 
-    simplePasswordConfig(domainName: string, username: string, password: string, projectName: string): CloudConfig {
+    withPassword(domainName: string, username: string, password: string, projectName: string): CloudConfig {
         const cc = this.baseCfg()
         cc.auth.domain_name = domainName
         cc.auth.username = username
@@ -56,18 +56,22 @@ export class CloudConfigHelper {
         return cc
     }
 
-    simpleTokenConfig(token: string): CloudConfig {
+    withToken(token: string): CloudConfig {
         const cc = this.baseCfg()
         cc.auth.token = token
         return cc
     }
 
-    simpleAkSkConfig(ak: string, sk: string): CloudConfig {
+    withAKSK(ak: string, sk: string): CloudConfig {
         const cc = this.baseCfg()
         cc.auth.ak = ak
         cc.auth.sk = sk
         return cc
     }
+}
+
+export function cloudConfig(authURL: string): CloudConfigHelper {
+    return new CloudConfigHelper(authURL)
 }
 
 const msRe = /(?<=\d{2})\.\d{3}(?=Z)/

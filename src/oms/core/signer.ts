@@ -18,7 +18,7 @@ function canonicalRequest(config: RequestOpts): string {
     const queryString = url.search.substring(1)
     const canonHeaders = Object.entries(config.headers).map(e => `${e[0].toLowerCase()}:${e[1].trim()}\n`).sort().join('')
     const signedHeaders = Object.keys(config.headers).sort((a: string, b: string): number => (a[0].toLowerCase() < b[0].toLowerCase() ? -1 : 1)).join(';')
-    const hash = hexEncode(sha256(config.text))
+    const hash = hexEncode(sha256(config.body!))
     return `${config.method}\n${url.pathname}\n${queryString}\n${canonHeaders}\n${signedHeaders}\n${hash}`
 }
 

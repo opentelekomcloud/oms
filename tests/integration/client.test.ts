@@ -1,4 +1,4 @@
-import { CloudConfig, CloudConfigHelper } from '../../src/oms/core/types'
+import { cloudConfig, CloudConfig } from '../../src/oms/core/types'
 import { authServerUrl, fakeAuthServer, fakeRegion, fakeServiceServer, fakeToken } from '../utils/servers'
 import Client from '../../src/oms/client'
 import { randomString } from '../utils/helpers'
@@ -16,15 +16,14 @@ afterAll(() => {
 })
 
 test('Client: authToken', async () => {
-    const cfg = new CloudConfigHelper(authServerUrl())
-        .simplePasswordConfig('MYDOMAIN', 'MYNAME', '>>>Super!Secret<<<', fakeRegion)
+    const cfg = cloudConfig(authServerUrl())
+        .withPassword('MYDOMAIN', 'MYNAME', '>>>Super!Secret<<<', fakeRegion)
     const client = new Client(cfg)
     await client.authToken()
 })
 
 test('Client: authAKSK', () => {
-    const cfg = new CloudConfigHelper(authServerUrl())
-        .simpleAkSkConfig('AK', 'SK')
+    const cfg = cloudConfig(authServerUrl()).withAKSK('AK', 'SK')
     const client = new Client(cfg)
     client.authAkSk()
 })
@@ -36,8 +35,7 @@ const srv = {
 }
 
 test('Client: register service', () => {
-    const cfg = new CloudConfigHelper(authServerUrl())
-        .simpleTokenConfig(fakeToken)
+    const cfg = cloudConfig(authServerUrl()).withToken(fakeToken)
     const client = new Client(cfg)
     client.registerService(srv.type, srv.version, srv.url)
 
@@ -56,8 +54,8 @@ test('Client: register service', () => {
 })
 
 test('Client: get not registered service', async () => {
-    const cfg = new CloudConfigHelper(authServerUrl())
-        .simplePasswordConfig('MYDOMAIN', 'MYNAME', '>>>Super!Secret<<<', fakeRegion)
+    const cfg = cloudConfig(authServerUrl())
+        .withPassword('MYDOMAIN', 'MYNAME', '>>>Super!Secret<<<', fakeRegion)
     const client = new Client(cfg)
     await client.authenticate()
 
@@ -86,14 +84,45 @@ test('Client: no ak/sk opts', () => {
 })
 
 test('Client: ak/sk opts', async () => {
-    const cfg = new CloudConfigHelper('http://nsdfdf').simpleAkSkConfig(
+    const cfg = cloudConfig('http://nsdfdf').withAKSK(
         randomString(10),
         randomString(20),
     )
     const client = new Client(cfg)
     client.authAkSk = jest.fn()
-    await client.authenticate().catch(() => {
-        console.log('This is fine')
-    })
+    client.loadServiceCatalog = jest.fn()
+    await client.authenticate()
     expect(client.authAkSk).toBeCalled()
+})
+
+test('Client: abs URL', async () => {
+    const cfg = cloudConfig(authServerUrl()).withToken('')
+    const client = new Client(cfg)
+    await client.httpClient.get({ url: authServerUrl() })
+})
+
+test('Client: abs URL with base', async () => {
+    const cfg = cloudConfig(authServerUrl()).withToken('')
+    const client = new Client(cfg)
+    await client.httpClient.get({ url: authServerUrl(), baseURL: 'https://google.com' })
+})
+
+test('Client: merge handlers', async () => {
+    const cfg = cloudConfig(authServerUrl()).withToken('')
+    const client = new Client(cfg)
+    const mock1 = jest.fn()
+    const mock2 = jest.fn()
+    client.httpClient.injectPreProcessor(opts => {
+        mock1()
+        return opts
+    })
+    await client.httpClient.get({
+        url: authServerUrl(),
+        handler: opts => {
+            mock2()
+            return opts
+        },
+    })
+    expect(mock1).toBeCalledTimes(1)
+    expect(mock2).toBeCalledTimes(1)
 })
