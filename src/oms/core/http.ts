@@ -22,14 +22,49 @@ export interface QueryParams {
     [key: string]: unknown
 }
 
+type AbsHeaders = HeadersInit | Record<string, string | boolean | number | undefined>
+
 export interface RequestOptsAbs {
     url?: string
     baseURL?: string
     method?: string
     params?: ParsedQuery | QueryParams
-    headers?: Headers
+    headers?: AbsHeaders
     json?: Record<string, unknown>
     handler?: RequestConfigHandler
+}
+
+/**
+ * Convert input header-like object to list of headers
+ */
+function normalizeHeaders(src?: AbsHeaders): string[][] {
+    if (!src) {
+        return []
+    }
+    const result: string[][] = []
+    Object.entries(src)
+        .forEach(e => {
+            if (e[1] != undefined) {
+                result.push([e[0], String(e[1])])
+            }
+        })
+    return result
+}
+
+/**
+ * Merge existing sets of headers producing new Headers instance
+ */
+export function mergeHeaders(one?: AbsHeaders, two?: AbsHeaders): Headers {
+    if (!one && !two) {
+        return new Headers()
+    }
+    const headers = new Headers(normalizeHeaders(one))
+    if (two) {
+        for (const [k, v] of normalizeHeaders(two)) {
+            headers.append(k, v)
+        }
+    }
+    return headers
 }
 
 /**
@@ -42,7 +77,7 @@ export class RequestOpts implements RequestOptsAbs {
     params: ParsedQuery
     headers: Headers
     json?: Record<string, unknown>
-    text: string
+    body?: string
     handler?: RequestConfigHandler
 
     constructor(abs: RequestOptsAbs) {
@@ -55,7 +90,7 @@ export class RequestOpts implements RequestOptsAbs {
             throw `Request without URL: ${JSON.stringify(abs)}`
         }
         this.url = abs.url
-        this.headers = new Headers(abs.headers)
+        this.headers = mergeHeaders(abs.headers)
         const outParams: ParsedQuery = {}
         const inParams = abs.params
         if (inParams) {
@@ -67,8 +102,17 @@ export class RequestOpts implements RequestOptsAbs {
             })
         }
         this.params = outParams
-        this.text = abs.json ? JSON.stringify(abs.json) : ''
+        if (abs.json) {
+            this.body = JSON.stringify(abs.json)
+        }
     }
+}
+
+function prepareConfig(base?: RequestOptsAbs) {
+    const baseConfig = base && !_.isEmpty(base) ? _.cloneDeep(base) : {}
+    baseConfig.headers = mergeHeaders(baseConfig.headers)
+    baseConfig.headers.set('User-Agent', 'OpenTelekomCloud JS/v1.0')
+    return baseConfig
 }
 
 export default class HttpClient {
@@ -86,9 +130,7 @@ export default class HttpClient {
     }
 
     constructor(baseConfig?: RequestOptsAbs) {
-        this.baseConfig = baseConfig ? _.cloneDeep(baseConfig) : {}
-        this.baseConfig.headers = new Headers(this.baseConfig.headers)
-        this.baseConfig.headers.set('User-Agent', 'OpenTelekomCloud JS/v1.0')
+        this.baseConfig = prepareConfig(baseConfig)
     }
 
     /**
@@ -96,7 +138,7 @@ export default class HttpClient {
      */
     child(overrideConfig?: RequestOptsAbs): HttpClient {
         const client = _.cloneDeep(this)
-        client.baseConfig = overrideConfig ? _.cloneDeep(overrideConfig) : {}
+        client.baseConfig = overrideConfig ? prepareConfig(overrideConfig) : prepareConfig()
         return client
     }
 
@@ -109,11 +151,8 @@ export default class HttpClient {
             merged.baseURL = this.baseConfig.baseURL
         }
         // merge headers
-        merged.headers = new Headers(this.baseConfig.headers)
-        if (opts.headers) {
-            opts.headers.forEach((v, k) => merged.headers.append(k, v))
-        }
-        merged.baseURL = merged.baseURL ? merged.baseURL : this.baseConfig.baseURL
+        merged.headers = mergeHeaders(this.baseConfig.headers, merged.headers)
+        merged.baseURL = opts.baseURL ? opts.baseURL : this.baseConfig.baseURL
         if (merged.handler) {
             merged = merged.handler(merged)
         }

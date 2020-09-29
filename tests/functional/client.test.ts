@@ -13,7 +13,7 @@ const t = process.env.OS_TOKEN
 if (!t) {
     throw 'Missing OS_TOKEN required for tests'
 }
-const config = new CloudConfigHelper(authUrl).simpleTokenConfig(t)
+const config = new CloudConfigHelper(authUrl).withToken(t)
 jest.setTimeout(1000000)
 
 test('Client_auth', async () => {

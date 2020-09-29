@@ -22,7 +22,7 @@ test('CloudConfigHelper_pwd', () => {
     const username = randomString(3)
     const password = randomString(3)
     const project = randomString(3)
-    const auth = cc.simplePasswordConfig(domain, username, password, project).auth
+    const auth = cc.withPassword(domain, username, password, project).auth
     expect(auth.token).toBeUndefined()
     expect(auth.username).toEqual(username)
     expect(auth.password).toEqual(password)
@@ -35,7 +35,7 @@ test('CloudConfigHelper_pwd', () => {
 test('CloudConfigHelper_token', () => {
     const cc = new CloudConfigHelper('')
     const token = randomString(10)
-    const auth = cc.simpleTokenConfig(token).auth
+    const auth = cc.withToken(token).auth
     expect(auth.token).toEqual(token)
 })
 
@@ -43,7 +43,7 @@ test('CloudConfigHelper_ak/sk', () => {
     const cc = new CloudConfigHelper('')
     const ak = randomString(5)
     const sk = randomString(10)
-    const auth = cc.simpleAkSkConfig(ak, sk).auth
+    const auth = cc.withAKSK(ak, sk).auth
     expect(auth.ak).toEqual(ak)
     expect(auth.sk).toEqual(sk)
 })
