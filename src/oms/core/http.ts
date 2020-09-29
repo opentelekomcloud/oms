@@ -105,6 +105,9 @@ export class RequestOpts implements RequestOptsAbs {
         if (abs.json) {
             this.body = JSON.stringify(abs.json)
         }
+        if (abs.handler) {
+            this.handler = abs.handler
+        }
     }
 }
 

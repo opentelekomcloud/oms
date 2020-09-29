@@ -106,3 +106,23 @@ test('Client: abs URL with base', async () => {
     const client = new Client(cfg)
     await client.httpClient.get({ url: authServerUrl(), baseURL: 'https://google.com' })
 })
+
+test('Client: merge handlers', async () => {
+    const cfg = cloudConfig(authServerUrl()).withToken('')
+    const client = new Client(cfg)
+    const mock1 = jest.fn()
+    const mock2 = jest.fn()
+    client.httpClient.injectPreProcessor(opts => {
+        mock1()
+        return opts
+    })
+    await client.httpClient.get({
+        url: authServerUrl(),
+        handler: opts => {
+            mock2()
+            return opts
+        },
+    })
+    expect(mock1).toBeCalledTimes(1)
+    expect(mock2).toBeCalledTimes(1)
+})
