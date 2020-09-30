@@ -1,6 +1,6 @@
 import { AuthOptions, CloudConfig } from './core/types'
 import { signRequest } from './core/signer'
-import IdentityV3 from './services/identity/identity'
+import IdentityV3 from './services/identity'
 import Service, { ServiceType } from './services/base'
 import HttpClient from './core/http'
 import _ from 'lodash'
