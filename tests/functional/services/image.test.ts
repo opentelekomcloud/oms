@@ -1,6 +1,6 @@
-import Client from '../../../src/oms/client';
-import { CloudConfig, CloudConfigHelper } from '../../../src/oms/core/types';
-import ImageV2 from '../../../src/oms/services/image';
+import Client from '../../../src/oms'
+import { CloudConfig, CloudConfigHelper } from '../../../src/oms/core/types'
+import ImageV2 from '../../../src/oms/services/image'
 
 let defaultConfig: CloudConfig
 let defaultClient: Client
