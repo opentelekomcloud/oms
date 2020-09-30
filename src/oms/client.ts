@@ -25,6 +25,22 @@ export default class Client {
         return this.authOptions.token || ''
     }
 
+    get projectID(): string {
+        return this.authOptions.project_id || ''
+    }
+
+    set projectID(id: string) {
+        this.authOptions.project_id = id
+    }
+
+    get domainID(): string {
+        return this.authOptions.domain_id || ''
+    }
+
+    set domainID(id: string) {
+        this.authOptions.domain_id = id
+    }
+
     constructor(cloud: CloudConfig) {
         this.authOptions = cloud.auth
         this.httpClient = new HttpClient({})
@@ -50,7 +66,7 @@ export default class Client {
     getService<S extends Service>(Type: ServiceType<S>): S {
         const serviceURL = this.serviceMap.get(Client.get_service_key(Type.type, Type.version))
         if (!serviceURL) {
-            throw `Service '${serviceURL}' is not registered`
+            throw Error(`Service '${serviceURL}' is not registered`)
         }
         return new Type(serviceURL, this.httpClient)
     }
@@ -78,32 +94,47 @@ export default class Client {
         await Promise.all(waitServices) // wait for all services to be read
     }
 
-    authAkSk(): void {
+    /**
+     * Authenticate with AK/SK
+     */
+    async authAkSk(): Promise<void> {
+        // FIXME: not really signing
         if (!this.authOptions.ak || !this.authOptions.sk) {
-            throw `Missing AK/SK: ${JSON.stringify(this.authOptions)}`
+            throw Error(`Missing AK/SK: ${JSON.stringify(this.authOptions)}`)
         }
         // add signing interceptor
         this.httpClient.injectPreProcessor(signRequest(this.authOptions.ak, this.authOptions.sk))
+        // FIXME: missing projectID and domainID loading
     }
 
+    /**
+     * Authenticate with token
+     */
     async authToken(): Promise<void> {
         if (!this.token) {
             const identity = this.getIdentity()
-            this.token = await identity.getToken(this.authOptions)
+            const token = await identity.createToken(this.authOptions)
+            this.token = token.id
+            if (token.project) {
+                this.projectID = token.project.id
+            }
+            this.domainID = token.user.domain.id
         }
-        const { token } = this
         this.httpClient.injectPreProcessor(config => {
-            config.headers.set('X-Auth-Token', token)
+            config.headers.set('X-Auth-Token', this.token)
             return config
         })
     }
 
+    /**
+     * Authenticate client and populate domainID and projectID
+     */
     async authenticate(): Promise<void> {
         if (_.isEmpty(this.authOptions)) {
             throw new Error('Missing auth options')
         }
         if (this.authOptions.ak && this.authOptions.sk) {
-            this.authAkSk()
+            await this.authAkSk()
         } else {
             await this.authToken()
         }

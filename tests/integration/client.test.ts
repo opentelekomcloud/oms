@@ -22,10 +22,10 @@ test('Client: authToken', async () => {
     await client.authToken()
 })
 
-test('Client: authAKSK', () => {
+test('Client: authAKSK', async () => {
     const cfg = cloudConfig(authServerUrl()).withAKSK('AK', 'SK')
     const client = new Client(cfg)
-    client.authAkSk()
+    await client.authAkSk()
 })
 
 const srv = {
@@ -77,10 +77,10 @@ test('Client: no auth opts', async () => {
     await expect(client.authenticate()).rejects.toThrowError()
 })
 
-test('Client: no ak/sk opts', () => {
+test('Client: no ak/sk opts', async () => {
     const cfg = { auth: { auth_url: 'http://notempty' } }
     const client = new Client(cfg)
-    expect(() => client.authAkSk()).toThrowError()
+    await expect(client.authAkSk()).rejects.toThrowError()
 })
 
 test('Client: ak/sk opts', async () => {

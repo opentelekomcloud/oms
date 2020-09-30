@@ -1,4 +1,4 @@
-import HttpClient, { RequestOptsAbs } from '../core/http';
+import HttpClient, { HttpError, RequestOptsAbs } from '../core/http'
 
 /**
  * Describes service type with type, version and constructor
@@ -66,7 +66,7 @@ export class Pager<T extends Page> implements AsyncIterable<T>, AsyncIterator<T,
     async next(): Promise<IteratorResult<T, T>> {
         const resp = await this.client.get<T>(this.pageOpts)
         if (!resp.ok) {
-            throw `HTTP error during pagination: ${resp.status} (${JSON.stringify(await resp.text())})`
+            throw new HttpError(`Error during pagination: ${resp.status} (${JSON.stringify(await resp.text())})`)
         }
         this.pageOpts.url = resp.data.next   // change next request url
         if (this.firstIteration) {

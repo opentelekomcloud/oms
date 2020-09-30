@@ -18,6 +18,9 @@ export class HttpResponse<T> extends Response {
 export class HttpError extends Error {
 }
 
+export class RequestError extends Error {
+}
+
 export interface QueryParams {
     [key: string]: unknown
 }
@@ -83,11 +86,11 @@ export class RequestOpts implements RequestOptsAbs {
     constructor(abs: RequestOptsAbs) {
         // check absolutely minimal requirements:
         if (!abs.method) {
-            throw `Request without Method: ${JSON.stringify(abs)}`
+            throw new RequestError(`Request without Method: ${JSON.stringify(abs)}`)
         }
         this.method = abs.method
         if (!abs.url) {
-            throw `Request without URL: ${JSON.stringify(abs)}`
+            throw new RequestError(`Request without URL: ${JSON.stringify(abs)}`)
         }
         this.url = abs.url
         this.headers = mergeHeaders(abs.headers)

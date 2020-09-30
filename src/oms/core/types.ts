@@ -1,4 +1,4 @@
-export class NameOrID {
+export interface NameOrID {
     id?: string
     name?: string
 }
