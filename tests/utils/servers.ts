@@ -1,6 +1,7 @@
 import { createServer, IncomingMessage, Server, ServerResponse } from 'http';
 import { randomString } from './helpers';
 import { AddressInfo } from 'net';
+import { Token } from '../../src/oms/services/identity/v3/tokens'
 
 export const fakeToken = randomString(20)
 
@@ -31,7 +32,18 @@ export const fakeAuthServer: Server = createServer((req, resp) => {
     case '/v3/auth/tokens':
         resp.setHeader('X-Subject-Token', fakeToken)
         resp.statusCode = 200
-        resp.write(JSON.stringify('{}'))
+        const value: Token = {
+            id: '',
+            user: {
+                id: randomString(10),
+                name: randomString(10),
+                domain: {
+                    id: randomString(10),
+                    name: randomString(12)
+                }
+            }
+        }
+        resp.write(JSON.stringify(value))
         break
     case '/v3/endpoints':
         if (!checkAuth) {

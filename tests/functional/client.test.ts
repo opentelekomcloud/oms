@@ -4,7 +4,7 @@
  */
 import Client from '../../src/oms/client'
 import { CloudConfigHelper } from '../../src/oms/core/types';
-import IdentityV3 from '../../src/oms/services/identity';
+import IdentityV3 from '../../src/oms/services/identity/identity';
 import ImageV2 from '../../src/oms/services/image';
 
 
