@@ -15,7 +15,7 @@ function checkAuth(req: IncomingMessage, resp: ServerResponse): boolean {
         resp.statusCode = 401
         return false
     }
-    if (tok != fakeToken) {
+    if (tok !== fakeToken) {
         resp.statusCode = 403
         return false
     }
