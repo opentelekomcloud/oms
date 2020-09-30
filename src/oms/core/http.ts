@@ -161,7 +161,6 @@ export default class HttpClient {
         }
         // merge headers
         merged.headers = mergeHeaders(this.baseConfig.headers, merged.headers)
-        merged.baseURL = opts.baseURL ? opts.baseURL : this.baseConfig.baseURL
         if (merged.handler) {
             merged = merged.handler(merged)
         }
@@ -169,9 +168,10 @@ export default class HttpClient {
             merged = b(merged)
         }
 
-        let { url } = merged
-        if (!url.match(_absUrlRe)) { // use absolute URL without joining with base url
-            url = new URL(url, merged.baseURL).href
+        let { baseURL, url } = merged
+        baseURL = baseURL ? baseURL : this.baseConfig.baseURL
+        if (!url.match(_absUrlRe) && !!baseURL) {
+            url = joinURL(baseURL, url)
         }
         // append query params
         if (merged.params) {
@@ -211,4 +211,18 @@ export default class HttpClient {
         opts.method = 'DELETE'
         return await this.request(opts)
     }
+}
+
+const barePartRe = /^\/*(.+?)\/*$/
+
+export function joinURL(...parts: string[]): string {
+    const urls: string[] = []
+    for (const p of parts) {
+        const matches = p.match(barePartRe)
+        if (!matches || matches.length != 2) {
+            continue
+        }
+        urls.push(matches[1])
+    }
+    return urls.join('/')
 }
