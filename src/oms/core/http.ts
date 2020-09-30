@@ -40,15 +40,18 @@ export interface RequestOptsAbs {
 /**
  * Convert input header-like object to list of headers
  */
-function normalizeHeaders(src?: AbsHeaders): string[][] {
+function normalizeHeaders(src?: AbsHeaders): Headers {
+    const result = new Headers()
     if (!src) {
-        return []
+        return result
     }
-    const result: string[][] = []
+    if (src instanceof Headers) {
+        return src
+    }
     Object.entries(src)
         .forEach(e => {
             if (e[1] != undefined) {
-                result.push([e[0], String(e[1])])
+                result.append(e[0], String(e[1]))
             }
         })
     return result
@@ -61,7 +64,7 @@ export function mergeHeaders(one?: AbsHeaders, two?: AbsHeaders): Headers {
     if (!one && !two) {
         return new Headers()
     }
-    const headers = new Headers(normalizeHeaders(one))
+    const headers = normalizeHeaders(one)
     if (two) {
         for (const [k, v] of normalizeHeaders(two)) {
             headers.append(k, v)
