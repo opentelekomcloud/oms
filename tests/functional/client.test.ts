@@ -2,10 +2,10 @@
 /**
  * @jest-environment node
  */
-import Client from '../../src/oms/client'
-import { CloudConfigHelper } from '../../src/oms/core/types';
-import IdentityV3 from '../../src/oms/services/identity';
-import ImageV2 from '../../src/oms/services/image';
+import Client from '../../src/oms'
+import { CloudConfigHelper } from '../../src/oms/core/types'
+import IdentityV3 from '../../src/oms/services/identity'
+import ImageV2 from '../../src/oms/services/image'
 
 
 const authUrl = 'https://iam.eu-de.otc.t-systems.com'
