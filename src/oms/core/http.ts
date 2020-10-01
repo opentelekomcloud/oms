@@ -50,7 +50,7 @@ function normalizeHeaders(src?: AbsHeaders): Headers {
     }
     Object.entries(src)
         .forEach(e => {
-            if (e[1] != undefined) {
+            if (e[1] != null) {
                 result.append(e[0], String(e[1]))
             }
         })
@@ -102,7 +102,7 @@ export class RequestOpts implements RequestOptsAbs {
         if (inParams) {
             Object.keys(inParams).forEach(k => {
                 const v = inParams[k]
-                if (v != undefined) {
+                if (v != null) {
                     outParams[k] = String(inParams[k])
                 }
             })
@@ -219,7 +219,7 @@ export function joinURL(...parts: string[]): string {
     const urls: string[] = []
     for (const p of parts) {
         const matches = p.match(barePartRe)
-        if (!matches || matches.length != 2) {
+        if (!matches || matches.length !== 2) {
             continue
         }
         urls.push(matches[1])

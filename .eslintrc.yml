@@ -26,6 +26,7 @@ rules:
       "format": ["camelCase", "snake_case"],
     }
   ]
+  eqeqeq: ["warn", "smart"]
   arrow-parens: ["warn", "as-needed"]
 settings:
   import/resolver:
