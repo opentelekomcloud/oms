@@ -44,7 +44,7 @@ export class NetworkV1 extends Service {
         if (await statusOK()) {
             return state
         }
-        await waitFor(statusOK, 20)
+        await waitFor(statusOK, 60)
         return state
     }
 
@@ -69,7 +69,7 @@ export class NetworkV1 extends Service {
             }
             throw e
         }
-        await waitForResourceToBeDeleted(() => this.getVPC(vpcID), 20)
+        await waitForResourceToBeDeleted(() => this.getVPC(vpcID), 60)
     }
 
     /**
@@ -102,7 +102,7 @@ export class NetworkV1 extends Service {
         if (await statusActive()) {
             return state
         }
-        await waitFor(statusActive, 60)
+        await waitFor(statusActive, 120)
         return state
     }
 
@@ -120,6 +120,6 @@ export class NetworkV1 extends Service {
             vpc_id = vpcID
         }
         await deleteSubnet(this.client, vpc_id, subnetID)
-        await waitForResourceToBeDeleted(() => this.getSubnet(subnetID), 60)
+        await waitForResourceToBeDeleted(() => this.getSubnet(subnetID), 120)
     }
 }
