@@ -11,7 +11,7 @@ export type RequestConfigHandler = (i: RequestOpts) => RequestOpts
 
 const _absUrlRe = /^https?:\/\/.+/
 
-export interface HttpResponse<T> extends Response {
+export interface JSONResponse<T> extends Response {
     data: T
 }
 
@@ -161,7 +161,7 @@ export default class HttpClient {
     /**
      * Base request method
      */
-    async request<T>(opts: RequestOptsAbs): Promise<HttpResponse<T>> {
+    async request<T>(opts: RequestOptsAbs): Promise<JSONResponse<T>> {
         let merged = new RequestOpts(opts)
         if (!merged.baseURL) {
             merged.baseURL = this.baseConfig.baseURL
@@ -187,9 +187,10 @@ export default class HttpClient {
                 query: merged.params,
             }, { encode: true, skipNull: true })
         }
-        const response = await fetch(url, merged) as HttpResponse<T>
+        const response = await fetch(url, merged) as JSONResponse<T>
         if (response.ok) {
-            response.data = await response.json()
+            const data = await response.text()
+            response.data = data ? JSON.parse(data) : {} as T
         } else {
             throw new HttpError(
                 response.status,
@@ -200,22 +201,22 @@ export default class HttpClient {
         return response
     }
 
-    async get<T>(opts: RequestOptsAbs): Promise<HttpResponse<T>> {
+    async get<T>(opts: RequestOptsAbs): Promise<JSONResponse<T>> {
         opts.method = 'GET'
         return await this.request(opts)
     }
 
-    async post<T>(opts: RequestOptsAbs): Promise<HttpResponse<T>> {
+    async post<T>(opts: RequestOptsAbs): Promise<JSONResponse<T>> {
         opts.method = 'POST'
         return await this.request(opts)
     }
 
-    async put<T>(opts: RequestOptsAbs): Promise<HttpResponse<T>> {
+    async put<T>(opts: RequestOptsAbs): Promise<JSONResponse<T>> {
         opts.method = 'PUT'
         return await this.request(opts)
     }
 
-    async delete<T>(opts: RequestOptsAbs): Promise<HttpResponse<T>> {
+    async delete(opts: RequestOptsAbs): Promise<JSONResponse<unknown>> {
         opts.method = 'DELETE'
         return await this.request(opts)
     }
