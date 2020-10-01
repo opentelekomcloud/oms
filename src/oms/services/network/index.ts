@@ -1,1 +1,1 @@
-export { NetworkV1 } from './v1'
+export { VpcV1 } from './v1'

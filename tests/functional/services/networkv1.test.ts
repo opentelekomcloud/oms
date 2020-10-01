@@ -1,6 +1,6 @@
 import { cloudConfig } from '../../../src/oms/core/types'
 import Client from '../../../src/oms'
-import { NetworkV1 } from '../../../src/oms/services/network'
+import { VpcV1 } from '../../../src/oms/services/network'
 import { randomString } from '../../utils/helpers'
 import { Subnet, VPC } from '../../../src/oms/services/network/v1'
 
@@ -25,7 +25,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
     await client.authenticate()
-    const nw = client.getService(NetworkV1)
+    const nw = client.getService(VpcV1)
     if (orphans.subnet) {
         await nw.deleteSubnet(orphans.subnet.id, orphans.subnet.vpc_id)
     }
@@ -35,7 +35,7 @@ afterAll(async () => {
 })
 
 test('VPC/Subnet: lifecycle', async () => {
-    const nw = client.getService(NetworkV1)
+    const nw = client.getService(VpcV1)
     const name = 'oms-test-vpc'
     const cidr = '192.168.0.0/16'
     const description = randomString(10)

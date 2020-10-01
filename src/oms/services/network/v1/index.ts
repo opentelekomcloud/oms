@@ -16,7 +16,7 @@ export { Subnet } from './subnets'
 /**
  * VPC v1 service client
  */
-export class NetworkV1 extends Service {
+export class VpcV1 extends Service {
     static readonly type = 'vpc'
 
     constructor(url: string, client: HttpClient) {
