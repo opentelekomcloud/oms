@@ -4,8 +4,8 @@
  */
 import Client from '../../src/oms'
 import { CloudConfigHelper } from '../../src/oms/core/types'
-import IdentityV3 from '../../src/oms/services/identity'
 import ImageV2 from '../../src/oms/services/image'
+import { IdentityV3 } from '../../src/oms/services/identity/v3'
 
 
 const authUrl = 'https://iam.eu-de.otc.t-systems.com'
@@ -33,14 +33,7 @@ test('Client_serviceCatalog', async () => {
 
 test('Client_invalidService', async () => {
     const client = new Client(config!)
-    client.services.push('identiti/v3')
+    client.services.push('identiti')
     await client.authenticate()
     expect(Array.from(client.serviceMap.keys())).toHaveLength(client.services.length - 1)
-})
-
-test('Client_invalidVersion', async () => {
-    const client = new Client(config!)
-    client.services.push('identity/v1')
-    await client.authenticate()
-    expect(Array.from(client.serviceMap.keys())).toHaveLength(client.services.length)
 })

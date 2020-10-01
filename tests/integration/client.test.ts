@@ -37,7 +37,7 @@ const srv = {
 test('Client: register service', () => {
     const cfg = cloudConfig(authServerUrl()).withToken(fakeToken)
     const client = new Client(cfg)
-    client.registerService(srv.type, srv.version, srv.url)
+    client.registerService(srv.type, srv.url)
 
     class pseudo extends Service {
         static version = srv.version
@@ -90,7 +90,7 @@ test('Client: ak/sk opts', async () => {
     )
     const client = new Client(cfg)
     client.authAkSk = jest.fn()
-    client.loadServiceCatalog = jest.fn()
+    client.saveServiceCatalog = jest.fn()
     await client.authenticate()
     expect(client.authAkSk).toBeCalled()
 })

@@ -1,9 +1,9 @@
 import { AuthOptions, CloudConfig } from './core/types'
 import { signRequest } from './core/signer'
-import IdentityV3 from './services/identity'
 import Service, { ServiceType } from './services/base'
 import HttpClient from './core/http'
 import _ from 'lodash'
+import { CatalogEntity, IdentityV3, ResponseToken } from './services/identity/v3'
 
 
 /**
@@ -17,11 +17,11 @@ export default class Client {
     authOptions: AuthOptions
     region = 'eu-de'
 
-    set token(v: string) {
+    set tokenID(v: string) {
         this.authOptions.token = v
     }
 
-    get token(): string {
+    get tokenID(): string {
         return this.authOptions.token || ''
     }
 
@@ -44,27 +44,30 @@ export default class Client {
     constructor(cloud: CloudConfig) {
         this.authOptions = cloud.auth
         this.httpClient = new HttpClient({})
+        this.injectAuthToken()
         // register identity service
         this.registerService(
             'identity',
-            'v3',
             this.authOptions.auth_url,
         )
     }
 
     services = [
-        'identity/v3',
-        'image/v2',
+        'identity',
+        'image',
+        'compute',
+        'ecs',
+        'vpc',
     ]
 
     serviceMap: Map<string, string> = new Map<string, string>()
 
-    registerService(type: string, version: string, url: string): void {
-        this.serviceMap.set(Client.get_service_key(type, version), url)
+    registerService(type: string, url: string): void {
+        this.serviceMap.set(type, url)
     }
 
     getService<S extends Service>(Type: ServiceType<S>): S {
-        const serviceURL = this.serviceMap.get(Client.get_service_key(Type.type, Type.version))
+        const serviceURL = this.serviceMap.get(Type.type)
         if (!serviceURL) {
             throw Error(`Service '${serviceURL}' is not registered`)
         }
@@ -78,27 +81,23 @@ export default class Client {
     /**
      * Load service endpoint catalog for the region
      */
-    async loadServiceCatalog(): Promise<void> {
-        const iam = this.getIdentity()
-        // load catalog to catalog cache:
-        await iam.loadServiceEndpointCatalog()
-        const waitServices: Promise<void>[] = []
-        for (const key of this.services) {
-            const [type, version] = key.split('/', 2)
-            waitServices.push(
-                iam.getServiceUrl(type, version, this.region)
-                    .then(url => this.registerService(type, version, url))
-                    .catch(e => console.error(`${e}\nFailed to load URL for service ${key}`)),
+    saveServiceCatalog(catalog: CatalogEntity[]): void {
+        catalog.forEach(ce => {
+            const ep = ce.endpoints.find(e =>
+                (e.region === this.region || e.region === '*') &&
+                e.interface === 'public',
             )
-        }
-        await Promise.all(waitServices) // wait for all services to be read
+            if (ep) {
+                this.serviceMap.set(ce.type, ep.url)
+            }
+        })
     }
 
     /**
      * Authenticate with AK/SK
      */
     async authAkSk(): Promise<void> {
-        // FIXME: not really signing
+        // FIXME: NOT WORKING
         if (!this.authOptions.ak || !this.authOptions.sk) {
             throw Error(`Missing AK/SK: ${JSON.stringify(this.authOptions)}`)
         }
@@ -107,23 +106,37 @@ export default class Client {
         // FIXME: missing projectID and domainID loading
     }
 
+    private injectAuthToken() {
+        this.httpClient.injectPreProcessor(config => {
+            if (this.tokenID) {
+                config.headers.set('X-Auth-Token', this.tokenID)
+            }
+            return config
+        })
+    }
+
     /**
      * Authenticate with token
      */
     async authToken(): Promise<void> {
-        if (!this.token) {
-            const identity = this.getIdentity()
-            const token = await identity.createToken(this.authOptions)
-            this.token = token.id
-            if (token.project) {
-                this.projectID = token.project.id
-            }
-            this.domainID = token.user.domain.id
+        const identity = this.getIdentity()
+        let token: ResponseToken
+        if (!this.tokenID) {
+            token = await identity.issueToken(this.authOptions)
+            this.tokenID = token.id
+            this.injectAuthToken()
+        } else {
+            this.injectAuthToken()
+            token = await identity.verifyToken(this.tokenID)
         }
-        this.httpClient.injectPreProcessor(config => {
-            config.headers.set('X-Auth-Token', this.token)
-            return config
-        })
+        if (token.project) {
+            this.projectID = token.project.id
+        }
+        this.domainID = token.user.domain.id
+        if (!token.catalog) {
+            throw Error('No service catalog provided')
+        }
+        this.saveServiceCatalog(token.catalog)
     }
 
     /**
@@ -138,14 +151,5 @@ export default class Client {
         } else {
             await this.authToken()
         }
-        await this.loadServiceCatalog()
-    }
-
-    private static get_service_key(type: string, version: string | number): string {
-        let ver = String(version)
-        if (!ver.startsWith('v')) {
-            ver = `v${ver}`
-        }
-        return `${type}/${ver}`
     }
 }

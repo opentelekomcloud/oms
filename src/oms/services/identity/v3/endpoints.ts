@@ -3,12 +3,12 @@ import HttpClient from '../../../core/http'
 const listURL = '/v3/endpoints'
 
 export interface Endpoint {
-    id: string
-    service_id: string
-    region?: string
-    links: unknown
-    interface: string
-    url: string
+    readonly id: string
+    readonly service_id: string
+    readonly region?: string
+    readonly links: unknown
+    readonly interface: string
+    readonly url: string
 }
 
 export async function listEndpoints(client: HttpClient): Promise<Endpoint[]> {
