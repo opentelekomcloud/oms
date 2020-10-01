@@ -1,7 +1,7 @@
-import { createServer, IncomingMessage, Server, ServerResponse } from 'http';
-import { randomString } from './helpers';
-import { AddressInfo } from 'net';
-import { Token } from '../../src/oms/services/identity/v3/tokens'
+import { createServer, IncomingMessage, Server, ServerResponse } from 'http'
+import { randomString } from './helpers'
+import { AddressInfo } from 'net'
+import { ResponseToken } from '../../src/oms/services/identity/v3'
 
 export const fakeToken = randomString(20)
 
@@ -32,16 +32,16 @@ export const fakeAuthServer: Server = createServer((req, resp) => {
     case '/v3/auth/tokens':
         resp.setHeader('X-Subject-Token', fakeToken)
         resp.statusCode = 200
-        const value: Token = {
+        const value: ResponseToken = {
             id: '',
             user: {
                 id: randomString(10),
                 name: randomString(10),
                 domain: {
                     id: randomString(10),
-                    name: randomString(12)
-                }
-            }
+                    name: randomString(12),
+                },
+            },
         }
         resp.write(JSON.stringify(value))
         break
@@ -89,9 +89,9 @@ const fakeVersions = () => ({
             'links': [
                 {
                     'href': `${serviceServerUrl()}/v${fakeService.version}.6/`,
-                    'rel': 'self'
-                }
-            ]
+                    'rel': 'self',
+                },
+            ],
         },
         {
             'status': 'SUPPORTED',
@@ -99,9 +99,9 @@ const fakeVersions = () => ({
             'links': [
                 {
                     'href': `${serviceServerUrl()}/v${fakeService.version}.5/`,
-                    'rel': 'self'
-                }
-            ]
+                    'rel': 'self',
+                },
+            ],
         },
         {
             'status': 'DEPRECATED',
@@ -109,11 +109,11 @@ const fakeVersions = () => ({
             'links': [
                 {
                     'href': `${serviceServerUrl()}/v1/`,
-                    'rel': 'self'
-                }
-            ]
+                    'rel': 'self',
+                },
+            ],
         },
-    ]
+    ],
 }
 )
 export const fakeRegion = 'eu-de'
@@ -125,26 +125,26 @@ const fakeEndpoints = () => ({
             'links': {
                 'next': null,
                 'previous': null,
-                'self': `${authServerUrl()}/v3/endpoints/1360c0dc80654c5790c1b6d210f34746`
+                'self': `${authServerUrl()}/v3/endpoints/1360c0dc80654c5790c1b6d210f34746`,
             },
             'id': '1360c0dc80654c5790c1b6d210f34746',
             'interface': 'public',
             'region': fakeRegion,
             'url': authServerUrl(),
-            'enabled': true
-        }
+            'enabled': true,
+        },
     ],
     'links': {
         'next': null,
         'previous': null,
-        'self': `${authServerUrl()}/v3/endpoints`
-    }
+        'self': `${authServerUrl()}/v3/endpoints`,
+    },
 })
 const fakeServices = () => ({
     'links': {
         'next': null,
         'previous': null,
-        'self': `${authServerUrl()}/v3/services`
+        'self': `${authServerUrl()}/v3/services`,
     },
     'services': [
         {
@@ -152,22 +152,22 @@ const fakeServices = () => ({
             'links': {
                 'next': null,
                 'previous': null,
-                'self': `${authServerUrl()}/v3/services/01ddc5a9916c45c2b6f46dc604848cb7`
+                'self': `${authServerUrl()}/v3/services/01ddc5a9916c45c2b6f46dc604848cb7`,
             },
             'id': '01ddc5a9916c45c2b6f46dc604848cb7',
             'type': 'volumev3',
-            'enabled': true
+            'enabled': true,
         },
         {
             'name': 'glance',
             'links': {
                 'next': null,
                 'previous': null,
-                'self': `${authServerUrl()}/v3/services/${fakeService.id}`
+                'self': `${authServerUrl()}/v3/services/${fakeService.id}`,
             },
             'id': fakeService.id,
             'type': fakeService.type,
-            'enabled': true
-        }
-    ]
+            'enabled': true,
+        },
+    ],
 })

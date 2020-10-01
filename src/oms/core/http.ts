@@ -11,11 +11,18 @@ export type RequestConfigHandler = (i: RequestOpts) => RequestOpts
 
 const _absUrlRe = /^https?:\/\/.+/
 
-export class HttpResponse<T> extends Response {
-    data!: T
+export interface HttpResponse<T> extends Response {
+    data: T
 }
 
 export class HttpError extends Error {
+    name = 'HTTPError'
+    statusCode: number
+
+    constructor(statusCode: number, message?: string) {
+        super(message)
+        this.statusCode = statusCode
+    }
 }
 
 export class RequestError extends Error {
@@ -46,7 +53,7 @@ function normalizeHeaders(src?: AbsHeaders): Headers {
         return result
     }
     if (src instanceof Headers) {
-        return src
+        return new Headers(src)
     }
     Object.entries(src)
         .forEach(e => {
@@ -185,6 +192,7 @@ export default class HttpClient {
             response.data = await response.json()
         } else {
             throw new HttpError(
+                response.status,
                 `HTTP error received. ${response.status} ${response.statusText}: ${await response.text()}`
                 + `Request Opts:\n${JSON.stringify(opts)}`,
             )

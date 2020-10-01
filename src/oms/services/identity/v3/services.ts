@@ -3,15 +3,15 @@ import HttpClient from '../../../core/http'
 const listURL = '/v3/services'
 
 export interface ServiceRef {
-    name: string
-    type: string
-    links: {
-        next?: string
-        previous?: string
-        self: string
+    readonly name: string
+    readonly type: string
+    readonly links: {
+        readonly next?: string
+        readonly previous?: string
+        readonly self: string
     }
-    id: string
-    enabled: boolean
+    readonly id: string
+    readonly enabled: boolean
 }
 
 export async function listServices(client: HttpClient): Promise<ServiceRef[]> {

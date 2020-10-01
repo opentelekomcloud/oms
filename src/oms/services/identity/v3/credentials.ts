@@ -4,11 +4,11 @@ const url = '/v3.0/OS-CREDENTIAL/credentials'
 
 
 export interface Credential {
-    user_id: string
-    description?: string
-    access?: string
-    secret?: string
-    status?: string
+    readonly user_id: string
+    readonly description?: string
+    readonly access?: string
+    readonly secret?: string
+    readonly status?: string
 }
 
 /**

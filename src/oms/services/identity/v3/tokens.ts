@@ -4,8 +4,8 @@ import HttpClient from '../../../core/http'
 const url = '/v3/auth/tokens'
 
 interface domain {
-    id: string
-    name: string
+    readonly id: string
+    readonly name: string
 }
 
 interface authRecord {
@@ -14,34 +14,36 @@ interface authRecord {
     domain: domain
 }
 
-interface tokenInfo {
-    user: authRecord
-    project?: authRecord
-    catalog?: {
-        type: string,
-        id: string,
-        name: string,
-        endpoints: {
-            url: string
-            region: string
-            region_id: string
-            interface: string
-            id: string
-        }[]
+export interface CatalogEntity {
+    readonly type: string,
+    readonly id: string,
+    readonly name: string,
+    readonly endpoints: {
+        readonly url: string
+        readonly region: string
+        readonly region_id: string
+        readonly interface: string
+        readonly id: string
     }[]
 }
 
-export interface Token extends tokenInfo {
-    id: string
+interface ResponseTokenInfo {
+    readonly user: authRecord
+    readonly project?: authRecord
+    readonly catalog?: CatalogEntity[]
+}
+
+export interface ResponseToken extends ResponseTokenInfo {
+    readonly id: string
 }
 
 interface identity {
-    password: {
-        user: {
-            id?: string
-            name?: string
-            password: string
-            domain: NameOrID
+    readonly password: {
+        readonly user: {
+            readonly id?: string
+            readonly name?: string
+            readonly password: string
+            readonly domain: NameOrID
         }
     }
 }
@@ -101,11 +103,11 @@ function optsToRequestData(opts: AuthOptions): AuthRequestData {
  * @param authOptions
  * @param nocatalog - not attach catalog to token
  */
-export async function createToken(client: HttpClient, authOptions: AuthOptions, nocatalog?: boolean): Promise<Token> {
+export async function createToken(client: HttpClient, authOptions: AuthOptions, nocatalog?: boolean): Promise<ResponseToken> {
     const params = nocatalog ? { nocatalog: 'nocatalog' } : undefined
     const data = optsToRequestData(authOptions)
     const resp = await client
-        .post<tokenInfo>({ url: url, json: data, params: params })
+        .post<ResponseTokenInfo>({ url: url, json: data, params: params })
         .catch(e => {
             console.log(JSON.stringify(e))
             throw e
@@ -113,7 +115,7 @@ export async function createToken(client: HttpClient, authOptions: AuthOptions, 
     const token = resp.data
     const tokenID = resp.headers.get('X-Subject-Token')
     if (!tokenID) {
-        throw 'No token provided as X-Subject-Token'
+        throw 'No tokenID provided as X-Subject-Token'
     }
     return { id: tokenID, ...token }
 }
@@ -121,12 +123,12 @@ export async function createToken(client: HttpClient, authOptions: AuthOptions, 
 /**
  * Verifying a Token
  * @param client
- * @param token - token to be verified
+ * @param token - tokenID to be verified
  * @param nocatalog - not attach catalog to token
  */
-export async function verifyToken(client: HttpClient, token: string, nocatalog?: boolean): Promise<Token> {
+export async function verifyToken(client: HttpClient, token: string, nocatalog?: boolean): Promise<ResponseToken> {
     const params = nocatalog ? { nocatalog: 'nocatalog' } : undefined
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const resp = await client.get<Token>({ url: url, headers: { 'X-Subject-Token': token }, params: params })
-    return resp.data
+    const resp = await client.get<{ token: ResponseToken }>({ url: url, headers: { 'X-Subject-Token': token }, params: params })
+    return resp.data.token
 }

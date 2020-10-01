@@ -5,7 +5,7 @@ import HttpClient, { HttpError, RequestOptsAbs } from '../core/http'
  */
 export interface ServiceType<T> {
     readonly type: string
-    readonly version: string
+
     new(url: string, client: HttpClient): T
 }
 
@@ -14,7 +14,6 @@ export interface ServiceType<T> {
  */
 export default abstract class Service {
     static readonly type: string = ''
-    static readonly version: string = ''
     client: HttpClient
 
     protected constructor(url: string, client: HttpClient) {
@@ -65,9 +64,6 @@ export class Pager<T extends Page> implements AsyncIterable<T>, AsyncIterator<T,
      */
     async next(): Promise<IteratorResult<T, T>> {
         const resp = await this.client.get<T>(this.pageOpts)
-        if (!resp.ok) {
-            throw new HttpError(`Error during pagination: ${resp.status} (${JSON.stringify(await resp.text())})`)
-        }
         this.pageOpts.url = resp.data.next   // change next request url
         if (this.firstIteration) {
             this.pageOpts.params = undefined // remove params, the are already part of `next`
@@ -75,4 +71,53 @@ export class Pager<T extends Page> implements AsyncIterable<T>, AsyncIterator<T,
         }
         return { value: resp.data, done: !resp.data.next }
     }
+}
+
+function sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+const maxInterval = 40000
+
+/**
+ * Wait for condition to become `true` with increasing retry interval
+ * @param condition
+ * @param timeoutSeconds
+ */
+export async function waitFor(condition: () => Promise<boolean>, timeoutSeconds: number): Promise<void> {
+    const timeLimit = Date.now() + timeoutSeconds * 1000
+    let pause = 1000
+    while (timeLimit > Date.now()) {
+        if (await condition()) {
+            return
+        }
+        await sleep(pause)
+        if (pause < maxInterval) {
+            pause += pause
+        }
+    }
+    throw Error(`Timeout (${timeoutSeconds}s) reached waiting for condition ${condition}`)
+}
+
+/**
+ * Wait for resource to be deleted with increasing retry interval
+ * @param checkMethod - method, possibly returning `HttpError(404)`
+ * @param timeoutSeconds - maximum timeout
+ */
+export async function waitForResourceToBeDeleted(checkMethod: () => Promise<unknown>, timeoutSeconds: number): Promise<void> {
+    const timeLimit = Date.now() + timeoutSeconds * 1000
+    let pause = 0
+    while (timeLimit > Date.now()) {
+        await sleep(pause)
+        try {
+            await checkMethod()
+        } catch (e) {
+            if (e instanceof HttpError && e.statusCode === 404) {
+                return
+            }
+            throw e
+        }
+        pause += 1000
+    }
+    throw Error(`Timeout (${timeoutSeconds}s) reached waiting for resource to be unavailable`)
 }
