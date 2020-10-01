@@ -2337,6 +2337,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cidr-regex@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "cidr-regex@npm:3.1.1"
+  dependencies:
+    ip-regex: ^4.1.0
+  checksum: 780ebf0ff7caaec607e9b0e520d7d930812ffc99a68c7f80420e5e254ff24b945723e68b86306092432e9233850d6763b8735de8e7bc3b97f1f5366a964b595a
+  languageName: node
+  linkType: hard
+
 "cipher-base@npm:^1.0.0, cipher-base@npm:^1.0.1, cipher-base@npm:^1.0.3":
   version: 1.0.4
   resolution: "cipher-base@npm:1.0.4"
@@ -4380,6 +4389,13 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
+"ip-regex@npm:^4.1.0":
+  version: 4.2.0
+  resolution: "ip-regex@npm:4.2.0"
+  checksum: 9e376018e64da89756e27d3f1b3313abc85291b5d1b5b9878f26b3934ecb04fa512116bf66b6dcd9553ba0b88af4feaaedbccd86f0ba6c05e464642ccb8504c5
+  languageName: node
+  linkType: hard
+
 "is-accessor-descriptor@npm:^0.1.6":
   version: 0.1.6
   resolution: "is-accessor-descriptor@npm:0.1.6"
@@ -4427,6 +4443,15 @@ fsevents@^2.1.2:
   bin:
     is-ci: bin.js
   checksum: 09083018edafd63221ff0506356f13c0aaf4b75a6435ea648bc67d07ddab199b2d5b9297de43d0821df1a14c18cd9f1edd1775a0166abfe37390843e79137213
+  languageName: node
+  linkType: hard
+
+"is-cidr@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "is-cidr@npm:4.0.2"
+  dependencies:
+    cidr-regex: ^3.1.1
+  checksum: 62edf22596fac22a6fca0d462d5eeabb4baaa78a715b7d81bad575a3655fd07291d02f6aee3496e98e78dc3cdbecb0122a0122f8385a36a7538d7ae178eb4a33
   languageName: node
   linkType: hard
 
@@ -6273,6 +6298,7 @@ fsevents@^2.1.2:
     eslint-import-resolver-typescript: ^2.3.0
     eslint-plugin-import: ^2.22.1
     eslint-plugin-node: ^11.1.0
+    is-cidr: ^4.0.2
     isomorphic-fetch: ^3.0.0
     jest: ^26.4.2
     js-sha256: ^0.9.0
