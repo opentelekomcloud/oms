@@ -1,4 +1,5 @@
 import HttpClient, { HttpError, RequestOptsAbs } from '../core/http'
+import _ from 'lodash'
 
 /**
  * Describes service type with type, version and constructor
@@ -34,6 +35,8 @@ export function bareUrl(serviceUrl: string): string {
  * Abstract page having only default properties
  */
 export interface Page {
+    [key: string]: string | unknown[] | undefined
+
     readonly schema?: string
     readonly next?: string
     readonly first?: string
@@ -42,7 +45,7 @@ export interface Page {
 /**
  * Pager for lazy pagination implementation. <T> describes page structure
  */
-export class Pager<T extends Page> implements AsyncIterable<T>, AsyncIterator<T, T> {
+export class Pager<T extends Page> implements AsyncIterable<T>, AsyncIterator<T, undefined> {
     // Service-bind http client
     readonly client: HttpClient
     readonly pageOpts: RequestOptsAbs
@@ -62,15 +65,60 @@ export class Pager<T extends Page> implements AsyncIterable<T>, AsyncIterator<T,
     /**
      * Load next paginator page
      */
-    async next(): Promise<IteratorResult<T, T>> {
+    async next(): Promise<IteratorResult<T, undefined>> {
+        if (!this.pageOpts.url) {
+            return { value: undefined, done: true }
+        }
         const resp = await this.client.get<T>(this.pageOpts)
         this.pageOpts.url = resp.data.next   // change next request url
         if (this.firstIteration) {
             this.pageOpts.params = undefined // remove params, the are already part of `next`
             this.firstIteration = false
         }
-        return { value: resp.data, done: !resp.data.next }
+        return { value: resp.data }
     }
+
+    /**
+     * Get single page with all page data
+     */
+    async all(): Promise<T> {
+        let archPage: T | undefined = undefined
+        let count = 0
+        for await (const page of this) {
+            count++
+            archPage = this.mergeTwoPages(archPage, page)
+        }
+        if (!archPage) {
+            throw Error('Failed to get merged pages')
+        }
+        console.log(`Loaded ${count} pages`)
+        return archPage
+    }
+
+    mergeTwoPages(base?: T, other?: T): T {
+        if (!other) {
+            if (!base) {
+                throw Error('No pages to merge')
+            }
+            return base
+        }
+        if (!base) {
+            return _.cloneDeep(other)
+        }
+        for (const k in base) {
+            if (!base.hasOwnProperty(k) || !other.hasOwnProperty(k)) {
+                continue
+            }
+            const val1 = base[k]
+            const val2 = other[k]
+            // merge only data arrays
+            if (val1 instanceof Array && val2 instanceof Array) {
+                base[k] = val1.concat(...val2) as T[Extract<keyof T, string>]
+            }
+        }
+        return base
+    }
+
 }
 
 function sleep(ms: number): Promise<void> {
