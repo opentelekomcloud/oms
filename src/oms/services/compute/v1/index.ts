@@ -20,6 +20,9 @@ export class ComputeV1 extends Service {
      */
     async listFlavors(az?: string): Promise<Flavor[]> {
         const flavors = await listFlavors(this.client, az)
+        if (!az) {
+            return flavors
+        }
         // AZ filtering is not working on server side, so still need to filter it
         return flavors.filter(f => {
             const azs = f.os_extra_specs['cond:operation:az'].split(',')

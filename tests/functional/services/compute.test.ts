@@ -1,6 +1,6 @@
-import { CloudConfig, CloudConfigHelper } from '../../../src/oms/core/types'
+import { CloudConfig, CloudConfigHelper } from '../../../src/oms/core'
 import Client from '../../../src/oms'
-import { ComputeV2 } from '../../../src/oms/services/compute'
+import { ComputeV1, ComputeV2 } from '../../../src/oms/services/compute'
 
 let defaultConfig: CloudConfig
 let defaultClient: Client
@@ -26,4 +26,15 @@ test('Nova: list key pairs', async () => {
     expect(keyPairs[0]).toHaveProperty('name')
     expect(keyPairs[0]).toHaveProperty('fingerprint')
     expect(keyPairs[0]).toHaveProperty('public_key')
+})
+
+test('ECS: list flavors', async () => {
+    const ecs = defaultClient.getService(ComputeV1)
+    const all = await ecs.listFlavors()
+    expect(all).toBeDefined()
+    expect(all[0]).toHaveProperty('id')
+    const az02flavs = await ecs.listFlavors('eu-de-02')
+    expect(az02flavs).toBeDefined()
+    expect(az02flavs[0]).toHaveProperty('id')
+    expect(az02flavs.length < all.length).toBeTruthy()
 })
