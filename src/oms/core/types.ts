@@ -1,3 +1,5 @@
+import { JSONSchema4, JSONSchema6, JSONSchema7 } from 'json-schema'
+
 export interface NameOrID {
     readonly id?: string
     readonly name?: string
@@ -84,3 +86,5 @@ export function normalizeDateTime(date?: string | Date): string | undefined {
         .toISOString()
         .replace(msRe, '')
 }
+
+export type JSONSchema = JSONSchema4 | JSONSchema6 | JSONSchema7

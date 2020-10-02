@@ -4,6 +4,8 @@
  */
 import _ from 'lodash';
 import { ParsedQuery, stringifyUrl } from 'query-string';
+import { validate } from 'json-schema'
+import { JSONSchema } from './types';
 
 require('isomorphic-fetch')
 
@@ -42,6 +44,9 @@ export interface RequestOptsAbs {
     headers?: AbsHeaders
     json?: Record<string, unknown>
     handler?: RequestConfigHandler
+
+    // json schema to validate response JSON with
+    schema?: JSONSchema
 }
 
 /**
@@ -93,6 +98,8 @@ export class RequestOpts implements RequestOptsAbs {
     body?: string
     handler?: RequestConfigHandler
 
+    schema: JSONSchema
+
     constructor(abs: RequestOptsAbs) {
         // check absolutely minimal requirements:
         if (!abs.method) {
@@ -121,6 +128,7 @@ export class RequestOpts implements RequestOptsAbs {
         if (abs.handler) {
             this.handler = abs.handler
         }
+        this.schema = abs.schema ? abs.schema : {}
     }
 }
 
@@ -188,15 +196,19 @@ export default class HttpClient {
             }, { encode: true, skipNull: true })
         }
         const response = await fetch(url, merged) as JSONResponse<T>
-        if (response.ok) {
-            const data = await response.text()
-            response.data = data ? JSON.parse(data) : {} as T
-        } else {
+        if (!response.ok) {
             throw new HttpError(
                 response.status,
                 `HTTP error received. ${response.status} ${response.statusText}: ${await response.text()}`
                 + `Request Opts:\n${JSON.stringify(opts)}`,
             )
+        }
+        const data = await response.text()
+        response.data = data ? JSON.parse(data) : {} as T
+        // will be validated against own 'schema' field, if one is provided
+        const result = validate(response.data, merged.schema)
+        if (!result.valid) {
+            throw Error(`Failed JSON Schema validation: ${result.errors}`)
         }
         return response
     }
