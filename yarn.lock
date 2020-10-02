@@ -840,6 +840,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/jsonschema@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@types/jsonschema@npm:1.1.1"
+  dependencies:
+    jsonschema: "*"
+  checksum: 83b8a6f3f504a635bf9c53e83397e9b47d4f57527aa4c37299257ea71129896221d862ac936833473be53cdbff8e1565be4f843c2e14a95365801789edc9df67
+  languageName: node
+  linkType: hard
+
 "@types/keyv@npm:*":
   version: 3.1.1
   resolution: "@types/keyv@npm:3.1.1"
@@ -5474,6 +5483,13 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
+"jsonschema@npm:*, jsonschema@npm:^1.2.7":
+  version: 1.2.7
+  resolution: "jsonschema@npm:1.2.7"
+  checksum: 8d6cee1c650c2a25c6bacd866333408b9ccec46f1b8d99fc8d2787cd802ea9b55a6b80a3049025566691e088a71e1464e4c0b313c9caa7369cb9d607a360a482
+  languageName: node
+  linkType: hard
+
 "jsprim@npm:^1.2.2":
   version: 1.4.1
   resolution: "jsprim@npm:1.4.1"
@@ -6284,6 +6300,7 @@ fsevents@^2.1.2:
   resolution: "oms@workspace:."
   dependencies:
     "@types/eslint": ^7
+    "@types/jsonschema": ^1.1.1
     "@types/lodash": ^4
     "@types/node": ^14.11.2
     "@types/query-string": ^6
@@ -6302,6 +6319,7 @@ fsevents@^2.1.2:
     isomorphic-fetch: ^3.0.0
     jest: ^26.4.2
     js-sha256: ^0.9.0
+    jsonschema: ^1.2.7
     lodash: ^4.17.20
     nyc: ^15.1.0
     query-string: ^6.13.2
