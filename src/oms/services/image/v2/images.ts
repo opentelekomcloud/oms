@@ -81,58 +81,58 @@ export interface ListImageOpts {
 }
 
 export interface Image {
-    id: string
-    protected: boolean
-    virtual_env_type: 'FusionCompute' | 'DataImage' | 'Ironic'
-    visibility: visibility
-    owner: string
-    status: imageStatus
-    name: string
-    container_format: string
-    disk_format: 'vhd' | 'raw' | 'zvhd' | 'qcow2'
-    min_ram: number
-    max_ram: number
-    min_disk: number
-    schema: string
-    self: string
+    readonly id: string
+    readonly protected: boolean
+    readonly virtual_env_type: 'FusionCompute' | 'DataImage' | 'Ironic'
+    readonly visibility: visibility
+    readonly owner: string
+    readonly status: imageStatus
+    readonly name: string
+    readonly container_format: string
+    readonly disk_format: 'vhd' | 'raw' | 'zvhd' | 'qcow2'
+    readonly min_ram: number
+    readonly max_ram: number
+    readonly min_disk: number
+    readonly schema: string
+    readonly self: string
     /* eslint-disable */
-    __backup_id?: string
-    __data_origin?: string
-    __description: string
-    __image_location: string
-    __image_size: number
-    __image_source_type: string
-    __is_config_init: boolean
-    __isregistered: boolean
-    __lazyloading: boolean
-    __originalimagename?: string
-    __imagetype: 'gold' | 'shared' | 'private'
-    __os_bit: string
-    __os_feature_list: string[]
-    __platform: string
-    __os_type: string
-    __os_version: string
-    __support_kvm: boolean
-    __support_xen: boolean
-    __support_largememory: boolean
-    __support_diskintensive: boolean
-    __support_highperformance: boolean
-    __support_xen_gpu_type: boolean
-    __support_kvm_gpu_type: boolean
-    __support_xen_hana: boolean
-    __support_kvm_infiniband: boolean
-    __productcode: string
-    __root_origin?: 'file'
-    __sequence_num: number
+    readonly __backup_id?: string
+    readonly __data_origin?: string
+    readonly __description: string
+    readonly __image_location: string
+    readonly __image_size: number
+    readonly __image_source_type: string
+    readonly __is_config_init: boolean
+    readonly __isregistered: boolean
+    readonly __lazyloading: boolean
+    readonly __originalimagename?: string
+    readonly __imagetype: 'gold' | 'shared' | 'private'
+    readonly __os_bit: string
+    readonly __os_feature_list: string[]
+    readonly __platform: string
+    readonly __os_type: string
+    readonly __os_version: string
+    readonly __support_kvm: boolean
+    readonly __support_xen: boolean
+    readonly __support_largememory: boolean
+    readonly __support_diskintensive: boolean
+    readonly __support_highperformance: boolean
+    readonly __support_xen_gpu_type: boolean
+    readonly __support_kvm_gpu_type: boolean
+    readonly __support_xen_hana: boolean
+    readonly __support_kvm_infiniband: boolean
+    readonly __productcode: string
+    readonly __root_origin?: 'file'
+    readonly __sequence_num: number
     /* eslint-enable */
-    tags: string[]
-    created_at: string
-    updated_at: string
-    active_at: string
-    deleted: boolean
-    deleted_at: string
-    hw_firmware_type: 'bios' | 'uefi'
-    file: string
+    readonly tags: string[]
+    readonly created_at: string
+    readonly updated_at: string
+    readonly active_at: string
+    readonly deleted: boolean
+    readonly deleted_at: string
+    readonly hw_firmware_type: 'bios' | 'uefi'
+    readonly file: string
 }
 
 
