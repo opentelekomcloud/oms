@@ -1,8 +1,9 @@
-import { AuthOptions } from '../../../core/types'
+import { AuthOptions } from '../../../core'
 import Service, { bareUrl } from '../../base'
 import HttpClient from '../../../core/http'
 import { createToken, ResponseToken, verifyToken } from './tokens'
 import { createCredential, Credential } from './credentials'
+import { listProjects, Project } from './projects'
 
 export * from './tokens'
 export * from './endpoints'
@@ -37,6 +38,13 @@ export class IdentityV3 extends Service {
      */
     async getAKSK(userID: string, description?: string): Promise<Credential> {
         return await createCredential(this.client, userID, description)
+    }
+
+    /**
+     * List available projects (tenants)
+     */
+    async listProjects(): Promise<Project[]> {
+        return await listProjects(this.client)
     }
 
 }
