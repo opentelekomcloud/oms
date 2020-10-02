@@ -1,10 +1,6 @@
-import Service, { bareUrl, Pager } from './base';
-import HttpClient from '../core/http';
-import { normalizeDateTime } from '../core/types';
-
-class image {
-
-}
+import { normalizeDateTime } from '../../../core'
+import HttpClient from '../../../core/http'
+import { Page, Pager } from '../../base'
 
 /**
  * Specifies the image status. The value can be one of the following:
@@ -40,8 +36,8 @@ type visibility = 'public' | 'private' | 'shared'
 type operator = 'gt' | 'gte' | 'lt' | 'lte' | 'eq' | 'neq'
 
 interface timeRange {
-    operator: operator
-    date: string | Date
+    readonly operator: operator
+    readonly date: string | Date
 }
 
 function rangeToString(range?: timeRange): string | undefined {
@@ -51,7 +47,6 @@ function rangeToString(range?: timeRange): string | undefined {
     return `${range.operator}:${normalizeDateTime(range.date)}`
 }
 
-// eslint-disable-next-line camelcase
 export interface ListImageOpts {
     readonly protected?: boolean
     readonly visibility?: visibility
@@ -84,6 +79,62 @@ export interface ListImageOpts {
     readonly sort_key?: string
     readonly sort_dir?: string
 }
+
+export interface Image {
+    readonly id: string
+    readonly protected: boolean
+    readonly virtual_env_type: 'FusionCompute' | 'DataImage' | 'Ironic'
+    readonly visibility: visibility
+    readonly owner: string
+    readonly status: imageStatus
+    readonly name: string
+    readonly container_format: string
+    readonly disk_format: 'vhd' | 'raw' | 'zvhd' | 'qcow2'
+    readonly min_ram: number
+    readonly max_ram: number
+    readonly min_disk: number
+    readonly schema: string
+    readonly self: string
+    /* eslint-disable */
+    readonly __backup_id?: string
+    readonly __data_origin?: string
+    readonly __description: string
+    readonly __image_location: string
+    readonly __image_size: number
+    readonly __image_source_type: string
+    readonly __is_config_init: boolean
+    readonly __isregistered: boolean
+    readonly __lazyloading: boolean
+    readonly __originalimagename?: string
+    readonly __imagetype: 'gold' | 'shared' | 'private'
+    readonly __os_bit: string
+    readonly __os_feature_list: string[]
+    readonly __platform: string
+    readonly __os_type: string
+    readonly __os_version: string
+    readonly __support_kvm: boolean
+    readonly __support_xen: boolean
+    readonly __support_largememory: boolean
+    readonly __support_diskintensive: boolean
+    readonly __support_highperformance: boolean
+    readonly __support_xen_gpu_type: boolean
+    readonly __support_kvm_gpu_type: boolean
+    readonly __support_xen_hana: boolean
+    readonly __support_kvm_infiniband: boolean
+    readonly __productcode: string
+    readonly __root_origin?: 'file'
+    readonly __sequence_num: number
+    /* eslint-enable */
+    readonly tags: string[]
+    readonly created_at: string
+    readonly updated_at: string
+    readonly active_at: string
+    readonly deleted: boolean
+    readonly deleted_at: string
+    readonly hw_firmware_type: 'bios' | 'uefi'
+    readonly file: string
+}
+
 
 function toQueryParams(opts?: ListImageOpts) {
     if (!opts) {
@@ -120,23 +171,11 @@ function toQueryParams(opts?: ListImageOpts) {
     }
 }
 
-export interface ImagePage {
-    readonly first: string
-    readonly next?: string
-    readonly schema: string
-    readonly images: image[]
+export interface ImagePage extends Page {
+    readonly images: Image[]
 }
 
-export default class ImageV2 extends Service {
-    static readonly type = 'image'
-    static readonly version = '2'
-
-    constructor(url: string, httpClient: HttpClient) {
-        super(bareUrl(url), httpClient)
-    }
-
-    listImages(opts?: ListImageOpts): Pager<ImagePage> {
-        const params = toQueryParams(opts)
-        return new Pager<ImagePage>({ url: '/v2/images', params }, this.client)
-    }
+export function listImages(client: HttpClient, opts: ListImageOpts): Pager<ImagePage> {
+    const params = toQueryParams(opts)
+    return new Pager<ImagePage>({ url: '/v2/images', params: params }, client)
 }

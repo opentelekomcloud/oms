@@ -3,9 +3,9 @@
  * @jest-environment node
  */
 import Client from '../../src/oms'
-import { CloudConfigHelper } from '../../src/oms/core/types'
-import ImageV2 from '../../src/oms/services/image'
+import { CloudConfigHelper } from '../../src/oms/core'
 import { IdentityV3 } from '../../src/oms/services/identity/v3'
+import { ImageV2 } from '../../src/oms/services/image'
 
 
 const authUrl = 'https://iam.eu-de.otc.t-systems.com'
@@ -24,7 +24,7 @@ test('Client_auth', async () => {
 test('Client_serviceCatalog', async () => {
     const client = new Client(config!)
     await client.authenticate()
-    expect(Array.from(client.serviceMap.keys())).toHaveLength(Object.keys(client.services).length)
+    expect(Array.from(client.serviceMap.keys())).toHaveLength(Object.keys(client.knownServices).length)
     const iam = client.getService(IdentityV3)
     expect(iam.client.baseConfig.baseURL).toContain('iam.')
     const ims = client.getService(ImageV2)
@@ -33,7 +33,7 @@ test('Client_serviceCatalog', async () => {
 
 test('Client_invalidService', async () => {
     const client = new Client(config!)
-    client.services.push('identiti')
+    client.knownServices.push('identiti')
     await client.authenticate()
-    expect(Array.from(client.serviceMap.keys())).toHaveLength(client.services.length - 1)
+    expect(Array.from(client.serviceMap.keys())).toHaveLength(client.knownServices.length - 1)
 })
