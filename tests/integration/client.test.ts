@@ -1,4 +1,4 @@
-import { cloudConfig, CloudConfig } from '../../src/oms/core/types'
+import { cloudConfig, CloudConfig } from '../../src/oms/core'
 import { authServerUrl, fakeAuthServer, fakeRegion, fakeServiceServer, fakeToken } from '../utils/servers'
 import Client from '../../src/oms'
 import { randomString } from '../utils/helpers'
@@ -15,7 +15,7 @@ afterAll(() => {
     fakeServiceServer.close()
 })
 
-test('Client: authToken', async () => {
+test.skip('Client: authToken', async () => {
     const cfg = cloudConfig(authServerUrl())
         .withPassword('MYDOMAIN', 'MYNAME', '>>>Super!Secret<<<', fakeRegion)
     const client = new Client(cfg)
@@ -53,7 +53,7 @@ test('Client: register service', () => {
     expect(ps.client.baseConfig.baseURL).toBe(srv.url)
 })
 
-test('Client: get not registered service', async () => {
+test.skip('Client: get not registered service', async () => {
     const cfg = cloudConfig(authServerUrl())
         .withPassword('MYDOMAIN', 'MYNAME', '>>>Super!Secret<<<', fakeRegion)
     const client = new Client(cfg)
