@@ -52,7 +52,7 @@ export default class Client {
         )
     }
 
-    services = [
+    knownServices = [
         'identity',
         'image',
         'compute',
@@ -87,8 +87,8 @@ export default class Client {
                 (e.region === this.region || e.region === '*') &&
                 e.interface === 'public',
             )
-            if (ep) {
-                this.serviceMap.set(ce.type, ep.url)
+            if (ep && this.knownServices.includes(ce.type)) {
+                this.registerService(ce.type, ep.url)
             }
         })
     }
