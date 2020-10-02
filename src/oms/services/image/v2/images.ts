@@ -1,10 +1,6 @@
-import Service, { bareUrl, Pager } from './base';
-import HttpClient from '../core/http';
-import { normalizeDateTime } from '../core/types';
-
-class image {
-
-}
+import { normalizeDateTime } from '../../../core'
+import HttpClient from '../../../core/http'
+import { Page, Pager } from '../../base'
 
 /**
  * Specifies the image status. The value can be one of the following:
@@ -40,8 +36,8 @@ type visibility = 'public' | 'private' | 'shared'
 type operator = 'gt' | 'gte' | 'lt' | 'lte' | 'eq' | 'neq'
 
 interface timeRange {
-    operator: operator
-    date: string | Date
+    readonly operator: operator
+    readonly date: string | Date
 }
 
 function rangeToString(range?: timeRange): string | undefined {
@@ -51,7 +47,6 @@ function rangeToString(range?: timeRange): string | undefined {
     return `${range.operator}:${normalizeDateTime(range.date)}`
 }
 
-// eslint-disable-next-line camelcase
 export interface ListImageOpts {
     readonly protected?: boolean
     readonly visibility?: visibility
@@ -84,6 +79,62 @@ export interface ListImageOpts {
     readonly sort_key?: string
     readonly sort_dir?: string
 }
+
+export interface Image {
+    id: string
+    protected: boolean
+    virtual_env_type: 'FusionCompute' | 'DataImage' | 'Ironic'
+    visibility: visibility
+    owner: string
+    status: imageStatus
+    name: string
+    container_format: string
+    disk_format: 'vhd' | 'raw' | 'zvhd' | 'qcow2'
+    min_ram: number
+    max_ram: number
+    min_disk: number
+    schema: string
+    self: string
+    /* eslint-disable */
+    __backup_id?: string
+    __data_origin?: string
+    __description: string
+    __image_location: string
+    __image_size: number
+    __image_source_type: string
+    __is_config_init: boolean
+    __isregistered: boolean
+    __lazyloading: boolean
+    __originalimagename?: string
+    __imagetype: 'gold' | 'shared' | 'private'
+    __os_bit: string
+    __os_feature_list: string[]
+    __platform: string
+    __os_type: string
+    __os_version: string
+    __support_kvm: boolean
+    __support_xen: boolean
+    __support_largememory: boolean
+    __support_diskintensive: boolean
+    __support_highperformance: boolean
+    __support_xen_gpu_type: boolean
+    __support_kvm_gpu_type: boolean
+    __support_xen_hana: boolean
+    __support_kvm_infiniband: boolean
+    __productcode: string
+    __root_origin?: 'file'
+    __sequence_num: number
+    /* eslint-enable */
+    tags: string[]
+    created_at: string
+    updated_at: string
+    active_at: string
+    deleted: boolean
+    deleted_at: string
+    hw_firmware_type: 'bios' | 'uefi'
+    file: string
+}
+
 
 function toQueryParams(opts?: ListImageOpts) {
     if (!opts) {
@@ -120,23 +171,11 @@ function toQueryParams(opts?: ListImageOpts) {
     }
 }
 
-export interface ImagePage {
-    readonly first: string
-    readonly next?: string
-    readonly schema: string
-    readonly images: image[]
+export interface ImagePage extends Page {
+    readonly images: Image[]
 }
 
-export default class ImageV2 extends Service {
-    static readonly type = 'image'
-    static readonly version = '2'
-
-    constructor(url: string, httpClient: HttpClient) {
-        super(bareUrl(url), httpClient)
-    }
-
-    listImages(opts?: ListImageOpts): Pager<ImagePage> {
-        const params = toQueryParams(opts)
-        return new Pager<ImagePage>({ url: '/v2/images', params }, this.client)
-    }
+export function listImages(client: HttpClient, opts: ListImageOpts): Pager<ImagePage> {
+    const params = toQueryParams(opts)
+    return new Pager<ImagePage>({ url: '/v2/images', params: params }, client)
 }
