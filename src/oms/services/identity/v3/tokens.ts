@@ -1,4 +1,4 @@
-import { AuthOptions, NameOrID } from '../../../core/types'
+import { AuthOptions, NameOrID } from '../../../core'
 import HttpClient from '../../../core/http'
 
 const url = '/v3/auth/tokens'
