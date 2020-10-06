@@ -3,8 +3,7 @@
     merge-mode: squash-merge
     check:
       jobs:
-        - job:
-            name: simple
+        - simple:
             vars:
               simple_run:
                 - yarn lint
@@ -15,8 +14,7 @@
                 - yarn cov-report:codecov
     gate:
       jobs:
-        - job:
-            name: simple
+        - simple:
             vars:
               simple_env:
                 OS_TOKEN: os_token
