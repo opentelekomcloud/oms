@@ -4,28 +4,28 @@
     check:
       jobs:
         - job:
-          name: simple
-          vars:
-            simple_run:
-              - yarn lint
-              - yarn build
-              - yarn unit
-              - yarn intergation
-              - yarn cov-merge
-              - yarn cov-report:codecov
+            name: simple
+            vars:
+              simple_run:
+                - yarn lint
+                - yarn build
+                - yarn unit
+                - yarn intergation
+                - yarn cov-merge
+                - yarn cov-report:codecov
     gate:
       jobs:
         - job:
-          name: simple
-          vars:
-            simple_env:
-              OS_TOKEN: os_token
-            simple_run:
-              - yarn lint
-              - yarn build
-              - yarn test
-              - yarn cov-merge
-              - yarn cov-report:codecov
+            name: simple
+            vars:
+              simple_env:
+                OS_TOKEN: os_token
+              simple_run:
+                - yarn lint
+                - yarn build
+                - yarn test
+                - yarn cov-merge
+                - yarn cov-report:codecov
 
 - job:
     name: "simple"
