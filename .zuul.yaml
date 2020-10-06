@@ -9,7 +9,7 @@
                 - yarn lint
                 - yarn build
                 - yarn unit
-                - yarn intergation
+                - yarn integration
                 - yarn cov-merge
                 - yarn cov-report:codecov
     gate:
