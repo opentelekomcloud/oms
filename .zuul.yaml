@@ -3,25 +3,10 @@
     merge-mode: squash-merge
     check:
       jobs:
-        - simple:
-            vars:
-              simple_run:
-                - yarn lint
-                - yarn build
-                - yarn unit
-                - yarn integration
-                - yarn cov-merge
-                - yarn cov-report:codecov
+        - simple
     gate:
       jobs:
-        - simple-secure:
-            vars:
-              simple_run:
-                - yarn lint
-                - yarn build
-                - yarn test
-                - yarn cov-merge
-                - yarn cov-report:codecov
+        - simple
 
 - job:
     name: "simple"
@@ -30,56 +15,10 @@
       simple_source_image: "node:latest"
       simple_prerun:
         - yarn install
-- job:
-    name: "simple-secure"
-    parent: "simple"
-    vars:
-      simple_env:
-        OS_TOKEN: os_token
-    secrets:
-      - os_token
-
-- secret:
-    name: os_token
-    data:
-      secret: !encrypted/pkcs1-oaep
-        - MpIQILoVzegR/fYVNgqPOqwjePMGZ2PsqbnS9pmDk2of5P3MeqN6ehgQdM/Dww9VqWGS+
-          oHO85Jqj/L5eaiArwbexysSzRXRY5z8Ko8bDMIRzeGpuGZ/0iYnjxetSc31XGXub4Ubst
-          REJBwTHfcQ/HxFTWhKgRrmuoa6mdFSvQxIOwZhd9JzqUAtqOY37X0j83jOQOUVK71bNTy
-          sj0Ztmme7yz8hF9iPKHaRPgAu+1+pJvjJSa8mShZB0gO5Y59o54BQtSizaDmnoO9F1kph
-          pchCurHzgCzeYJiky4x/gZEsHSpMFXkrB56hdu/govaEenrmdjwvVo6an4Xs7ZqJmDjTw
-          8doSLtMSJ7OxqNDihVtYZpGBFevK9UtRg4BpAAZ7SfVFhqVFcaCOxuxO2neamnHxY8UT5
-          R5mytRq/z9YIe1mcM/A4dIB/zUrqLhVPhFzRdm7etrMsX8L6ThMvFYnb6jK68yFuA3GVE
-          yXhdHRK1+8Ddo8GXcyNoxOesIx6U8uEiwwkv1A7fcIAHSDeo0nbzrHHLktvqrUEZEc6ul
-          TZdPV+3ZsPcJduHjjZN9oEhmhm/GwaZVBOuSlmIR0gjEuQqN1NNXrGIu5Ug7lO3n/hQBL
-          ABARXmvJRy+0JM6bdB1IyKyJwF939yBc444uHg5uYS2iToaWnn59gX5cbPYCJg=
-        - ejQHHldTEoFH32N5XSzXzLazTthyqm5iTOvsUmD0nHbjsMLznUpphT4GgYSuVpqQRhBMb
-          SF5n1EWKeXASXvu1DAmHKLKmspv2ZCs+0vwcXYWJ81Z1U+IfMnzay+MnDMdLUHk+Sp7t7
-          PRibLbrRNurtmtvMgOM2KdbDKvbPgbl1N8e6ByE6p/vX5At1nuL8I3/ASCLuqOFZMhKLH
-          l76PjYauXxqlfRrmWZIr0iu5SAOHRCYeS5rBSN+wByb1azvyX206eOe9vYOScLnmLHZ2s
-          +8alptGtmzzrG+cNdNNMWaXxqV6Vmh3L3F8bwme2m9QPXZDV6OdKSmCkrrnW+tB8OVxMP
-          1FMxpxHYNczU7TdxYbzjSfYDkMXa0E6KZPzEwyLNPli2Q4p3gGnXzO21DCjTwUckFuIJO
-          TR2xdF6ZEbAK8/gKhA4GEuUhcFXssnkV8N44aRD0G4ime50ltzKOC5yF7BF95HbOGFR5A
-          hK6/gzyMDfXbDMmbRbTXsuWNrCE+Pt5GA7rh539slCgd9+BMF2DzeiXoZlo6MLT+BBaZo
-          53kF40hjBNLC18RP+vyjsJpW4+cv+/ynoIGWJXllLC6rgbhzEewlChXwJThb0epcCLa2U
-          Etp8PTWZzDHfVYeqXNbJlJWtER7POgb6qOGDBqcBza2mbCGoItBoG8zhh5JiWE=
-        - itjq+nyiGZ30z+PaBFkyqOKCLm3gjXR53uJ+ywH7VdeX/v9J5eVEixIKyPMjzLPwalYpY
-          jvltb3N5wiB1ErFa0rLGHxEq4m3hipIZcNcay/a5WNFqt9IYdOGCeGgLZPfsLy4J1c2go
-          Kzk3ciSwInZNlRhg4lgwkCRhW2twiu+qEJc89jJ5EQ9ZIvqxAotNpozwzST/XS3+A6iuY
-          fpy9GDab35qPU1rFNrAlD+y9moFhEHXPIZqT19x0E7c2dWqqOQwFGm88+F7b1ZwSPfVCK
-          CFD5LIZArAVcswsSHDpjxXxBRRdcSD6BVehPnM5HEL6e1uSIbic2/cK4HRVBdRrtd8tKc
-          qRZgp8gUwoXAxTrxEvEB6xuUfS4kzm+q4gDHIla5slESbWuPSc6AiQElGEraNOliuEs73
-          MpSIl1pmSYWYrfFQ4OwHWGdMVovTrXDu2Sp0WaaVHOWzi32y2ybWDB5a/1xATuVvq5FnR
-          oyCEOzTNGxGYddWoRlchhb6syY6ao3NRevGrXk88ShucqUIFwWFp2SIU8OP/abl8p+gNY
-          ZpN5aAiwgv40Fn1jnjztvpxCp4iQ0p99tQqmOGpL1UDDvgaW8LzJAWgp4tklpt+yVxe/z
-          +keNQjYIecdy3wt7/4M/Yx/J8oW/VUWSafqvmRSlQyazaKUOyRMVJ6auYaPoU0=
-        - OHpkBwQ+FtA4Rf/fJgpvXfBKE9cIkZxhGD2S9DxQXZvVXjh0pzBNXq0hEQIgxqsCvGJ3Q
-          6jymIyo1lR1EXYD0LLiaFg42y+TwZSq3lkxkIyxZ5Mi3jqEue866L/9NK1qyV1TjyCDKE
-          cI46zwc/mezLjph4SNluM5nP+pjf846gQPxZqonUqCdx844FOJ00rrxoRD2bYhHibhQYI
-          TX1P86hwmRKEtDzQb0QRoNp2Ks//CcVGsX0sIrUCOzsjJ4uIoKq4BzBVxbVnxzKclbtL/
-          Z9zC084w4eJYVpjkZ8XV+8zwURdja+1jRVZlUUEUNwD0IQD7aqoMSINK2u/iaVSaUaeWB
-          pydA+n6965krmscfl3n3hudyGoBT7JY1Y2ZhkMiYlgWFcm2kMt6papOndjQPVxqin48vv
-          damn0+JJp/ZV9fFUYiwsOSzatoJ4Ic1qKIf8dmVx1LaIoBEY8DJq7Kq3d76ziVofv+Xzb
-          hII4M4/SikpckZDGa6SaQNL+J/E5Xt/d+d3y2VYGPLsPKYLzSbawnGTPWPUOab/4vb688
-          18PdnJQ9jazaG6VKDRfQczdDeDd3kbs5rag607xIjlbN+7BqT/uwDjnm3vcm/r5sLokUQ
-          XYt7eG5hGoKxXOnK45XKV0BlANwfzVjwv6czGv+6HBr1k86/DtnYhh++ixN+oE=
+      simple_run:
+        - yarn lint
+        - yarn build
+        - yarn unit
+        - yarn integration
+        - yarn cov-merge
+        - yarn cov-report:codecov
