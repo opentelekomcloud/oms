@@ -1,4 +1,4 @@
-import { cloudConfig } from '../../../src/oms/core/types'
+import { cloudConfig } from '../../../src/oms/core'
 import Client from '../../../src/oms'
 import { VpcV1 } from '../../../src/oms/services/network'
 import { randomString } from '../../utils/helpers'
@@ -13,9 +13,9 @@ const config = cloudConfig(authUrl).withToken(t)
 const client = new Client(config)
 
 const orphans: {
-    vpc?: VPC
-    subnet?: Subnet
-} = {}
+    vpcs: VPC[]
+    subnets: Subnet[]
+} = { vpcs: [], subnets: [] }
 
 jest.setTimeout(1000000)  // for debug
 
@@ -26,12 +26,15 @@ beforeAll(async () => {
 afterAll(async () => {
     await client.authenticate()
     const nw = client.getService(VpcV1)
-    if (orphans.subnet) {
-        await nw.deleteSubnet(orphans.subnet.id, orphans.subnet.vpc_id)
+    for (const subnet of orphans.subnets) {
+        await nw.deleteSubnet(subnet.id, subnet.vpc_id)
     }
-    if (orphans.vpc) {
-        await nw.deleteVPC(orphans.vpc.id)
-    }
+    await Promise.all([
+        orphans.subnets.map(subnet => nw.deleteSubnet(subnet.id, subnet.vpc_id)),
+    ])
+    await Promise.all([
+        orphans.vpcs.map(vpc => nw.deleteVPC(vpc.id)),
+    ])
 })
 
 test('VPC/Subnet: lifecycle', async () => {
@@ -46,7 +49,7 @@ test('VPC/Subnet: lifecycle', async () => {
     })
     expect(vpc).toBeDefined()
     expect(vpc.id).toBeDefined()
-    orphans.vpc = vpc
+    orphans.vpcs.push(vpc)
     expect(vpc.status).toBe('OK')
     expect(vpc.name).toBe(name)
     expect(vpc.cidr).toBe(cidr)
@@ -64,7 +67,7 @@ test('VPC/Subnet: lifecycle', async () => {
     const subnet = await nw.createSubnet(opts)
     expect(subnet).toBeDefined()
     expect(subnet.id).toBeDefined()
-    orphans.subnet = subnet
+    orphans.subnets.push(subnet)
     expect(subnet.vpc_id).toBe(vpc.id)
     expect(subnet.name).toBe(opts.name)
     expect(subnet.cidr).toBe(opts.cidr)
@@ -80,9 +83,28 @@ test('VPC/Subnet: lifecycle', async () => {
     expect(snList.find(s => s.id === subnet.id)).toBeDefined()
 
     await nw.deleteSubnet(subnet.id)
-    orphans.subnet = undefined
+    orphans.subnets.splice(orphans.subnets.indexOf(subnet))
 
     await nw.deleteVPC(vpc.id)
-    orphans.vpc = undefined
+    orphans.vpcs.splice(orphans.vpcs.indexOf(vpc))
 })
 
+test('Sec Groups: lifecycle', async () => {
+    const nw = client.getService(VpcV1)
+    const sgOpts = {
+        name: 'oms-test-sg',
+    }
+    const sg = await nw.createSecurityGroup(sgOpts)
+    expect(sg).toHaveProperty('id')
+    expect(sg.security_group_rules.length).toBe(2)  // default rules
+
+    let sgs = await nw.listSecurityGroups({})
+    expect(sgs.find(s => s.id === sg.id)).toBeTruthy()
+
+    sgs = await nw.listSecurityGroups()
+    expect(sgs.find(s => s.id === sg.id)).toBeTruthy()
+
+    await nw.deleteSecurityGroup(sg.id)
+    sgs = await nw.listSecurityGroups()
+    expect(sgs.find(s => s.id === sg.id)).not.toBeTruthy()
+})

@@ -48,4 +48,3 @@ export class IdentityV3 extends Service {
     }
 
 }
-
