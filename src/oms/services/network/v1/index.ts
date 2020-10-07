@@ -9,6 +9,14 @@ import {
     listSubnets,
     Subnet,
 } from './subnets'
+import {
+    CreateOpts as SGCreateOpts,
+    createSecurityGroup,
+    deleteSecurityGroup,
+    ListOpts as SecGroupListOpts,
+    listSecurityGroups,
+    SecurityGroup,
+} from './secgroups'
 
 export { VPC } from './vpcs'
 export { Subnet } from './subnets'
@@ -121,5 +129,32 @@ export class VpcV1 extends Service {
         }
         await deleteSubnet(this.client, vpc_id, subnetID)
         await waitForResourceToBeDeleted(() => this.getSubnet(subnetID), 120)
+    }
+
+    /**
+     * List existing security groups
+     * @param opts
+     */
+    async listSecurityGroups(opts?: SecGroupListOpts): Promise<SecurityGroup[]> {
+        if (!opts) {
+            opts = {}
+        }
+        return listSecurityGroups(this.client, opts)
+    }
+
+    /**
+     * Create new security group
+     * @param opts
+     */
+    async createSecurityGroup(opts: SGCreateOpts): Promise<SecurityGroup> {
+        return createSecurityGroup(this.client, opts)
+    }
+
+    /**
+     * Delete existing security group
+     * @param id
+     */
+    async deleteSecurityGroup(id: string): Promise<void> {
+        return deleteSecurityGroup(this.client, id)
     }
 }
