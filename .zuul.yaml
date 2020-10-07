@@ -20,5 +20,3 @@
         - yarn build
         - yarn unit
         - yarn integration
-        - yarn cov-merge
-        - yarn cov-report:codecov
