@@ -1,3 +1,22 @@
 ---
 - project:
     merge-mode: squash-merge
+    check:
+      jobs:
+        - simple
+    gate:
+      jobs:
+        - simple
+
+- job:
+    name: "simple"
+    parent: "simpleton"
+    vars:
+      simple_source_image: "node:latest"
+      simple_prerun:
+        - yarn install
+      simple_run:
+        - yarn lint
+        - yarn build
+        - yarn unit
+        - yarn integration
