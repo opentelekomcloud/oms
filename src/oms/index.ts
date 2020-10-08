@@ -52,14 +52,6 @@ export default class Client {
         )
     }
 
-    knownServices = [
-        'identity',
-        'image',
-        'compute',
-        'ecs',
-        'vpc',
-    ]
-
     serviceMap: Map<string, string> = new Map<string, string>()
 
     registerService(type: string, url: string): void {
@@ -69,7 +61,7 @@ export default class Client {
     getService<S extends Service>(Type: ServiceType<S>): S {
         const serviceURL = this.serviceMap.get(Type.type)
         if (!serviceURL) {
-            throw Error(`Service '${serviceURL}' is not registered`)
+            throw Error(`Service '${Type.type}' is not registered`)
         }
         return new Type(serviceURL, this.httpClient)
     }
@@ -87,7 +79,7 @@ export default class Client {
                 (e.region === this.region || e.region === '*') &&
                 e.interface === 'public',
             )
-            if (ep && this.knownServices.includes(ce.type)) {
+            if (ep) {
                 this.registerService(ce.type, ep.url)
             }
         })
