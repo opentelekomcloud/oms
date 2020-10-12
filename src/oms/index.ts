@@ -1,10 +1,12 @@
-import { AuthOptions, CloudConfig } from './core/types'
-import { signRequest } from './core/signer'
+import { AuthOptions, CloudConfig } from './core'
+import { signRequest } from './core'
 import Service, { ServiceType } from './services/base'
 import HttpClient from './core/http'
 import _ from 'lodash'
 import { CatalogEntity, IdentityV3, ResponseToken } from './services/identity/v3'
 
+export * from './core'
+export * from './services'
 
 /**
  * Client is base provider client
