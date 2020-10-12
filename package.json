@@ -1,11 +1,19 @@
 {
-  "name": "oms",
+  "name": "@opentelekomcloud/oms",
   "version": "0.0.1",
   "description": "Micro SDK for OpenTelekomCloud",
-  "repository": "https://github.com/opentelekomcloud/oms",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opentelekomcloud/oms.git"
+  },
   "author": "Anton Kachurin <anton.kachurin@t-systems.com>",
   "license": "Apache-2.0",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "devDependencies": {
     "@types/eslint": "^7",
     "@types/jsonschema": "^1.1.1",
@@ -31,8 +39,7 @@
     "ts-jest": "^26.4.0",
     "ts-loader": "^8.0.4",
     "ts-node": "^9.0.0",
-    "typescript": "^4.0.3",
-    "yarn": "^1.22.5"
+    "typescript": "^4.0.3"
   },
   "scripts": {
     "cov-rename": "mv ./coverage/coverage-final.json ./coverage/coverage-$0.json",
@@ -54,5 +61,13 @@
     "js-sha256": "^0.9.0",
     "lodash": "^4.17.20",
     "query-string": "^6.13.2"
+  },
+  "bugs": {
+    "url": "https://github.com/opentelekomcloud/oms/issues"
+  },
+  "homepage": "https://github.com/opentelekomcloud/oms#readme",
+  "directories": {
+    "lib": "dist",
+    "test": "tests"
   }
 }
