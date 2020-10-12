@@ -652,7 +652,6 @@ __metadata:
   resolution: "@opentelekomcloud/oms@workspace:."
   dependencies:
     "@types/eslint": ^7
-    "@types/jsonschema": ^1.1.1
     "@types/lodash": ^4
     "@types/node": ^14.11.2
     "@types/query-string": ^6
@@ -874,15 +873,6 @@ __metadata:
   version: 0.0.29
   resolution: "@types/json5@npm:0.0.29"
   checksum: 66e9ac0143ec521522c7bb670301e9836ee886207eeed1aab6d4854a1b19b404ab3a54cd8d449f9b1f13acc357f540be96f8ac2d1e86e301eab52ae0f9a4066f
-  languageName: node
-  linkType: hard
-
-"@types/jsonschema@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@types/jsonschema@npm:1.1.1"
-  dependencies:
-    jsonschema: "*"
-  checksum: 83b8a6f3f504a635bf9c53e83397e9b47d4f57527aa4c37299257ea71129896221d862ac936833473be53cdbff8e1565be4f843c2e14a95365801789edc9df67
   languageName: node
   linkType: hard
 
@@ -5581,7 +5571,7 @@ fsevents@^2.1.2:
   languageName: node
   linkType: hard
 
-"jsonschema@npm:*, jsonschema@npm:^1.2.7":
+"jsonschema@npm:^1.2.7":
   version: 1.2.11
   resolution: "jsonschema@npm:1.2.11"
   checksum: cc7de9620544abc424ceb25a10ad4cf1ccd8b60d18e167f572f4a9e852c5118e642cbb6c90b3f2957a892089b177732146d8ca7617021004cdbff0dc8f1efa58
