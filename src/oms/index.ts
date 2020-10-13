@@ -64,7 +64,9 @@ export default class Client {
         if (!serviceURL) {
             throw Error(`Service '${Type.type}' is not registered`)
         }
-        return new Type(serviceURL, this.httpClient)
+        const srv = new Type(serviceURL, this.httpClient)
+        srv.projectID = this.projectID
+        return srv
     }
 
     private getIdentity(): IdentityV3 {

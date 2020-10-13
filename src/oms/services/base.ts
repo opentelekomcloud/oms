@@ -17,6 +17,8 @@ export default abstract class Service {
     static readonly type: string = ''
     client: HttpClient
 
+    projectID = ''
+
     protected constructor(url: string, client: HttpClient) {
         this.client = client.child({ baseURL: url })
     }
