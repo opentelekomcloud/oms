@@ -1,8 +1,8 @@
-import _ from 'lodash';
+import sampleSize from 'lodash/sampleSize'
 
 const defaultCharset = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 
 export function randomString(size: number): string {
-    const samp = _.sampleSize(defaultCharset, size) as string[]
+    const samp = sampleSize(defaultCharset, size) as string[]
     return samp.join('')
 }

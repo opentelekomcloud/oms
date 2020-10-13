@@ -2,10 +2,11 @@
  * Simple implementation of HTTP client based on `fetch` with
  * possibility to inject pre-request configuration handlers
  */
-import _ from 'lodash';
-import { ParsedQuery, stringifyUrl } from 'query-string';
+import cloneDeep from 'lodash/cloneDeep'
+import isEmpty from 'lodash/isEmpty'
+import { ParsedQuery, stringifyUrl } from 'query-string'
 import { validate } from 'json-schema'
-import { JSONSchema } from './types';
+import { JSONSchema } from './types'
 
 require('isomorphic-fetch')
 
@@ -133,7 +134,7 @@ export class RequestOpts implements RequestOptsAbs {
 }
 
 function prepareConfig(base?: RequestOptsAbs) {
-    const baseConfig = base && !_.isEmpty(base) ? _.cloneDeep(base) : {}
+    const baseConfig = base && !isEmpty(base) ? cloneDeep(base) : {}
     baseConfig.headers = mergeHeaders(baseConfig.headers)
     baseConfig.headers.set('User-Agent', 'OpenTelekomCloud JS/v1.0')
     return baseConfig
@@ -161,7 +162,7 @@ export default class HttpClient {
      * Create new HttpClient inheriting all client settings
      */
     child(overrideConfig?: RequestOptsAbs): HttpClient {
-        const client = _.cloneDeep(this)
+        const client = cloneDeep(this)
         client.baseConfig = overrideConfig ? prepareConfig(overrideConfig) : prepareConfig()
         return client
     }
