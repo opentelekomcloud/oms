@@ -1,6 +1,6 @@
 import { cloudConfig, CloudConfig } from '../../src/oms/core'
 import { authServerUrl, fakeAuthServer, fakeRegion, fakeServiceServer, fakeToken } from '../utils/servers'
-import Client from '../../src/oms'
+import { Client } from '../../src/oms'
 import { randomString } from '../utils/helpers'
 import Service from '../../src/oms/services/base'
 import HttpClient from '../../src/oms/core/http'
