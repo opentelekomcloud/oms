@@ -1,8 +1,7 @@
-import { AuthOptions, CloudConfig } from './core'
-import { signRequest } from './core'
+import { AuthOptions, CloudConfig, signRequest } from './core'
 import Service, { ServiceType } from './services/base'
 import HttpClient from './core/http'
-import _ from 'lodash'
+import isEmpty from 'lodash/isEmpty'
 import { CatalogEntity, IdentityV3, ResponseToken } from './services/identity/v3'
 
 export * from './core'
@@ -137,7 +136,7 @@ export default class Client {
      * Authenticate client and populate domainID and projectID
      */
     async authenticate(): Promise<void> {
-        if (_.isEmpty(this.authOptions)) {
+        if (isEmpty(this.authOptions)) {
             throw new Error('Missing auth options')
         }
         if (this.authOptions.ak && this.authOptions.sk) {

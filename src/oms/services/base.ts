@@ -1,5 +1,5 @@
 import HttpClient, { HttpError, RequestOptsAbs } from '../core/http'
-import _ from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
 
 /**
  * Describes service type with type, version and constructor
@@ -103,7 +103,7 @@ export class Pager<T extends Page> implements AsyncIterable<T>, AsyncIterator<T,
             return base
         }
         if (!base) {
-            return _.cloneDeep(other)
+            return cloneDeep(other)
         }
         for (const k in base) {
             if (!base.hasOwnProperty(k) || !other.hasOwnProperty(k)) {
