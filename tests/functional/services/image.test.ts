@@ -1,4 +1,4 @@
-import Client from '../../../src/oms'
+import { Client } from '../../../src/oms'
 import { cloudConfig } from '../../../src/oms/core'
 import { ImageV2 } from '../../../src/oms/services/image'
 

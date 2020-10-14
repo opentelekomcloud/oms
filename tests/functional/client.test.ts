@@ -2,7 +2,7 @@
 /**
  * @jest-environment node
  */
-import Client from '../../src/oms'
+import { Client } from '../../src/oms'
 import { CloudConfigHelper } from '../../src/oms/core'
 import { IdentityV3 } from '../../src/oms/services/identity/v3'
 import { ImageV2 } from '../../src/oms/services/image'

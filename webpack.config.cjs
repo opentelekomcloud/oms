@@ -4,7 +4,8 @@ module.exports = {
     entry: './dist/index.js',
     devtool: 'inline-source-map',
     output: {
-        filename: 'bundle.js',
+        library: 'oms',
+        filename: 'client.min.js',
         path: path.resolve(__dirname, 'dist'),
     },
 };

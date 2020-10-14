@@ -10,7 +10,7 @@ export * from './services'
 /**
  * Client is base provider client
  */
-export default class Client {
+export class Client {
     /**
      * client provides unauthorized access to public resources
      */

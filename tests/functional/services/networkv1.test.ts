@@ -1,5 +1,5 @@
 import { cloudConfig } from '../../../src/oms/core'
-import Client from '../../../src/oms'
+import { Client } from '../../../src/oms'
 import { VpcV1 } from '../../../src/oms/services/network'
 import { randomString } from '../../utils/helpers'
 import { Subnet, VPC } from '../../../src/oms/services/network/v1'
