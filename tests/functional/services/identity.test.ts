@@ -7,7 +7,7 @@ const t = process.env.OS_TOKEN
 if (!t) {
     throw 'Missing OS_TOKEN required for tests'
 }
-const config = cloudConfig(authUrl).withToken(t)
+const config = cloudConfig(authUrl).withToken(t).config
 const client = new Client(config)
 
 

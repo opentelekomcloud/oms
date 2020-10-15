@@ -9,7 +9,7 @@ if (!t) {
     throw 'Missing OS_TOKEN required for tests'
 }
 const authUrl = 'https://iam.eu-de.otc.t-systems.com/v3'
-const config = cloudConfig(authUrl).withToken(t)
+const config = cloudConfig(authUrl).withToken(t).config
 const client = new Client(config)
 
 const orphans: {
