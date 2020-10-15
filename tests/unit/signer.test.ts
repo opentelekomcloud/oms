@@ -21,5 +21,5 @@ test('aws-signature correct signature', () => {
     expect(output['Authorization']).toBe(
         'AWS4-HMAC-SHA256 Credential=BmZtmqwC4PPLkWdk20fgr4ehJK1KJqIZtkCGkVPc/' +
         '20201015/eu-de/crs/aws4_request, SignedHeaders=content-type;host;x-amz-date,' +
-        ' Signature=2cd530a15d8edf2889136672b5ddf141c82be80bc860fbc5a6fd7434abe55c71')
+        ' Signature=2d822e4b474d31f04c1503d9202eb6f99d2e79a7f4d7dc58e7d3fb6dea1278d5')
 })

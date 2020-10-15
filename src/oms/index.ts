@@ -1,4 +1,4 @@
-import { CloudConfig, signRequest } from './core'
+import { CloudConfig, Signature, SignatureInputData } from './core'
 import Service, { ServiceType } from './services/base'
 import HttpClient from './core/http'
 import isEmpty from 'lodash/isEmpty'
@@ -104,7 +104,7 @@ export class Client {
             throw Error(`Missing AK/SK: ${JSON.stringify(this.cloud.auth)}`)
         }
         // add signing interceptor
-        this.httpClient.injectPreProcessor(signRequest(this.cloud.auth.ak, this.cloud.auth.sk))
+        // this.httpClient.injectPreProcessor(signRequest(this.cloud.auth.ak, this.cloud.auth.sk))
         // FIXME: missing projectID and domainID loading
     }
 
