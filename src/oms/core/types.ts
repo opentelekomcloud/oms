@@ -99,3 +99,7 @@ export function normalizeDateTime(date?: string | Date): string | undefined {
 }
 
 export type JSONSchema = JSONSchema4 | JSONSchema6 | JSONSchema7
+
+export interface Metadata {
+    [key: string]: string
+}
