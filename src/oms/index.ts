@@ -1,4 +1,4 @@
-import { AuthOptions, CloudConfig, signRequest } from './core'
+import { CloudConfig, signRequest } from './core'
 import Service, { ServiceType } from './services/base'
 import HttpClient from './core/http'
 import isEmpty from 'lodash/isEmpty'
@@ -6,6 +6,8 @@ import { CatalogEntity, IdentityV3, ResponseToken } from './services/identity/v3
 
 export * from './core'
 export * from './services'
+
+const defaultRegion = 'eu-de'
 
 /**
  * Client is base provider client
@@ -15,41 +17,46 @@ export class Client {
      * client provides unauthorized access to public resources
      */
     httpClient: HttpClient
-    authOptions: AuthOptions
-    region = 'eu-de'
+    cloud: CloudConfig
 
     set tokenID(v: string) {
-        this.authOptions.token = v
+        this.cloud.auth.token = v
     }
 
     get tokenID(): string {
-        return this.authOptions.token || ''
+        return this.cloud.auth.token || ''
     }
 
     get projectID(): string {
-        return this.authOptions.project_id || ''
+        return this.cloud.auth.project_id || ''
     }
 
     set projectID(id: string) {
-        this.authOptions.project_id = id
+        this.cloud.auth.project_id = id
     }
 
     get domainID(): string {
-        return this.authOptions.domain_id || ''
+        return this.cloud.auth.domain_id || ''
     }
 
     set domainID(id: string) {
-        this.authOptions.domain_id = id
+        this.cloud.auth.domain_id = id
     }
 
     constructor(cloud: CloudConfig) {
-        this.authOptions = cloud.auth
+        this.cloud = cloud
+        if (!cloud.region) {
+            cloud.region = defaultRegion
+            if (cloud.auth.project_name) {
+                cloud.region = cloud.auth.project_name.split('_', 1)[0]
+            }
+        }
         this.httpClient = new HttpClient({})
         this.injectAuthToken()
         // register identity service
         this.registerService(
             'identity',
-            this.authOptions.auth_url,
+            this.cloud.auth.auth_url,
         )
     }
 
@@ -79,7 +86,7 @@ export class Client {
     saveServiceCatalog(catalog: CatalogEntity[]): void {
         catalog.forEach(ce => {
             const ep = ce.endpoints.find(e =>
-                (e.region === this.region || e.region === '*') &&
+                (e.region === this.cloud.region || e.region === '*') &&
                 e.interface === 'public',
             )
             if (ep) {
@@ -93,11 +100,11 @@ export class Client {
      */
     async authAkSk(): Promise<void> {
         // FIXME: NOT WORKING
-        if (!this.authOptions.ak || !this.authOptions.sk) {
-            throw Error(`Missing AK/SK: ${JSON.stringify(this.authOptions)}`)
+        if (!this.cloud.auth.ak || !this.cloud.auth.sk) {
+            throw Error(`Missing AK/SK: ${JSON.stringify(this.cloud.auth)}`)
         }
         // add signing interceptor
-        this.httpClient.injectPreProcessor(signRequest(this.authOptions.ak, this.authOptions.sk))
+        this.httpClient.injectPreProcessor(signRequest(this.cloud.auth.ak, this.cloud.auth.sk))
         // FIXME: missing projectID and domainID loading
     }
 
@@ -117,7 +124,7 @@ export class Client {
         const identity = this.getIdentity()
         let token: ResponseToken
         if (!this.tokenID) {
-            token = await identity.issueToken(this.authOptions)
+            token = await identity.issueToken(this.cloud.auth)
             this.tokenID = token.id
             this.injectAuthToken()
         } else {
@@ -138,10 +145,10 @@ export class Client {
      * Authenticate client and populate domainID and projectID
      */
     async authenticate(): Promise<void> {
-        if (isEmpty(this.authOptions)) {
+        if (isEmpty(this.cloud.auth)) {
             throw new Error('Missing auth options')
         }
-        if (this.authOptions.ak && this.authOptions.sk) {
+        if (this.cloud.auth.ak && this.cloud.auth.sk) {
             await this.authAkSk()
         } else {
             await this.authToken()

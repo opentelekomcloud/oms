@@ -1,9 +1,9 @@
-import { CloudConfig, CloudConfigHelper } from '../../../src/oms/core'
+import { cloudConfig, CloudConfig } from '../../../src/oms/core'
 import { Client } from '../../../src/oms'
 import { ComputeV1, ComputeV2 } from '../../../src/oms/services/compute'
 
-let defaultConfig: CloudConfig
-let defaultClient: Client
+let config: CloudConfig
+let client: Client
 
 const authUrl = 'https://iam.eu-de.otc.t-systems.com/v3'
 
@@ -14,13 +14,13 @@ beforeAll(async () => {
     if (!t) {
         throw 'Missing OS_TOKEN required for tests'
     }
-    defaultConfig = new CloudConfigHelper(authUrl).withToken(t)
-    defaultClient = new Client(defaultConfig)
-    await defaultClient.authenticate()
+    config = cloudConfig(authUrl).withToken(t).config
+    client = new Client(config)
+    await client.authenticate()
 })
 
 test('Nova: list key pairs', async () => {
-    const nova = defaultClient.getService(ComputeV2)
+    const nova = client.getService(ComputeV2)
     const keyPairs = await nova.listKeyPairs()
     expect(keyPairs.length).toBeTruthy()
     expect(keyPairs[0]).toHaveProperty('name')
@@ -29,7 +29,7 @@ test('Nova: list key pairs', async () => {
 })
 
 test('ECS: list flavors', async () => {
-    const ecs = defaultClient.getService(ComputeV1)
+    const ecs = client.getService(ComputeV1)
     const all = await ecs.listFlavors()
     expect(all).toBeDefined()
     expect(all[0]).toHaveProperty('id')
