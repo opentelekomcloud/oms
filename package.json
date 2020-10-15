@@ -57,6 +57,7 @@
     "clean": "rm -rf ./dist ./coverage"
   },
   "dependencies": {
+    "@types/crypto-js": "^4.0.1",
     "crypto-js": "^4.0.0",
     "is-cidr": "^4.0.2",
     "isomorphic-fetch": "^3.0.0",
