@@ -7,7 +7,7 @@ const t = process.env.OS_TOKEN
 if (!t) {
     throw 'Missing OS_TOKEN required for tests'
 }
-const defaultConfig = cloudConfig(authUrl).withToken(t)
+const defaultConfig = cloudConfig(authUrl).withToken(t).config
 const defaultClient = new Client(defaultConfig)
 
 jest.setTimeout(1000000)  // for debug

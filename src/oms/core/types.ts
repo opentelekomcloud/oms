@@ -27,6 +27,7 @@ export class AuthOptions {
  */
 export class CloudConfig {
     auth: AuthOptions
+    region?: string
 
     constructor() {
         this.auth = new (AuthOptions)()
@@ -39,36 +40,46 @@ export class CloudConfig {
 export class CloudConfigHelper {
     authUrl: string
 
-    constructor(authUrl: string) {
-        this.authUrl = authUrl
+    private readonly cfg: CloudConfig
+
+    get config(): CloudConfig {
+        return this.cfg
     }
 
-    baseCfg(): CloudConfig {
+    constructor(authUrl: string) {
+        this.authUrl = authUrl
+        this.cfg = this.baseCfg()
+    }
+
+    private baseCfg(): CloudConfig {
         const cc = new (CloudConfig)()
         cc.auth.auth_url = this.authUrl
         return cc
     }
 
-    withPassword(domainName: string, username: string, password: string, projectName: string): CloudConfig {
-        const cc = this.baseCfg()
-        cc.auth.domain_name = domainName
-        cc.auth.username = username
-        cc.auth.password = password
-        cc.auth.project_name = projectName
-        return cc
+    withRegion(region: string): CloudConfigHelper {
+        this.config.region = region
+        return this
     }
 
-    withToken(token: string): CloudConfig {
-        const cc = this.baseCfg()
-        cc.auth.token = token
-        return cc
+    withPassword(domainName: string, username: string, password: string, projectName: string): CloudConfigHelper {
+        this.config.auth.domain_name = domainName
+        this.config.auth.username = username
+        this.config.auth.password = password
+        this.config.auth.project_name = projectName
+        return this
     }
 
-    withAKSK(ak: string, sk: string): CloudConfig {
-        const cc = this.baseCfg()
-        cc.auth.ak = ak
-        cc.auth.sk = sk
-        return cc
+    withToken(token: string): CloudConfigHelper {
+        this.config.auth.token = token
+        return this
+    }
+
+    withAKSK(ak: string, sk: string, projectName?: string): CloudConfigHelper {
+        this.config.auth.ak = ak
+        this.config.auth.sk = sk
+        this.config.auth.project_name = projectName
+        return this
     }
 }
 

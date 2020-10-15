@@ -2,8 +2,7 @@
 /**
  * @jest-environment node
  */
-import { Client } from '../../src/oms'
-import { CloudConfigHelper } from '../../src/oms/core'
+import { Client, cloudConfig } from '../../src/oms'
 import { IdentityV3 } from '../../src/oms/services/identity/v3'
 import { ImageV2 } from '../../src/oms/services/image'
 import Service from '../../src/oms/services/base'
@@ -15,16 +14,19 @@ const t = process.env.OS_TOKEN
 if (!t) {
     throw 'Missing OS_TOKEN required for tests'
 }
-const config = new CloudConfigHelper(authUrl).withToken(t)
+const config = cloudConfig(authUrl).withToken(t).config
 jest.setTimeout(1000000)
 
 test('Client_auth', async () => {
-    const client = new Client(config!)
+    const client = new Client(config)
     await client.authenticate()
+    expect(client.tokenID).toBeTruthy()
+    expect(client.domainID).toBeTruthy()
+    expect(client.projectID).toBeTruthy()
 })
 
 test('Client_serviceCatalog', async () => {
-    const client = new Client(config!)
+    const client = new Client(config)
     await client.authenticate()
     const iam = client.getService(IdentityV3)
     expect(iam.client.baseConfig.baseURL).toContain('iam.')
@@ -42,7 +44,7 @@ class PseudoIam extends Service {
 
 
 test('Client_invalidService', async () => {
-    const client = new Client(config!)
+    const client = new Client(config)
     await client.authenticate()
     expect(() => client.getService(PseudoIam)).toThrow(`Service '${PseudoIam.type}' is not registered`)
 })

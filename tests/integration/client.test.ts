@@ -18,12 +18,15 @@ afterAll(() => {
 test.skip('Client: authToken', async () => {
     const cfg = cloudConfig(authServerUrl())
         .withPassword('MYDOMAIN', 'MYNAME', '>>>Super!Secret<<<', fakeRegion)
+        .config
     const client = new Client(cfg)
     await client.authToken()
 })
 
 test('Client: authAKSK', async () => {
-    const cfg = cloudConfig(authServerUrl()).withAKSK('AK', 'SK')
+    const cfg = cloudConfig(authServerUrl())
+        .withAKSK('AK', 'SK')
+        .config
     const client = new Client(cfg)
     await client.authAkSk()
 })
@@ -35,7 +38,9 @@ const srv = {
 }
 
 test('Client: register service', () => {
-    const cfg = cloudConfig(authServerUrl()).withToken(fakeToken)
+    const cfg = cloudConfig(authServerUrl())
+        .withToken(fakeToken)
+        .config
     const client = new Client(cfg)
     client.registerService(srv.type, srv.url)
 
@@ -56,6 +61,7 @@ test('Client: register service', () => {
 test.skip('Client: get not registered service', async () => {
     const cfg = cloudConfig(authServerUrl())
         .withPassword('MYDOMAIN', 'MYNAME', '>>>Super!Secret<<<', fakeRegion)
+        .config
     const client = new Client(cfg)
     await client.authenticate()
 
@@ -84,10 +90,9 @@ test('Client: no ak/sk opts', async () => {
 })
 
 test('Client: ak/sk opts', async () => {
-    const cfg = cloudConfig('http://nsdfdf').withAKSK(
-        randomString(10),
-        randomString(20),
-    )
+    const cfg = cloudConfig('http://nsdfdf')
+        .withAKSK(randomString(10),randomString(20))
+        .config
     const client = new Client(cfg)
     client.authAkSk = jest.fn()
     client.saveServiceCatalog = jest.fn()
@@ -96,19 +101,20 @@ test('Client: ak/sk opts', async () => {
 })
 
 test('Client: abs URL', async () => {
-    const cfg = cloudConfig(authServerUrl()).withToken('')
+    const cfg = cloudConfig(authServerUrl()).config
     const client = new Client(cfg)
     await client.httpClient.get({ url: authServerUrl() })
 })
 
 test('Client: abs URL with base', async () => {
-    const cfg = cloudConfig(authServerUrl()).withToken('')
+    const cfg = cloudConfig(authServerUrl())
+        .config
     const client = new Client(cfg)
     await client.httpClient.get({ url: authServerUrl(), baseURL: 'https://google.com' })
 })
 
 test('Client: merge handlers', async () => {
-    const cfg = cloudConfig(authServerUrl()).withToken('')
+    const cfg = cloudConfig(authServerUrl()).config
     const client = new Client(cfg)
     const mock1 = jest.fn()
     const mock2 = jest.fn()
