@@ -1603,6 +1603,8 @@ __metadata:
     typescript: ^4.0.3
     webpack: webpack-4
     webpack-cli: ^4.0.0
+  bin:
+    upload: ./bin/swift-upload.js
   languageName: unknown
   linkType: soft
 
