@@ -24,28 +24,33 @@ export class SignatureInputData{
     host?: string;
     region = '';
     endpoint?: string;
-    requestParameters?: string = '';
-    contentType?: string = 'text/plain';
-    accessKey?: string = '';
+    requestParameters = '';
+    contentType = 'text/plain';
+    accessKey = '';
     secretKey = '';
     canonicalUri?: string;
-    canonicalQuerystring?: string = '';
+    canonicalQuerystring = '';
+}
+
+
+export interface OutSignatureData{
+    /* eslint-disable */
+    readonly 'Content-Type': string
+    readonly 'X-Amz-Date': string
+    readonly Authorization: string
+    /* eslint-enable */
 }
 
 export class Signature {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    constructor() {
-    }
-
     /**
      * Generates the signature
      *
      * @param {SignatureInputData} input - structure with data to be signed and keys
      * @param {Date} currentDate - optional parameter to pass custom date
      */
-    generateSignature(input: SignatureInputData, currentDate: Date = new Date()): any {
+    generateSignature(input: SignatureInputData, currentDate: Date = new Date()): OutSignatureData {
         if (!input) {
-            return {};
+            throw Error('Input is missing')
         }
         const {canonicalHeaders, dateStamp, amzDate} =
             Signature.prepareCanonicalHeaders(currentDate, input);
@@ -58,11 +63,8 @@ export class Signature {
             algorithm, input, credentialScope, signedHeaders, signature);
 
         return {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
             'Content-Type': input.contentType,
-            // eslint-disable-next-line @typescript-eslint/naming-convention
             'X-Amz-Date': amzDate,
-            // eslint-disable-next-line @typescript-eslint/naming-convention
             'Authorization': authorizationHeader
         };
     }
