@@ -3,7 +3,7 @@
  * @class Signature
  */
 
-import * as Crypto from 'crypto-js';
+import {sha256, HmacSHA256} from 'crypto-js';
 
 // const algorithm = 'AWS4-HMAC-SHA256'
 
@@ -33,6 +33,7 @@ export class SignatureInputData{
 }
 
 export class Signature {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     constructor() {
     }
 
@@ -57,8 +58,11 @@ export class Signature {
             algorithm, input, credentialScope, signedHeaders, signature);
 
         return {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             'Content-Type': input.contentType,
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             'X-Amz-Date': amzDate,
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             'Authorization': authorizationHeader
         };
     }
@@ -73,7 +77,7 @@ export class Signature {
 
     private static prepareCanonicalRequest(input: SignatureInputData, canonicalHeaders: string) {
         const signedHeaders = 'content-type;host;x-amz-date';
-        const payloadHash = Crypto.SHA256(input.requestParameters).toString();
+        const payloadHash = sha256(input.requestParameters).toString();
         const canonicalRequest = input.method + '\n' + input.canonicalUri + '\n'
             + input.canonicalQuerystring + '\n' + canonicalHeaders + '\n'
             + signedHeaders + '\n' + payloadHash;
@@ -85,13 +89,13 @@ export class Signature {
         const credentialScope = dateStamp + '/' + input.region + '/'
             + input.service + '/' + 'aws4_request';
         const stringToSign = algorithm + '\n' + amzDate + '\n' + credentialScope +
-            '\n' + Crypto.SHA256(canonicalRequest).toString();
+            '\n' + sha256(canonicalRequest).toString();
         return {stringToSign, algorithm, credentialScope};
     }
 
     private signString(input: SignatureInputData, dateStamp: string, stringToSign: string) {
         const signingKey = Signature.getSignatureKey(input.secretKey, dateStamp, input.region, input.service);
-        const signature = Crypto.HmacSHA256(stringToSign, signingKey).toString();
+        const signature = HmacSHA256(stringToSign, signingKey).toString();
         return signature;
     }
 
@@ -107,10 +111,10 @@ export class Signature {
         regionName: string,
         serviceName: string): any
     {
-        const kDate = Crypto.HmacSHA256(dateStamp, 'AWS4' + key);
-        const kRegion = Crypto.HmacSHA256(regionName, kDate);
-        const kService = Crypto.HmacSHA256(serviceName, kRegion);
-        const kSigning = Crypto.HmacSHA256('aws4_request', kService);
+        const kDate = HmacSHA256(dateStamp, 'AWS4' + key);
+        const kRegion = HmacSHA256(regionName, kDate);
+        const kService = HmacSHA256(serviceName, kRegion);
+        const kSigning = HmacSHA256('aws4_request', kService);
         return kSigning;
     }
 }
