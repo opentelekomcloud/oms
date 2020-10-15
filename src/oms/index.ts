@@ -1,15 +1,16 @@
-import { AuthOptions, CloudConfig } from './core/types'
-import { signRequest } from './core/signer'
+import { AuthOptions, CloudConfig, signRequest } from './core'
 import Service, { ServiceType } from './services/base'
 import HttpClient from './core/http'
-import _ from 'lodash'
+import isEmpty from 'lodash/isEmpty'
 import { CatalogEntity, IdentityV3, ResponseToken } from './services/identity/v3'
 
+export * from './core'
+export * from './services'
 
 /**
  * Client is base provider client
  */
-export default class Client {
+export class Client {
     /**
      * client provides unauthorized access to public resources
      */
@@ -63,7 +64,9 @@ export default class Client {
         if (!serviceURL) {
             throw Error(`Service '${Type.type}' is not registered`)
         }
-        return new Type(serviceURL, this.httpClient)
+        const srv = new Type(serviceURL, this.httpClient)
+        srv.projectID = this.projectID
+        return srv
     }
 
     private getIdentity(): IdentityV3 {
@@ -135,7 +138,7 @@ export default class Client {
      * Authenticate client and populate domainID and projectID
      */
     async authenticate(): Promise<void> {
-        if (_.isEmpty(this.authOptions)) {
+        if (isEmpty(this.authOptions)) {
             throw new Error('Missing auth options')
         }
         if (this.authOptions.ak && this.authOptions.sk) {

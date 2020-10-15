@@ -66,6 +66,7 @@ function optsToRequestData(opts: AuthOptions): AuthRequestData {
     }
     const auth = {
         identity: {
+            methods: ['password'],
             password: {
                 user: {
                     name: opts.username,
@@ -107,12 +108,12 @@ export async function createToken(client: HttpClient, authOptions: AuthOptions, 
     const params = nocatalog ? { nocatalog: 'nocatalog' } : undefined
     const data = optsToRequestData(authOptions)
     const resp = await client
-        .post<ResponseTokenInfo>({ url: url, json: data, params: params })
+        .post<{ token: ResponseTokenInfo }>({ url: url, json: data, params: params })
         .catch(e => {
             console.log(JSON.stringify(e))
             throw e
         })
-    const token = resp.data
+    const token = resp.data.token
     const tokenID = resp.headers.get('X-Subject-Token')
     if (!tokenID) {
         throw 'No tokenID provided as X-Subject-Token'
@@ -128,7 +129,11 @@ export async function createToken(client: HttpClient, authOptions: AuthOptions, 
  */
 export async function verifyToken(client: HttpClient, token: string, nocatalog?: boolean): Promise<ResponseToken> {
     const params = nocatalog ? { nocatalog: 'nocatalog' } : undefined
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    const resp = await client.get<{ token: ResponseToken }>({ url: url, headers: { 'X-Subject-Token': token }, params: params })
-    return resp.data.token
+    const resp = await client.get<{ token: ResponseTokenInfo }>({
+        url: url,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        headers: { 'X-Subject-Token': token },
+        params: params,
+    })
+    return { id: token, ...resp.data.token }
 }

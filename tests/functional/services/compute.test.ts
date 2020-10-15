@@ -1,5 +1,5 @@
 import { CloudConfig, CloudConfigHelper } from '../../../src/oms/core'
-import Client from '../../../src/oms'
+import { Client } from '../../../src/oms'
 import { ComputeV1, ComputeV2 } from '../../../src/oms/services/compute'
 
 let defaultConfig: CloudConfig
