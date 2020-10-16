@@ -6,17 +6,14 @@
 import { sha256 } from 'js-sha256';
 
 export interface SignatureInputData{
-    method: string,
-    service: string,
-    host: string,
-    region: string,
-    endpoint?: string;
-    requestParameters: string;
-    contentType: string;
-    accessKey: string;
-    secretKey: string;
-    canonicalUri: string;
-    canonicalQuerystring: string;
+    readonly method: string,
+    readonly url: URL,
+    readonly headers: Headers;
+    readonly accessKey: string;
+    readonly secretKey: string;
+    readonly region: string,
+    readonly service: string,
+    readonly requestBody?: string,
 }
 
 
@@ -39,8 +36,12 @@ export class Signature {
         if (!input) {
             throw Error('Input is missing')
         }
+        let contentType = input.headers.get('Content-Type')
+        if (!contentType) {
+            contentType = ''
+        }
         const { canonicalHeaders, dateStamp, amzDate } =
-            Signature.prepareCanonicalHeaders(currentDate, input);
+            Signature.prepareCanonicalHeaders(currentDate, input.url.host, contentType);
         const { canonicalRequest, signedHeaders } =
             Signature.prepareCanonicalRequest(input, canonicalHeaders);
         const { stringToSign, algorithm, credentialScope } =
@@ -51,24 +52,28 @@ export class Signature {
 
         return {
             /* eslint-disable */
-            'Content-Type': input.contentType,
+            'Content-Type': contentType,
             'X-Amz-Date': amzDate,
             'Authorization': authorizationHeader
             /* eslint-enable */
         };
     }
 
-    private static prepareCanonicalHeaders(currentDate: Date, input: SignatureInputData) {
+    private static prepareCanonicalHeaders(currentDate: Date, host: string, contentType: string) {
         const amzDate = currentDate.toISOString().replace(/-|:|\..{3}/g, '');
         const dateStamp = amzDate.substr(0, 8);
-        const canonicalHeaders = `content-type:${input.contentType}\nhost:${input.host}\nx-amz-date:${amzDate}\n`;
+        const canonicalHeaders = `content-type:${contentType}\nhost:${host}\nx-amz-date:${amzDate}\n`;
         return { canonicalHeaders, dateStamp, amzDate };
     }
 
     private static prepareCanonicalRequest(input: SignatureInputData, canonicalHeaders: string) {
+        let body = input.requestBody
+        if (body === undefined) {
+            body = ''
+        }
         const signedHeaders = 'content-type;host;x-amz-date';
-        const payloadHash = sha256(input.requestParameters).toString();
-        const canonicalRequest = `${input.method}\n${input.canonicalUri}\n${input.canonicalQuerystring}\n${canonicalHeaders}\n${signedHeaders}\n${payloadHash}`;
+        const payloadHash = sha256(body).toString();
+        const canonicalRequest = `${input.method}\n${input.url.pathname}\n${input.url.searchParams}\n${canonicalHeaders}\n${signedHeaders}\n${payloadHash}`;
         return { canonicalRequest, signedHeaders };
     }
 
@@ -84,7 +89,7 @@ export class Signature {
         return sha256.hmac(stringToSign, signingKey).toString()
     }
 
-    private static generateAuthorizationHeader(algorithm: string, input: SignatureInputData, credentialScope: string, signedHeaders: string, signature: any) {
+    private static generateAuthorizationHeader(algorithm: string, input: SignatureInputData, credentialScope: string, signedHeaders: string, signature: string) {
         return `${algorithm} Credential=${input.accessKey}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`
     }
 
@@ -92,7 +97,7 @@ export class Signature {
         key: string,
         dateStamp: string,
         regionName: string,
-        serviceName: string): any
+        serviceName: string)
     {
         const kDate = sha256.hmac(dateStamp, 'AWS4' + key)
         const kRegion = sha256.hmac(regionName, kDate)

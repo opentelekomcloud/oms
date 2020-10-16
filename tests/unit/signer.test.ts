@@ -1,17 +1,18 @@
 import { Signature, SignatureInputData } from '../../src/oms/core'
 
 test('aws-signature correct signature', () => {
+    const myHeaders = new Headers();
+    myHeaders.append( 'content-type', 'application/json')
+    const myUrl = new URL('http://test-api.com/api/canonical/1')
     const data: SignatureInputData = {
         method: 'POST',
-        canonicalUri: '/api/canonical/1',
-        host: 'test-api.com',
         region: 'eu-de',
         service: 'crs',
         accessKey: 'BmZtmqwC4PPLkWdk20fgr4ehJK1KJqIZtkCGkVPc',
         secretKey: 'GKHYPTS41PKM6UPVJTSX',
-        contentType: 'application/json',
-        requestParameters: '{"key":"value"}',
-        canonicalQuerystring: ''
+        requestBody: '{"key":"value"}',
+        headers: myHeaders,
+        url: myUrl
     }
     const signingTool = new Signature()
     const date = new Date('2020-10-15:01:00Z')

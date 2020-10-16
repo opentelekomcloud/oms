@@ -99,12 +99,10 @@ export class Client {
      * Authenticate with AK/SK
      */
     async authAkSk(): Promise<void> {
-        // FIXME: NOT WORKING
         if (!this.cloud.auth.ak || !this.cloud.auth.sk) {
             throw Error(`Missing AK/SK: ${JSON.stringify(this.cloud.auth)}`)
         }
-        // add signing interceptor
-        // this.httpClient.injectPreProcessor(signRequest(this.cloud.auth.ak, this.cloud.auth.sk))
+        // this.httpClient.injectPreProcessor(signature)
         // FIXME: missing projectID and domainID loading
     }
 
