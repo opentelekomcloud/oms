@@ -68,7 +68,7 @@ export class Signature {
 
     private static prepareCanonicalRequest(input: SignatureInputData, canonicalHeaders: string) {
         let body = input.requestBody
-        if (body === undefined) {
+        if (!body) {
             body = ''
         }
         const signedHeaders = 'content-type;host;x-amz-date';
