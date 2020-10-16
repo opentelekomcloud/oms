@@ -140,22 +140,58 @@ function prepareConfig(base?: RequestOptsAbs) {
     return baseConfig
 }
 
+/**
+ * Pre-request config handlers
+ * You can iterate over peloton, last and first are available only directly.
+ * The `first` and `last` are special cases. Don't use them except you know
+ * this handler absolutely _must_ be the first or the last one.
+ * Otherwise just use `.push(...)` to add the handler
+ */
+export class Handlers implements Iterable<RequestConfigHandler> {
+    private theFirst?: RequestConfigHandler
+    private readonly peloton: RequestConfigHandler[] = []
+    private theLast?: RequestConfigHandler
+
+    * [Symbol.iterator](): Iterator<RequestConfigHandler> {
+        yield* this.peloton.reverse()
+    }
+
+    public push(handler: RequestConfigHandler): void {
+        this.peloton.push(handler)
+    }
+
+    public set last(handler: RequestConfigHandler | undefined) {
+        if (this.theLast) {
+            throw Error('Last handler is already set')
+        }
+        this.theLast = handler
+    }
+
+    public get last(): RequestConfigHandler | undefined {
+        return this.theLast
+    }
+
+    public set first(handler: RequestConfigHandler | undefined) {
+        if (this.theFirst) {
+            throw Error('First handler is already set')
+        }
+        this.theFirst = handler
+    }
+
+    public get first(): RequestConfigHandler | undefined {
+        return this.theFirst
+    }
+
+}
+
 export default class HttpClient {
     baseConfig: RequestOptsAbs
 
-    private beforeRequest: RequestConfigHandler[] = []
-
-    /**
-     * Add pre-process request config handler
-     * handlers are executed in FILO order
-     * @param handler
-     */
-    injectPreProcessor(handler: RequestConfigHandler): void {
-        this.beforeRequest.push(handler)
-    }
+    public beforeRequest: Handlers
 
     constructor(baseConfig?: RequestOptsAbs) {
         this.baseConfig = prepareConfig(baseConfig)
+        this.beforeRequest = new Handlers()
     }
 
     /**
@@ -175,12 +211,18 @@ export default class HttpClient {
         if (!merged.baseURL) {
             merged.baseURL = this.baseConfig.baseURL
         }
-        // merge headers
         merged.headers = mergeHeaders(this.baseConfig.headers, merged.headers)
+        // handlers are executed in order: beforeRequest.first, opts.handler,
+        // beforeRequest.peloton, ..., beforeRequest.last
+        // note that beforeRequest.last executed just before `fetch` and receives 100%
+        // prepared request
+        if (this.beforeRequest.first) {
+            merged = this.beforeRequest.first(merged)
+        }
         if (merged.handler) {
             merged = merged.handler(merged)
         }
-        for (const b of this.beforeRequest.reverse()) {
+        for (const b of this.beforeRequest) {
             merged = b(merged)
         }
 
@@ -195,6 +237,9 @@ export default class HttpClient {
                 url,
                 query: merged.params,
             }, { encode: true, skipNull: true })
+        }
+        if (this.beforeRequest.last) {
+            merged = this.beforeRequest.last(merged)
         }
         const response = await fetch(url, merged) as JSONResponse<T>
         if (!response.ok) {

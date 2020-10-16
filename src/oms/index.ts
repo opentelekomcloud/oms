@@ -104,12 +104,12 @@ export class Client {
             throw Error(`Missing AK/SK: ${JSON.stringify(this.cloud.auth)}`)
         }
         // add signing interceptor
-        this.httpClient.injectPreProcessor(signRequest(this.cloud.auth.ak, this.cloud.auth.sk))
+        this.httpClient.beforeRequest.last = signRequest(this.cloud.auth.ak, this.cloud.auth.sk)
         // FIXME: missing projectID and domainID loading
     }
 
     private injectAuthToken() {
-        this.httpClient.injectPreProcessor(config => {
+        this.httpClient.beforeRequest.push(config => {
             if (this.tokenID) {
                 config.headers.set('X-Auth-Token', this.tokenID)
             }

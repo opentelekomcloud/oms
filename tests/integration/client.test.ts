@@ -91,7 +91,7 @@ test('Client: no ak/sk opts', async () => {
 
 test('Client: ak/sk opts', async () => {
     const cfg = cloudConfig('http://nsdfdf')
-        .withAKSK(randomString(10),randomString(20))
+        .withAKSK(randomString(10), randomString(20))
         .config
     const client = new Client(cfg)
     client.authAkSk = jest.fn()
@@ -118,7 +118,7 @@ test('Client: merge handlers', async () => {
     const client = new Client(cfg)
     const mock1 = jest.fn()
     const mock2 = jest.fn()
-    client.httpClient.injectPreProcessor(opts => {
+    client.httpClient.beforeRequest.push(opts => {
         mock1()
         return opts
     })
