@@ -107,7 +107,7 @@ export class RequestOpts implements RequestOptsAbs {
             throw new RequestError(`Request without Method: ${JSON.stringify(abs)}`)
         }
         this.method = abs.method
-        if (!abs.url) {
+        if (abs.url == null) {
             throw new RequestError(`Request without URL: ${JSON.stringify(abs)}`)
         }
         this.url = abs.url
