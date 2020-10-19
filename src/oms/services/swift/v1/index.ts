@@ -1,6 +1,6 @@
 import Service from '../../base'
 import HttpClient from '../../../core/http'
-import { ContainerACLs, createContainer, listContainers } from './container'
+import { ContainerACLs, Containers, createContainer, deleteContainer, listContainers } from './container'
 import { Metadata } from '../../../core'
 
 export class SwiftV1 extends Service {
@@ -14,8 +14,12 @@ export class SwiftV1 extends Service {
         await createContainer(this.client, name, acls, metadata)
     }
 
-    async listContainers(): Promise<unknown> {
+    async listContainers(): Promise<Containers> {
         return await listContainers(this.client)
+    }
+
+    async deleteContainer(name: string): Promise<void> {
+        return await deleteContainer(this.client, name)
     }
 
 }

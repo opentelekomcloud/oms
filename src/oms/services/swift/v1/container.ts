@@ -1,7 +1,7 @@
 import HttpClient, { joinURL } from '../../../core/http'
 import { Metadata } from '../../../core'
 
-const url = '/container'
+const url = ''
 
 export interface ContainerACLs {
     /**
@@ -53,7 +53,7 @@ export type Containers = Array<{ name: string }>
 
 export async function listContainers(client: HttpClient): Promise<Containers> {
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const resp = await client.get<Containers>({ url: '', headers: { 'Accept': 'application/json' } })
+    const resp = await client.get<Containers>({ url: url, headers: { 'Accept': 'application/json' } })
     return resp.data
 }
 
