@@ -1572,6 +1572,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@opentelekomcloud/oms@workspace:."
   dependencies:
+    "@types/crypto-js": ^4
     "@types/eslint": ^7
     "@types/lodash": ^4
     "@types/node": ^14.11.2
@@ -1584,6 +1585,7 @@ __metadata:
     babel-register: ^6.26.0
     browserify: ^16.5.2
     codecov: ^3.7.2
+    crypto-js: ^4.0.0
     eslint: ^7.10.0
     eslint-import-resolver-typescript: ^2.3.0
     eslint-plugin-import: ^2.22.1
@@ -1591,7 +1593,6 @@ __metadata:
     is-cidr: ^4.0.2
     isomorphic-fetch: ^3.0.0
     jest: ^26.4.2
-    js-sha256: ^0.9.0
     jsonschema: ^1.2.7
     lodash: ^4.17.20
     nyc: ^15.1.0
@@ -1704,6 +1705,13 @@ __metadata:
     "@types/node": "*"
     "@types/responselike": "*"
   checksum: 3dae802a0808573986c56b92bf16cd031a5b648b6c893d20c7ef6bfda3fc72a2107c7978697d2b27b14febc597162d6959985eeb5befc307a9f9f3c5081d4905
+  languageName: node
+  linkType: hard
+
+"@types/crypto-js@npm:^4":
+  version: 4.0.1
+  resolution: "@types/crypto-js@npm:4.0.1"
+  checksum: 6b81c4d064931ef697a8896f09e1290cfb2e59420522f7f6ce443646f768d25a767e15763853007eae8abfb298c6853bdb17fb2c894ed7ddf651337912526d7a
   languageName: node
   linkType: hard
 
@@ -4454,6 +4462,13 @@ __metadata:
     randombytes: ^2.0.0
     randomfill: ^1.0.3
   checksum: 8b558367b3759652b7c8dfd8fa0dc55a69362ae3efe039ac44d4b010bc63143708f4748ef8efc079945bf61dbc53c829cda968cd2abc1f34fcf43f669a414f73
+  languageName: node
+  linkType: hard
+
+"crypto-js@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "crypto-js@npm:4.0.0"
+  checksum: fdd1415b9e4b317f6ac7f055a00495dabea6aa93ab82ccd63866b0a76d2da9587942764816a8a7976cb23b8bbfd7eea23ccb852b3fef218d166cc5db8c008ab3
   languageName: node
   linkType: hard
 
@@ -7793,13 +7808,6 @@ fsevents@^1.2.7:
   bin:
     jest: bin/jest.js
   checksum: e5fe5dbcf94025b7a454273f29ee5e6567ca385ce942acd8eef55d6db5f937f669d1c22fe1c87f37acebbb1d002d9557f1f700b20c128794255f0ca7a4d87080
-  languageName: node
-  linkType: hard
-
-"js-sha256@npm:^0.9.0":
-  version: 0.9.0
-  resolution: "js-sha256@npm:0.9.0"
-  checksum: 0bef2c83a7bceb2c54ea580fac3c69b5b5c422f590a0c514f6a9440a1c809359514d0ad5f0be52b95e0dd929c348b9f8153b9c1d5b0fa9bcf56b800791e304fb
   languageName: node
   linkType: hard
 

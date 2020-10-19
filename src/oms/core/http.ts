@@ -238,6 +238,7 @@ export default class HttpClient {
                 query: merged.params,
             }, { encode: true, skipNull: true })
         }
+        merged.url = url
         if (this.beforeRequest.last) {
             merged = this.beforeRequest.last(merged)
         }

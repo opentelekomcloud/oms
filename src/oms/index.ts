@@ -99,34 +99,30 @@ export class Client {
      * Authenticate with AK/SK
      */
     async authAkSk(): Promise<void> {
-        const signingTool = new Signature()
-        const url = new URL(this.cloud.auth.auth_url)
-        const headers = new Headers();
-        let region = this.cloud.region
-        if (!region){
-            region = defaultRegion
-        }
-        if (!this.cloud.auth.ak || !this.cloud.auth.sk) {
-            throw Error(`Missing AK/SK: ${JSON.stringify(this.cloud.auth)}`)
-        }
-        headers.append( 'content-type', 'application/json')
-
-        const authData: SignatureInputData = {
-            method: 'POST',
-            url: url,
-            headers: headers,
-            accessKey: this.cloud.auth.ak,
-            secretKey: this.cloud.auth.sk,
-            region: region,
-            service: 'aksk',
-        }
-        // add signing interceptor
-        const signature = signingTool.generateSignature(authData)
-        type signature = typeof signature;
-        this.httpClient.beforeRequest.push(config => {
+        this.httpClient.beforeRequest.last = (config => {
+            const signingTool = new Signature()
+            const url = new URL(config.url)
+            const region = this.cloud.region
+            if (!region){
+                throw Error('Missing Region')
+            }
+            if (!this.cloud.auth.ak || !this.cloud.auth.sk) {
+                throw Error(`Missing AK/SK: ${JSON.stringify(this.cloud.auth)}`)
+            }
+            const authData: SignatureInputData = {
+                method: config.method,
+                url: url,
+                headers: config.headers,
+                accessKey: this.cloud.auth.ak,
+                secretKey: this.cloud.auth.sk,
+                region: '',
+                service: '',
+            }
+            // add signing interceptor
+            const signature = signingTool.generateSignature(authData)
             if (signature) {
                 config.headers.set('Content-Type', signature['Content-Type'])
-                config.headers.set('X-Amz-Date', signature['X-Amz-Date'])
+                config.headers.set('X-Amz-Date', signature['X-Sdk-Date'])
                 config.headers.set('Authorization', signature.Authorization)
             }
             return config
