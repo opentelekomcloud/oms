@@ -15,7 +15,7 @@ test('aws-signature correct signature', () => {
         requestBody: 'foo=bar'
     }
     const signingTool = new Signature()
-    const date = new Date('Mon, 09 Sep 2011 23:36:00 GMT')
+    const date = new Date('Fri, 09 Sep 2011 23:36:00 GMT')
     const output = signingTool.generateSignature(data, date)
     expect(output['Content-Type']).toBe('application/x-www-form-urlencoded; charset=utf8')
     expect(output['X-Sdk-Date']).toBe('20110909T233600Z')
