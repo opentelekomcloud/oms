@@ -108,3 +108,9 @@ test('Sec Groups: lifecycle', async () => {
     sgs = await nw.listSecurityGroups()
     expect(sgs.find(s => s.id === sg.id)).not.toBeTruthy()
 })
+
+test('Public IP: list', async () => {
+    const nw = client.getService(VpcV1)
+    const ips = await nw.listPublicIPs()
+    expect(ips).toHaveProperty('length')
+})
