@@ -1,26 +1,25 @@
-import { Signature, SignatureInputData } from '../../src/oms/core'
+import { getSignedUrl } from '../../src/oms/core'
 
-test('aws-signature correct signature', () => {
-    const myHeaders = new Headers();
-    myHeaders.append( 'content-type','application/x-www-form-urlencoded; charset=utf8')
-    const myUrl = new URL('http://host.foo.com/')
-    const data: SignatureInputData = {
-        method: 'POST',
-        region: 'cn-north-1',
-        service: 'host',
-        accessKey: 'AKIDEXAMPLE',
-        secretKey: 'wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY',
-        url: myUrl,
-        headers: myHeaders,
-        requestBody: 'foo=bar'
-    }
-    const signingTool = new Signature()
+test('aws-signature test', () => {
+    const myUrl = new URL('http://host.foo.com/%20/foo')
     const date = new Date('Fri, 09 Sep 2011 23:36:00 GMT')
-    const output = signingTool.generateSignature(data, date)
-    expect(output['Content-Type']).toBe('application/x-www-form-urlencoded; charset=utf8')
-    expect(output['X-Sdk-Date']).toBe('20110909T233600Z')
-    expect(output['Authorization']).toBe(
-        'SDK-HMAC-SHA256 Credential=AKIDEXAMPLE/' +
-        '20110909/cn-north-1/host/sdk_request, SignedHeaders=content-type;date;host,' +
-        ' Signature=81a7a27bd8500c271145b269e50ebee0f0fe9a51c89ce506cfa33e4a07e51a17')
+    const signedUrlGet = getSignedUrl(
+        {
+            accessKeyId: 'AKIDEXAMPLE',
+            secretAccessKey: 'wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY',
+            regionName: 'cn-north-1'
+        },
+        {
+            method: 'GET',
+            hostName: myUrl.host,
+            serviceName: 'host',
+            uriPath: myUrl.pathname,
+        },
+        date
+    );
+    expect(signedUrlGet.Authorization).toBe(
+        'SDK-HMAC-SHA256 Credential=AKIDEXAMPLE/20110909/cn-north-1/host/sdk_request,' +
+        ' SignedHeaders=host;x-sdk-date,' +
+        ' Signature=c11b63b04ae21a93d0de7e4702033153d3322f11b67cceca98b33af3100840e8')
+
 })
