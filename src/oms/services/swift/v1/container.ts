@@ -1,5 +1,7 @@
 import HttpClient, { joinURL } from '../../../core/http'
 import { Metadata } from '../../../core'
+import { getAccount } from './accounts'
+import { Container } from './types'
 
 const url = ''
 
@@ -49,12 +51,13 @@ export async function createContainer(client: HttpClient, name: string, acl?: Co
     })
 }
 
-export type Containers = Array<{ name: string }>
-
-export async function listContainers(client: HttpClient): Promise<Containers> {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    const resp = await client.get<Containers>({ url: url, headers: { 'Accept': 'application/json' } })
-    return resp.data
+/**
+ * Get list of containers for the account
+ * @param client
+ */
+export async function listContainers(client: HttpClient): Promise<Container[]> {
+    const account = await getAccount(client)
+    return account.containers
 }
 
 export async function deleteContainer(client: HttpClient, name: string): Promise<void> {

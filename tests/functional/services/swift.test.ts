@@ -13,6 +13,13 @@ beforeAll(async () => {
     await client.authenticate()
 })
 
+test('Account: show metadata', async () => {
+    const srv = client.getService(SwiftV1)
+    const account = await srv.showAccountMetadata()
+    expect(account).toBeDefined()
+    expect(account.domainID).toBe(client.domainID)
+})
+
 test('Containers: list', async () => {
     const srv = client.getService(SwiftV1)
     const containers = await srv.listContainers()
