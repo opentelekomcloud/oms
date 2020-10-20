@@ -20,6 +20,21 @@ test('Account: show metadata', async () => {
     expect(account.domainID).toBe(client.domainID)
 })
 
+// needs a user with enough rights
+test.skip('Account: update metadata', async () => {
+    const srv = client.getService(SwiftV1)
+    const testMeta = {
+        meta: 'data',
+        meta2: 'atad',
+    }
+    const testQuota = 20
+    await srv.updateAccountMetadata(testMeta, testQuota)
+    const account = await srv.showAccountMetadata()
+    expect(account.metadata.meta).toBe(testMeta.meta)
+    expect(account.metadata.meta2).toBe(testMeta.meta2)
+    expect(account.metadata['quota-bytes']).toBe(testQuota)
+})
+
 test('Containers: list', async () => {
     const srv = client.getService(SwiftV1)
     const containers = await srv.listContainers()

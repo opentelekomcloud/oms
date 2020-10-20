@@ -4,7 +4,7 @@ import { Metadata } from '../../../core'
 
 const url = ''
 
-const metadataPrefix = 'X-Account-Meta-'
+const metadataPrefix = 'X-Account-Meta-'.toLowerCase()
 const maxQuota = 9223372036854775807
 
 function parseAccountHeaders(headers: Headers): Account {

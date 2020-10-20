@@ -1,6 +1,6 @@
 import Service from '../../base'
 import HttpClient from '../../../core/http'
-import { ContainerACLs, createContainer, deleteContainer, listContainers } from './container'
+import { ContainerACLs, createContainer, deleteContainer } from './container'
 import { Metadata } from '../../../core'
 import { Account, AccountWithContainers, Container } from './types'
 import { getAccount, showAccountMetadata, updateAccountMetadata } from './accounts'
@@ -12,10 +12,16 @@ export class SwiftV1 extends Service {
         super(url, client)
     }
 
+    /**
+     * Get Account details and container list
+     */
     async getAccount(): Promise<AccountWithContainers> {
         return await getAccount(this.client)
     }
 
+    /**
+     * Get Account details
+     */
     async showAccountMetadata(): Promise<Account> {
         return await showAccountMetadata(this.client)
     }
@@ -36,7 +42,7 @@ export class SwiftV1 extends Service {
     }
 
     async listContainers(): Promise<Container[]> {
-        return await listContainers(this.client)
+        return (await this.getAccount()).containers
     }
 
     async deleteContainer(name: string): Promise<void> {

@@ -13,6 +13,7 @@ export interface Account {
     readonly objectCount: number
     readonly containerCount: number
     readonly metadata: Metadata
+    readonly quota?: number
 }
 
 export interface AccountWithContainers extends Account{

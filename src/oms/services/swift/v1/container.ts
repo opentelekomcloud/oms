@@ -1,7 +1,5 @@
 import HttpClient, { joinURL } from '../../../core/http'
 import { Metadata } from '../../../core'
-import { getAccount } from './accounts'
-import { Container } from './types'
 
 const url = ''
 
@@ -49,15 +47,6 @@ export async function createContainer(client: HttpClient, name: string, acl?: Co
         url: joinURL(url, name),
         headers: headers,
     })
-}
-
-/**
- * Get list of containers for the account
- * @param client
- */
-export async function listContainers(client: HttpClient): Promise<Container[]> {
-    const account = await getAccount(client)
-    return account.containers
 }
 
 export async function deleteContainer(client: HttpClient, name: string): Promise<void> {
