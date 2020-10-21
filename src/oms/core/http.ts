@@ -278,6 +278,11 @@ export default class HttpClient {
         opts.method = 'DELETE'
         return await this.request(opts)
     }
+
+    async head(opts: RequestOptsAbs): Promise<JSONResponse<unknown>> {
+        opts.method = 'HEAD'
+        return await this.request(opts)
+    }
 }
 
 const barePartRe = /^\/*(.+?)\/*$/
