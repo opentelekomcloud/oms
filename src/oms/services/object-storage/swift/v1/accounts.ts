@@ -1,13 +1,13 @@
-import HttpClient from '../../../core/http'
-import { Account, AccountWithContainers, Container } from './types'
-import { Metadata } from '../../../core'
+import HttpClient from '../../../../core/http'
+import { AccountMetadata, Account, ContainerMetadata } from './types'
+import { Metadata } from '../../../../core'
 
 const url = ''
 
 const metadataPrefix = 'X-Account-Meta-'.toLowerCase()
 const maxQuota = 9223372036854775807
 
-function parseAccountHeaders(headers: Headers): Account {
+function parseAccountHeaders(headers: Headers): AccountMetadata {
     const metadata: Metadata = {}
     let bytesUsed = 0
     let containerCount = 0
@@ -46,8 +46,8 @@ function parseAccountHeaders(headers: Headers): Account {
 /**
  * Get account details and list containers
  */
-export async function getAccount(client: HttpClient): Promise<AccountWithContainers> {
-    const resp = await client.get<Container[]>({ url: url, params: { format: 'json' } })
+export async function getAccount(client: HttpClient): Promise<Account> {
+    const resp = await client.get<ContainerMetadata[]>({ url: url, params: { format: 'json' } })
     const account = parseAccountHeaders(resp.headers)
     return {
         containers: resp.data,
@@ -75,15 +75,15 @@ export async function updateAccountMetadata(client: HttpClient, metadata?: Metad
             throw Error(`Invalid quota value: ${quota}`)
         }
         if (quota < 0) {
-            headers.append('X-Remove-Account-Meta-Quota-Bytes', 'yes')
+            headers.append('X-Remove-AccountMetadata-Meta-Quota-Bytes', 'yes')
         } else {
-            headers.append('X-Account-Meta-Quota-Bytes', quota.toString())
+            headers.append('X-AccountMetadata-Meta-Quota-Bytes', quota.toString())
         }
     }
     await client.post({ url: url, headers: headers })
 }
 
-export async function showAccountMetadata(client: HttpClient): Promise<Account> {
-    const resp = await client.request<Container[]>({ method: 'HEAD', url: url, params: { format: 'json' } })
+export async function showAccountMetadata(client: HttpClient): Promise<AccountMetadata> {
+    const resp = await client.request<ContainerMetadata[]>({ method: 'HEAD', url: url, params: { format: 'json' } })
     return parseAccountHeaders(resp.headers)
 }

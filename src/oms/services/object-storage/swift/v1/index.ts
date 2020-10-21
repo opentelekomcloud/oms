@@ -1,8 +1,8 @@
-import Service from '../../base'
-import HttpClient from '../../../core/http'
-import { ContainerACLs, createContainer, deleteContainer } from './container'
-import { Metadata } from '../../../core'
-import { Account, AccountWithContainers, Container } from './types'
+import Service from '../../../base'
+import HttpClient from '../../../../core/http'
+import { ContainerACLs, createContainer, deleteContainer, getContainer, showContainerMetadata } from './container'
+import { Metadata } from '../../../../core'
+import { Account, AccountMetadata, Container, ContainerMetadata, ObjectListOpts } from './types'
 import { getAccount, showAccountMetadata, updateAccountMetadata } from './accounts'
 
 export class SwiftV1 extends Service {
@@ -13,16 +13,16 @@ export class SwiftV1 extends Service {
     }
 
     /**
-     * Get Account details and container list
+     * Get AccountMetadata details and container list
      */
-    async getAccount(): Promise<AccountWithContainers> {
+    async getAccount(): Promise<Account> {
         return await getAccount(this.client)
     }
 
     /**
-     * Get Account details
+     * Get AccountMetadata details
      */
-    async showAccountMetadata(): Promise<Account> {
+    async showAccountMetadata(): Promise<AccountMetadata> {
         return await showAccountMetadata(this.client)
     }
 
@@ -41,8 +41,16 @@ export class SwiftV1 extends Service {
         await createContainer(this.client, name, acls, metadata)
     }
 
-    async listContainers(): Promise<Container[]> {
+    async listContainers(): Promise<ContainerMetadata[]> {
         return (await this.getAccount()).containers
+    }
+
+    async showContainerMetadata(name: string): Promise<ContainerMetadata> {
+        return await showContainerMetadata(this.client, name)
+    }
+
+    async getContainer(name: string, objectListOpts?: ObjectListOpts): Promise<Container> {
+        return await getContainer(this.client, name, objectListOpts)
     }
 
     async deleteContainer(name: string): Promise<void> {
