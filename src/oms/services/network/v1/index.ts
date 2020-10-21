@@ -17,6 +17,7 @@ import {
     listSecurityGroups,
     SecurityGroup,
 } from './secgroups'
+import { listPublicIPs, PublicIP } from './eips'
 
 export { VPC } from './vpcs'
 export { Subnet } from './subnets'
@@ -156,5 +157,12 @@ export class VpcV1 extends Service {
      */
     async deleteSecurityGroup(id: string): Promise<void> {
         return deleteSecurityGroup(this.client, id)
+    }
+
+    /**
+     * List all public IPs assigned to the project
+     */
+    async listPublicIPs(): Promise<PublicIP[]> {
+        return listPublicIPs(this.client)
     }
 }
