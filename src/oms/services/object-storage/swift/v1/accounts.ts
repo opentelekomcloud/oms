@@ -84,6 +84,6 @@ export async function updateAccountMetadata(client: HttpClient, metadata?: Metad
 }
 
 export async function showAccountMetadata(client: HttpClient): Promise<AccountMetadata> {
-    const resp = await client.request<ContainerMetadata[]>({ method: 'HEAD', url: url, params: { format: 'json' } })
+    const resp = await client.head({ url: url })
     return parseAccountHeaders(resp.headers)
 }
