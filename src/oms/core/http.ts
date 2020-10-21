@@ -136,7 +136,6 @@ export class RequestOpts implements RequestOptsAbs {
 function prepareConfig(base?: RequestOptsAbs) {
     const baseConfig = base && !isEmpty(base) ? cloneDeep(base) : {}
     baseConfig.headers = mergeHeaders(baseConfig.headers)
-    baseConfig.headers.set('User-Agent', 'OpenTelekomCloud JS/v1.0')
     return baseConfig
 }
 
