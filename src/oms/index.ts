@@ -125,14 +125,13 @@ export class Client {
      * Authenticate with token
      */
     async authToken(): Promise<void> {
+        this.injectAuthToken()
         const identity = this.getIdentity()
         let token: ResponseToken
         if (!this.tokenID) {
             token = await identity.issueToken(this.cloud.auth)
             this.tokenID = token.id
-            this.injectAuthToken()
         } else {
-            this.injectAuthToken()
             token = await identity.verifyToken(this.tokenID)
         }
         if (token.project) {
