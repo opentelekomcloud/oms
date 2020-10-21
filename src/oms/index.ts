@@ -44,7 +44,7 @@ export class Client {
     }
 
     private injectCommonHeaders() {
-        this.httpClient.beforeRequest.push(addCommonHeaders)
+        this.httpClient.beforeRequest.first = addCommonHeaders
     }
 
     constructor(cloud: CloudConfig) {
