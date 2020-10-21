@@ -1,4 +1,4 @@
-import { CloudConfig, signRequest } from './core'
+import { CloudConfig, RequestOpts, signRequest } from './core'
 import Service, { ServiceType } from './services/base'
 import HttpClient from './core/http'
 import isEmpty from 'lodash/isEmpty'
@@ -43,6 +43,10 @@ export class Client {
         this.cloud.auth.domain_id = id
     }
 
+    private injectCommonHeaders() {
+        this.httpClient.beforeRequest.push(addCommonHeaders)
+    }
+
     constructor(cloud: CloudConfig) {
         this.cloud = cloud
         if (!cloud.region) {
@@ -52,7 +56,7 @@ export class Client {
             }
         }
         this.httpClient = new HttpClient({})
-        this.injectAuthToken()
+        this.injectCommonHeaders()
         // register identity service
         this.registerService(
             'identity',
@@ -154,4 +158,18 @@ export class Client {
             await this.authToken()
         }
     }
+}
+
+const appJSON = 'application/json; charset=utf-8'
+const userAgent = 'OpenTelekomCloud JS/v1.0'
+
+function addCommonHeaders(cfg: RequestOpts): RequestOpts {
+    cfg.headers.append('User-Agent', userAgent)
+    cfg.headers.append('Accept', appJSON)
+    cfg.headers.append('Content-Type', appJSON)
+    const base = cfg.baseURL || cfg.url || ''
+    if (base) {
+        cfg.headers.append('Host', new URL(base).host)
+    }
+    return cfg
 }
