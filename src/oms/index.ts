@@ -101,39 +101,14 @@ export class Client {
      */
     async authAkSk(): Promise<void> {
         this.httpClient.beforeRequest.last = (config => {
-            // const signingTool = new Signature()
-            // const url = new URL(config.url)
-            // const region = this.cloud.region
-            // if (!region){
-            //     throw Error('Missing Region')
-            // }
-            // if (!this.cloud.auth.ak || !this.cloud.auth.sk) {
-            //     throw Error(`Missing AK/SK: ${JSON.stringify(this.cloud.auth)}`)
-            // }
-            // const authData: SignatureInputData = {
-            //     method: config.method,
-            //     url: url,
-            //     headers: config.headers,
-            //     accessKey: this.cloud.auth.ak,
-            //     secretKey: this.cloud.auth.sk,
-            //     region: '',
-            //     service: '',
-            // }
-            // // add signing interceptor
-            // const signature = signingTool.generateSignature(authData)
-            // if (signature) {
-            //     config.headers.set('Content-Type', signature['Content-Type'])
-            //     config.headers.set('X-Amz-Date', signature['X-Sdk-Date'])
-            //     config.headers.set('Authorization', signature.Authorization)
-            // }
             if (!this.cloud.auth.ak || !this.cloud.auth.sk) {
                 throw Error(`Missing AK/SK: ${JSON.stringify(this.cloud.auth)}`)
             }
-            let newHeaders = {}
-            const userAgent = config.headers.get('User-Agent')
-            config.headers.append('Accept', 'application/json')
-            if (userAgent){
-                newHeaders = Object.assign({'user-agent': userAgent}, newHeaders)
+            if (this.projectID !== ''){
+                config.headers.set('X-Project-Id', this.projectID)
+            }
+            if (this.domainID !== '') {
+                config.headers.set('X-Domain-Id', this.domainID)
             }
             const url = new URL(config.url)
             const signedUrl = getSignedUrl(
@@ -144,13 +119,12 @@ export class Client {
                 },
                 {
                     method: config.method,
-                    hostName: url.host,
+                    url: url,
                     serviceName: '',
-                    uriPath: url.pathname,
-                    headers: newHeaders
+                    headers: config.headers
                 });
             if (signedUrl) {
-                config.headers.set('X-Amz-Date', signedUrl['X-Sdk-Date'])
+                config.headers.set('X-Sdk-Date', signedUrl['X-Sdk-Date'])
                 config.headers.set('Authorization', signedUrl.Authorization)
             }
             return config

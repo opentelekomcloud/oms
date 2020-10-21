@@ -1,25 +1,27 @@
 import { getSignedUrl } from '../../src/oms/core'
 
 test('aws-signature test', () => {
-    const myUrl = new URL('http://host.foo.com/%20/foo')
-    const date = new Date('Fri, 09 Sep 2011 23:36:00 GMT')
+    const myUrl = new URL('https://iam.eu-de.otc.t-systems.com/v3/projects/?name=eu-de_test_dmd')
+    const date = new Date('Mon, 19 Oct 2020 13:22:12 GMT')
+    const headers = new Headers()
+    headers.append('accept', 'application/json')
+    headers.append( 'user-agent', 'golangsdk/2.0.0' )
     const signedUrlGet = getSignedUrl(
         {
-            accessKeyId: 'AKIDEXAMPLE',
-            secretAccessKey: 'wJalrXUtnFEMI/K7MDENG+bPxRfiCYEXAMPLEKEY',
-            regionName: 'cn-north-1'
+            accessKeyId: 'A2VGRDT4L5Z7YOYSTNN9',
+            secretAccessKey: 'BYBYIiF3WUZGlorXmcTEDtNjB40JTibYIEfSUWqA',
+            regionName: ''
         },
         {
             method: 'GET',
-            hostName: myUrl.host,
-            serviceName: 'host',
-            uriPath: myUrl.pathname,
+            url: myUrl,
+            serviceName: '',
+            headers: headers,
         },
         date
     );
     expect(signedUrlGet.Authorization).toBe(
-        'SDK-HMAC-SHA256 Credential=AKIDEXAMPLE/20110909/cn-north-1/host/sdk_request,' +
-        ' SignedHeaders=host;x-sdk-date,' +
-        ' Signature=c11b63b04ae21a93d0de7e4702033153d3322f11b67cceca98b33af3100840e8')
-
+        'SDK-HMAC-SHA256 Credential=A2VGRDT4L5Z7YOYSTNN9/20201019///sdk_request,' +
+        ' SignedHeaders=accept;host;user-agent;x-sdk-date,' +
+        ' Signature=446f60d99021ad562739f1a841a242b708237d62ed5d278d882abcfea8b0428b')
 })

@@ -9,29 +9,32 @@ export interface credentialInfo {
 
 export interface requestInfo {
     method: string,
-    hostName: string,
+    url: URL,
     serviceName: string,
-    uriPath: string,
-    headers?: httpHeaders,
+    headers?: Headers,
 }
 
-type httpHeaders = { [key: string]: string }
+// type httpHeaders = { [key: string]: string }
+const SignAlgorithmHMACSHA256 = 'SDK-HMAC-SHA256'
+
 
 export const getSignedUrl = (
     { accessKeyId, secretAccessKey, regionName }: credentialInfo,
-    { method, hostName, serviceName, uriPath, headers = {} }: requestInfo, date: Date = new Date(), body = '') => {
+    { method, url, serviceName, headers }: requestInfo, date: Date = new Date(), body = '') => {
     let currentDate = dateIsoString(date)
     if (!currentDate) {
         currentDate = dateIsoString(new Date())
     }
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const newHeaders = new Headers({ ...headers, 'Host': hostName, 'X-Sdk-Date': currentDate })
+    const newHeaders = new Headers(headers)
+    newHeaders.append('Host', url.host)
+    newHeaders.append( 'X-Sdk-Date', currentDate )
     const stringifiedHeaders = sortedStringifiedHeaders(newHeaders)
     const signedHeaders = getSignedHeaders(stringifiedHeaders)
 
     const { queryString, yyyymmdd }: sdkQueryString = getQueryString(accessKeyId, regionName, signedHeaders, serviceName, currentDate)
-    const { canonicalRequest, additionalQueryString }: sdkCanonicalRequest = getCanonicalRequest(method, uriPath, '', stringifiedHeaders, signedHeaders, body)
+    const { canonicalRequest, additionalQueryString }: sdkCanonicalRequest = getCanonicalRequest(method, url.pathname, url.searchParams.toString(), stringifiedHeaders, signedHeaders, body)
     const hash = SHA256(canonicalRequest)
     const stringToSign: string = getStringToSign(currentDate, yyyymmdd, regionName, serviceName, hash)
     const signatureKey = getSigningKey(secretAccessKey, yyyymmdd, regionName, serviceName)
@@ -48,13 +51,12 @@ export const getSignedUrl = (
 
 /**
  * Stringify and sort http headers
- * @param headers {httpHeaders}
  * @returns {Array<string>}
  */
 const sortedStringifiedHeaders = (headers: Headers): Array<string> => {
     const result: string[] = []
     headers.forEach((v, k) => {
-        result.push(`${k}:${v}`.toLowerCase())
+        result.push(`${k.toLowerCase()}:${v}`)
     })
     return result.sort()
 }
@@ -66,12 +68,10 @@ const sortedStringifiedHeaders = (headers: Headers): Array<string> => {
  */
 const getSignedHeaders = (stringifiedHeaders: Array<string>): string => {
     let signedHeaders = ''
-
     for (let i = 0; i < stringifiedHeaders.length; i++) {
         signedHeaders += stringifiedHeaders[i].split(':')[0]
         if (i !== stringifiedHeaders.length - 1) signedHeaders += ';'
     }
-
     return signedHeaders
 }
 
@@ -87,8 +87,8 @@ const getQueryString = (
     accessKeyId: string, regionName: string, signedHeaders: string, serviceName: string, isoDate: string): sdkQueryString => {
 
     const yyyymmdd = isoDate.slice(0, 8)
-    let queryString = 'SDK-HMAC-SHA256'
-    queryString += ` Credential=${`${accessKeyId}/${yyyymmdd}/${regionName}/${serviceName}/sdk_request,`}`
+    let queryString = SignAlgorithmHMACSHA256
+    queryString += ` Credential=${accessKeyId}/${yyyymmdd}/${regionName}/${serviceName}/sdk_request,`
     queryString += ` SignedHeaders=${signedHeaders},`
 
     return { queryString, yyyymmdd }
@@ -110,24 +110,14 @@ const getCanonicalRequest = (
     signedHeaders: string,
     body: string,
 ): sdkCanonicalRequest => {
-
-    let canonicalRequest =
-        `${method}\n`
-        + `${uriPath}\n`
-        + `${queryString}\n`
-
+    let canonicalRequest = `${method}\n${uriPath}\n${queryString}\n`
     for (let i = 0; i < stringifledHeaders.length; i++) canonicalRequest += `${stringifledHeaders[i]}\n`
-
     canonicalRequest += `\n${signedHeaders}\n${SHA256(body).toString()}`
-
     return { canonicalRequest, additionalQueryString: '' }
 }
 
 const getStringToSign = (iso8601: string, yyyymmdd: string, regionName: string, serviceName: string, hash: CryptoJS.lib.WordArray): string =>
-    `SDK-HMAC-SHA256
-${iso8601}
-${yyyymmdd}/${regionName}/${serviceName}/sdk_request
-${hash.toString()}`
+    `${SignAlgorithmHMACSHA256}\n${iso8601}\n${yyyymmdd}/${regionName}/${serviceName}/sdk_request\n${hash.toString()}`
 
 export const getSigningKey = (
     secretAccessKey: string,
