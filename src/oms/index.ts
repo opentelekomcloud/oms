@@ -1,10 +1,8 @@
-import { CloudConfig } from './core'
-import { CloudConfig, RequestOpts, signRequest } from './core'
+import { CloudConfig, RequestOpts, Signature } from './core'
 import Service, { ServiceType } from './services/base'
 import HttpClient from './core/http'
 import isEmpty from 'lodash/isEmpty'
 import { CatalogEntity, IdentityV3, ResponseToken } from './services/identity/v3'
-import { getSignedUrl } from './core/signer'
 
 export * from './core'
 export * from './services'
@@ -115,8 +113,9 @@ export class Client {
             if (this.domainID !== '') {
                 config.headers.set('X-Domain-Id', this.domainID)
             }
+            const newSignature = new Signature()
             const url = new URL(config.url)
-            const signedUrl = getSignedUrl(
+            const signedUrl = newSignature.getSignedUrl(
                 {
                     accessKeyId: this.cloud.auth.ak,
                     secretAccessKey: this.cloud.auth.sk,

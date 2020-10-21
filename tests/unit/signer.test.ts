@@ -1,15 +1,18 @@
-import { getSignedUrl } from '../../src/oms/core'
+import { Signature } from '../../src/oms/core'
+
 
 test('aws-signature test', () => {
-    const myUrl = new URL('https://iam.eu-de.otc.t-systems.com/v3/projects/?name=eu-de_test_dmd')
-    const date = new Date('Mon, 19 Oct 2020 13:22:12 GMT')
+    const myUrl = new URL('https://iam.eu-de.otc.t-systems.com/v3/projects?name=eu-de_test_dmd')
+    const date = new Date('Wed, 21 Oct 2020 11:54:11 GMT')
     const headers = new Headers()
-    headers.append('accept', 'application/json')
-    headers.append( 'user-agent', 'golangsdk/2.0.0' )
-    const signedUrlGet = getSignedUrl(
+    headers.set('accept', 'application/json')
+    headers.set( 'user-agent', 'OpenTelekomCloud JS/v1.0' )
+    headers.set( 'content-type', 'application/json' )
+    const signature = new Signature()
+    const signedUrlGet = signature.getSignedUrl(
         {
-            accessKeyId: 'A2VGRDT4L5Z7YOYSTNN9',
-            secretAccessKey: 'BYBYIiF3WUZGlorXmcTEDtNjB40JTibYIEfSUWqA',
+            accessKeyId: 'AKIDEXAMPLE',
+            secretAccessKey: 'BYBYIiF3WUZGlorXmcTEDtNjB40JTibEXAMPLE',
             regionName: ''
         },
         {
@@ -21,7 +24,7 @@ test('aws-signature test', () => {
         date
     );
     expect(signedUrlGet.Authorization).toBe(
-        'SDK-HMAC-SHA256 Credential=A2VGRDT4L5Z7YOYSTNN9/20201019///sdk_request,' +
-        ' SignedHeaders=accept;host;user-agent;x-sdk-date,' +
-        ' Signature=446f60d99021ad562739f1a841a242b708237d62ed5d278d882abcfea8b0428b')
+        'SDK-HMAC-SHA256 Credential=AKIDEXAMPLE/20201021///sdk_request,' +
+        ' SignedHeaders=accept;content-type;host;user-agent;x-sdk-date,' +
+        ' Signature=cb8397a6b119b38e8a4879f342e498896eb6f80f4c3cdebfd400cb2298d8a555')
 })
