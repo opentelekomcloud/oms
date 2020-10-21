@@ -104,7 +104,7 @@ export class Signature {
         method: string,
         uriPath: string,
         queryString: string,
-        stringifledHeaders: Array<string>,
+        stringifiedHeaders: Array<string>,
         signedHeaders: string,
         body: string
     ): sdkCanonicalRequest => {
@@ -118,10 +118,11 @@ export class Signature {
             uriPath = '/' + uriPath
         }
         let canonicalRequest = `${method}\n${uriPath}\n${queryString}\n`
-        for (let i = 0; i < stringifledHeaders.length; i++) canonicalRequest += `${stringifledHeaders[i]}\n`
+        for (let i = 0; i < stringifiedHeaders.length; i++) canonicalRequest += `${stringifiedHeaders[i]}\n`
         canonicalRequest += `\n${signedHeaders}\n${SHA256(body).toString()}`
         return { canonicalRequest, additionalQueryString: '' }
     }
+
     private getStringToSign = (
         iso8601: string,
         yyyymmdd: string,
