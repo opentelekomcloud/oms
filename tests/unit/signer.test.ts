@@ -9,7 +9,7 @@ test('aws-signature test', () => {
     headers.set( 'user-agent', 'OpenTelekomCloud JS/v1.0' )
     headers.set( 'content-type', 'application/json' )
     const signature = new Signature()
-    const signedUrlGet = signature.getSignedUrl(
+    const signedUrlGet = signature.getSignHeaders(
         {
             accessKeyId: 'AKIDEXAMPLE',
             secretAccessKey: 'BYBYIiF3WUZGlorXmcTEDtNjB40JTibEXAMPLE',

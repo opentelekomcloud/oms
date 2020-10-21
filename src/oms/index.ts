@@ -115,7 +115,7 @@ export class Client {
             }
             const newSignature = new Signature()
             const url = new URL(config.url)
-            const signedUrl = newSignature.getSignedUrl(
+            const signedUrl = newSignature.getSignHeaders(
                 {
                     accessKeyId: this.cloud.auth.ak,
                     secretAccessKey: this.cloud.auth.sk,
