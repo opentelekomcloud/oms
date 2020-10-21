@@ -26,13 +26,13 @@ export const getSignedUrl = (
     }
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    const newHeaders = Object.assign({ 'host': hostName, 'X-Sdk-Date': currentDate }, headers)
+    const newHeaders = new Headers({ ...headers, 'Host': hostName, 'X-Sdk-Date': currentDate })
     const stringifiedHeaders = sortedStringifiedHeaders(newHeaders)
     const signedHeaders = getSignedHeaders(stringifiedHeaders)
 
     const { queryString, yyyymmdd }: sdkQueryString = getQueryString(accessKeyId, regionName, signedHeaders, serviceName, currentDate)
-    const { canonicalRequest, additionalQueryString }: sdkCanonicalRequest = getCanonicalRequest(method, uriPath, queryString, stringifiedHeaders, signedHeaders, body)
-    const hash: CryptoJS.lib.WordArray = SHA256((canonicalRequest))
+    const { canonicalRequest, additionalQueryString }: sdkCanonicalRequest = getCanonicalRequest(method, uriPath, '', stringifiedHeaders, signedHeaders, body)
+    const hash = SHA256(canonicalRequest)
     const stringToSign: string = getStringToSign(currentDate, yyyymmdd, regionName, serviceName, hash)
     const signatureKey = getSigningKey(secretAccessKey, yyyymmdd, regionName, serviceName)
     const signature = getSignature(signatureKey, stringToSign)
@@ -51,13 +51,12 @@ export const getSignedUrl = (
  * @param headers {httpHeaders}
  * @returns {Array<string>}
  */
-const sortedStringifiedHeaders = (headers: httpHeaders): Array<string> => {
-
-    const upper: Array<string> = Object.keys(headers).map((k) => `${k}:${headers[k]}`)
-    const lower = upper.map((m) => m.toLowerCase())
-    lower.sort()
-
-    return lower
+const sortedStringifiedHeaders = (headers: Headers): Array<string> => {
+    const result: string[] = []
+    headers.forEach((v, k) => {
+        result.push(`${k}:${v}`.toLowerCase())
+    })
+    return result.sort()
 }
 
 /**
