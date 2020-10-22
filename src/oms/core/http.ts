@@ -238,16 +238,30 @@ export default class HttpClient {
             }, { encode: true, skipNull: true })
         }
         merged.url = url
+        merged.baseURL = ''
         if (this.beforeRequest.last) {
             merged = this.beforeRequest.last(merged)
         }
         const response = await fetch(url, merged) as JSONResponse<T>
         if (!response.ok) {
-            throw new HttpError(
-                response.status,
-                `HTTP error received. ${response.status} ${response.statusText}: ${await response.text()}`
-                + `Request Opts:\n${JSON.stringify(opts)}`,
-            )
+            const strHeaders: Record<string, string> = {}
+            merged.headers.forEach((v, k) => {
+                if (k.toLowerCase().endsWith('-token')) {
+                    const tSize = v.length
+                    strHeaders[k] = `${v.substring(0, 10)}...${v.substring(tSize-10, tSize)}`
+                } else {
+                    strHeaders[k] = v
+                }
+            })
+            const strOpts = JSON.stringify(merged, (k, v) => {
+                if (k === 'headers') {
+                    return strHeaders
+                }
+                return v
+            })
+            const message = `HTTP error received. ${response.status} ${response.statusText}: ${await response.text()}`
+                + `Request Opts:\n${strOpts}`
+            throw new HttpError(response.status, message)
         }
         const data = await response.text()
         response.data = data ? JSON.parse(data) : {} as T
