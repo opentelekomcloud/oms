@@ -147,9 +147,9 @@ function prepareConfig(base?: RequestOptsAbs) {
  * Otherwise just use `.push(...)` to add the handler
  */
 export class Handlers implements Iterable<RequestConfigHandler> {
-    private theFirst?: RequestConfigHandler
+    first?: RequestConfigHandler
     private readonly peloton: RequestConfigHandler[] = []
-    private theLast?: RequestConfigHandler
+    last?: RequestConfigHandler
 
     * [Symbol.iterator](): Iterator<RequestConfigHandler> {
         yield* this.peloton.reverse()
@@ -158,29 +158,6 @@ export class Handlers implements Iterable<RequestConfigHandler> {
     public push(handler: RequestConfigHandler): void {
         this.peloton.push(handler)
     }
-
-    public set last(handler: RequestConfigHandler | undefined) {
-        if (this.theLast) {
-            throw Error('Last handler is already set')
-        }
-        this.theLast = handler
-    }
-
-    public get last(): RequestConfigHandler | undefined {
-        return this.theLast
-    }
-
-    public set first(handler: RequestConfigHandler | undefined) {
-        if (this.theFirst) {
-            throw Error('First handler is already set')
-        }
-        this.theFirst = handler
-    }
-
-    public get first(): RequestConfigHandler | undefined {
-        return this.theFirst
-    }
-
 }
 
 export default class HttpClient {
