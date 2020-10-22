@@ -1,4 +1,4 @@
-import { Signature } from '../../src/oms/core'
+import { getSignHeaders } from '../../src/oms/core'
 
 
 test('aws-signature test', () => {
@@ -8,8 +8,7 @@ test('aws-signature test', () => {
     headers.set('accept', 'application/json')
     headers.set( 'user-agent', 'OpenTelekomCloud JS/v1.0' )
     headers.set( 'content-type', 'application/json' )
-    const signature = new Signature()
-    const signedUrlGet = signature.getSignHeaders(
+    const signedHeaderGet = getSignHeaders(
         {
             accessKeyId: 'AKIDEXAMPLE',
             secretAccessKey: 'BYBYIiF3WUZGlorXmcTEDtNjB40JTibEXAMPLE',
@@ -23,7 +22,7 @@ test('aws-signature test', () => {
         },
         date
     );
-    expect(signedUrlGet.Authorization).toBe(
+    expect(signedHeaderGet.Authorization).toBe(
         'SDK-HMAC-SHA256 Credential=AKIDEXAMPLE/20201021///sdk_request,' +
         ' SignedHeaders=accept;content-type;host;user-agent;x-sdk-date,' +
         ' Signature=cb8397a6b119b38e8a4879f342e498896eb6f80f4c3cdebfd400cb2298d8a555')

@@ -1,4 +1,4 @@
-import { CloudConfig, RequestOpts, Signature } from './core'
+import { CloudConfig, RequestOpts, getSignHeaders } from './core'
 import Service, { ServiceType } from './services/base'
 import HttpClient from './core/http'
 import isEmpty from 'lodash/isEmpty'
@@ -113,9 +113,8 @@ export class Client {
             if (this.domainID !== '') {
                 config.headers.set('X-Domain-Id', this.domainID)
             }
-            const newSignature = new Signature()
             const url = new URL(config.url)
-            const signedUrl = newSignature.getSignHeaders(
+            const signedHeaders = getSignHeaders(
                 {
                     accessKeyId: this.cloud.auth.ak,
                     secretAccessKey: this.cloud.auth.sk,
@@ -127,9 +126,9 @@ export class Client {
                     serviceName: '',
                     headers: config.headers
                 });
-            if (signedUrl) {
-                config.headers.set('X-Sdk-Date', signedUrl['X-Sdk-Date'])
-                config.headers.set('Authorization', signedUrl.Authorization)
+            if (signedHeaders) {
+                config.headers.set('X-Sdk-Date', signedHeaders['X-Sdk-Date'])
+                config.headers.set('Authorization', signedHeaders.Authorization)
             }
             return config
         })
