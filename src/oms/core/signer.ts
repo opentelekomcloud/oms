@@ -1,4 +1,4 @@
-import { HmacSHA256, SHA256 } from 'crypto-js'
+import sha256, { hmac } from 'fast-sha256'
 
 export interface CredentialInfo {
     readonly accessKeyId: string,
@@ -51,7 +51,7 @@ interface StringToSignParams {
     readonly yyyymmdd: string,
     readonly regionName: string,
     readonly serviceName: string,
-    readonly hash: CryptoJS.lib.WordArray
+    readonly hash: Uint8Array
 }
 
 interface SigningKeyParams {
@@ -63,6 +63,7 @@ interface SigningKeyParams {
 
 const signAlgorithmHMACSHA256 = 'SDK-HMAC-SHA256'
 const dateFormat = /-|:|\..{3}/g
+const encoder = new TextEncoder()
 
 export function getSignHeaders(credentials: CredentialInfo, request: RequestInfo, date: Date = new Date(), body = ''): AuthHeaders {
     let currentDate = date.toISOString().replace(dateFormat, '')
@@ -88,7 +89,7 @@ export function getSignHeaders(credentials: CredentialInfo, request: RequestInfo
         signedHeaders: signedHeaders,
         body: body,
     })
-    const hash = SHA256(canonicalRequest)
+    const hash = sha256(encoder.encode(canonicalRequest))
     const stringToSign: string = getStringToSign({
         iso8601: currentDate,
         yyyymmdd: yyyymmdd,
@@ -152,6 +153,7 @@ function getQueryString(params: QueryStringParams): QueryString {
  * Get Canonical request.
  */
 function getCanonicalRequest(params: CanonicalRequestParams): CanonicalRequest {
+    const bodyHash = sha256(encoder.encode(params.body))
     if (!params.url.pathname) {
         params.url.pathname = '/'
     }
@@ -165,25 +167,25 @@ function getCanonicalRequest(params: CanonicalRequestParams): CanonicalRequest {
     for (const value of params.stringifiedHeaders) {
         canonicalRequest += `${value}\n`
     }
-    canonicalRequest += `\n${params.signedHeaders}\n${SHA256(params.body).toString()}`
+    canonicalRequest += `\n${params.signedHeaders}\n${Buffer.from(bodyHash).toString('hex')}`
     return { canonicalRequest, additionalQueryString: '' }
 }
 
 function getStringToSign(params: StringToSignParams): string {
-    return `${signAlgorithmHMACSHA256}\n${params.iso8601}\n${params.yyyymmdd}/${params.regionName}/${params.serviceName}/sdk_request\n${params.hash.toString()}`
+    return `${signAlgorithmHMACSHA256}\n${params.iso8601}\n${params.yyyymmdd}/${params.regionName}/${params.serviceName}/sdk_request\n${Buffer.from(params.hash).toString('hex')}`
 }
 
 function getSigningKey(params: SigningKeyParams) {
     try {
-        const kDate = HmacSHA256(params.dateStamp, `SDK${params.secretAccessKey}`)
-        const kRegion = HmacSHA256(params.regionName, kDate)
-        const kService = HmacSHA256(params.serviceName, kRegion)
-        return HmacSHA256('sdk_request', kService)
+        const kDate = hmac(encoder.encode(`SDK${params.secretAccessKey}`), encoder.encode(params.dateStamp))
+        const kRegion = hmac(kDate, encoder.encode(params.regionName))
+        const kService = hmac(kRegion, encoder.encode(params.serviceName))
+        return hmac(kService, encoder.encode('sdk_request'))
     } catch (e) {
         throw new Error(`Failed to generate signature key: ${e.message}`)
     }
 }
 
-function getSignature(keyBuffer: CryptoJS.lib.WordArray, stringToSign: string): string {
-    return HmacSHA256(stringToSign, keyBuffer).toString()
+function getSignature(keyBuffer: Uint8Array, stringToSign: string): string {
+    return Buffer.from(hmac(keyBuffer, encoder.encode(stringToSign))).toString('hex')
 }
