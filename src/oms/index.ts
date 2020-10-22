@@ -70,12 +70,12 @@ export class Client {
         this.serviceMap.set(type, url)
     }
 
-    getService<S extends Service>(Type: ServiceType<S>): S {
-        const serviceURL = this.serviceMap.get(Type.type)
+    getService<S extends Service>(type: ServiceType<S>): S {
+        const serviceURL = this.serviceMap.get(type.type)
         if (!serviceURL) {
-            throw Error(`Service '${Type.type}' is not registered`)
+            throw Error(`Service '${type.type}' is not registered`)
         }
-        const srv = new Type(serviceURL, this.httpClient)
+        const srv = new type(serviceURL, this.httpClient)
         srv.projectID = this.projectID
         return srv
     }

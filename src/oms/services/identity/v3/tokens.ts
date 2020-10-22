@@ -3,15 +3,15 @@ import HttpClient from '../../../core/http'
 
 const url = '/v3/auth/tokens'
 
-interface domain {
+interface Domain {
     readonly id: string
     readonly name: string
 }
 
-interface authRecord {
+interface AuthRecord {
     id: string
     name: string
-    domain: domain
+    domain: Domain
 }
 
 export interface CatalogEntity {
@@ -28,8 +28,8 @@ export interface CatalogEntity {
 }
 
 interface ResponseTokenInfo {
-    readonly user: authRecord
-    readonly project?: authRecord
+    readonly user: AuthRecord
+    readonly project?: AuthRecord
     readonly catalog?: CatalogEntity[]
 }
 
@@ -37,7 +37,7 @@ export interface ResponseToken extends ResponseTokenInfo {
     readonly id: string
 }
 
-interface identity {
+interface Identity {
     readonly password: {
         readonly user: {
             readonly id?: string
@@ -52,7 +52,7 @@ interface AuthRequestData {
     [key: string]: unknown
 
     auth: {
-        identity: identity
+        identity: Identity
         scope?: {
             project?: NameOrID
             domain?: NameOrID
