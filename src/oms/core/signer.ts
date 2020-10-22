@@ -61,13 +61,13 @@ interface SigningKeyParams {
     readonly serviceName: string
 }
 
-const SignAlgorithmHMACSHA256 = 'SDK-HMAC-SHA256'
-const DateFormat = /-|:|\..{3}/g
+const signAlgorithmHMACSHA256 = 'SDK-HMAC-SHA256'
+const dateFormat = /-|:|\..{3}/g
 
 export function getSignHeaders(credentials: CredentialInfo, request: RequestInfo, date: Date = new Date(), body = ''): AuthHeaders {
-    let currentDate = date.toISOString().replace(DateFormat, '')
+    let currentDate = date.toISOString().replace(dateFormat, '')
     if (!currentDate) {
-        currentDate = new Date().toISOString().replace(DateFormat, '')
+        currentDate = new Date().toISOString().replace(dateFormat, '')
     }
     const newHeaders = new Headers(request.headers)
     newHeaders.set('Host', request.url.host)
@@ -142,7 +142,7 @@ function getSignedHeaders(stringifiedHeaders: string[]): string {
  */
 function getQueryString(params: QueryStringParams): QueryString {
     const yyyymmdd = params.isoDate.slice(0, 8)
-    let queryString = SignAlgorithmHMACSHA256
+    let queryString = signAlgorithmHMACSHA256
     queryString += ` Credential=${params.accessKeyId}/${yyyymmdd}/${params.regionName}/${params.serviceName}/sdk_request,`
     queryString += ` SignedHeaders=${params.signedHeaders},`
     return { queryString, yyyymmdd }
@@ -170,7 +170,7 @@ function getCanonicalRequest(params: CanonicalRequestParams): CanonicalRequest {
 }
 
 function getStringToSign(params: StringToSignParams): string {
-    return `${SignAlgorithmHMACSHA256}\n${params.iso8601}\n${params.yyyymmdd}/${params.regionName}/${params.serviceName}/sdk_request\n${params.hash.toString()}`
+    return `${signAlgorithmHMACSHA256}\n${params.iso8601}\n${params.yyyymmdd}/${params.regionName}/${params.serviceName}/sdk_request\n${params.hash.toString()}`
 }
 
 function getSigningKey(params: SigningKeyParams) {
