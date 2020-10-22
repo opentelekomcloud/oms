@@ -181,7 +181,7 @@ export class Client {
     }
 }
 
-const appJSON = 'application/json; charset=utf-8'
+const appJSON = 'application/json'
 const userAgent = 'OpenTelekomCloud JS/v1.0'
 
 function addCommonHeaders(cfg: RequestOpts): RequestOpts {
