@@ -62,16 +62,13 @@ interface signingKeyParams {
 }
 
 const SignAlgorithmHMACSHA256 = 'SDK-HMAC-SHA256'
-
+const dateFormat = /-|:|\..{3}/g
 
 export function getSignHeaders(credentials: CredentialInfo, request: RequestInfo, date: Date = new Date(), body = ''): AuthHeaders {
-    const dateFormat = /-|:|\..{3}/g
     let currentDate = date.toISOString().replace(dateFormat, '')
     if (!currentDate) {
         currentDate = new Date().toISOString().replace(dateFormat, '')
     }
-
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     const newHeaders = new Headers(request.headers)
     newHeaders.set('Host', request.url.host)
     newHeaders.append('X-Sdk-Date', currentDate)
