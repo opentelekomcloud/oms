@@ -62,12 +62,12 @@ interface SigningKeyParams {
 }
 
 const SignAlgorithmHMACSHA256 = 'SDK-HMAC-SHA256'
-const dateFormat = /-|:|\..{3}/g
+const DateFormat = /-|:|\..{3}/g
 
 export function getSignHeaders(credentials: CredentialInfo, request: RequestInfo, date: Date = new Date(), body = ''): AuthHeaders {
-    let currentDate = date.toISOString().replace(dateFormat, '')
+    let currentDate = date.toISOString().replace(DateFormat, '')
     if (!currentDate) {
-        currentDate = new Date().toISOString().replace(dateFormat, '')
+        currentDate = new Date().toISOString().replace(DateFormat, '')
     }
     const newHeaders = new Headers(request.headers)
     newHeaders.set('Host', request.url.host)
