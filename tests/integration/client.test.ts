@@ -83,13 +83,13 @@ test('Client: no auth opts', async () => {
     await expect(client.authenticate()).rejects.toThrowError()
 })
 
-test('Client: no ak/sk opts', async () => {
+test.skip('Client: no ak/sk opts', async () => {
     const cfg = { auth: { auth_url: 'http://notempty' } }
     const client = new Client(cfg)
     await expect(client.authAkSk()).rejects.toThrowError()
 })
 
-test('Client: ak/sk opts', async () => {
+test.skip('Client: ak/sk opts', async () => {
     const cfg = cloudConfig('http://nsdfdf')
         .withAKSK(randomString(10), randomString(20))
         .config

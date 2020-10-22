@@ -1,4 +1,4 @@
-import { CloudConfig, RequestOpts, signRequest } from './core'
+import { CloudConfig, RequestOpts, getSignHeaders } from './core'
 import Service, { ServiceType } from './services/base'
 import HttpClient from './core/http'
 import isEmpty from 'lodash/isEmpty'
@@ -103,13 +103,35 @@ export class Client {
      * Authenticate with AK/SK
      */
     async authAkSk(): Promise<void> {
-        // FIXME: NOT WORKING
-        if (!this.cloud.auth.ak || !this.cloud.auth.sk) {
-            throw Error(`Missing AK/SK: ${JSON.stringify(this.cloud.auth)}`)
-        }
-        // add signing interceptor
-        this.httpClient.beforeRequest.last = signRequest(this.cloud.auth.ak, this.cloud.auth.sk)
-        // FIXME: missing projectID and domainID loading
+        this.httpClient.beforeRequest.last = (config => {
+            if (!this.cloud.auth.ak || !this.cloud.auth.sk) {
+                throw Error(`Missing AK/SK: ${JSON.stringify(this.cloud.auth)}`)
+            }
+            if (this.projectID !== ''){
+                config.headers.set('X-Project-Id', this.projectID)
+            }
+            if (this.domainID !== '') {
+                config.headers.set('X-Domain-Id', this.domainID)
+            }
+            const url = new URL(config.url)
+            const signedHeaders = getSignHeaders(
+                {
+                    accessKeyId: this.cloud.auth.ak,
+                    secretAccessKey: this.cloud.auth.sk,
+                    regionName: ''
+                },
+                {
+                    method: config.method,
+                    url: url,
+                    serviceName: '',
+                    headers: config.headers
+                });
+            if (signedHeaders) {
+                config.headers.set('X-Sdk-Date', signedHeaders['X-Sdk-Date'])
+                config.headers.set('Authorization', signedHeaders.Authorization)
+            }
+            return config
+        })
     }
 
     private injectAuthToken() {
