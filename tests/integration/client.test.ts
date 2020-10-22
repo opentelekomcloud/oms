@@ -44,7 +44,7 @@ test('Client: register service', () => {
     const client = new Client(cfg)
     client.registerService(srv.type, srv.url)
 
-    class pseudo extends Service {
+    class Pseudo extends Service {
         static version = srv.version
         static type = srv.type
 
@@ -53,7 +53,7 @@ test('Client: register service', () => {
         }
     }
 
-    const ps = client.getService(pseudo)
+    const ps = client.getService(Pseudo)
     expect(ps).toBeDefined()
     expect(ps.client.baseConfig.baseURL).toBe(srv.url)
 })
@@ -65,7 +65,7 @@ test.skip('Client: get not registered service', async () => {
     const client = new Client(cfg)
     await client.authenticate()
 
-    class pseudo extends Service {
+    class Pseudo extends Service {
         static version = srv.version
         static type = srv.type
 
@@ -74,7 +74,7 @@ test.skip('Client: get not registered service', async () => {
         }
     }
 
-    expect(() => client.getService(pseudo)).toThrowError()
+    expect(() => client.getService(Pseudo)).toThrowError()
 })
 
 test('Client: no auth opts', async () => {

@@ -12,7 +12,7 @@ require('isomorphic-fetch')
 
 export type RequestConfigHandler = (i: RequestOpts) => RequestOpts
 
-const _absUrlRe = /^https?:\/\/.+/
+const absUrlRe = /^https?:\/\/.+/
 
 export interface JSONResponse<T> extends Response {
     data: T
@@ -227,7 +227,7 @@ export default class HttpClient {
 
         let { baseURL, url } = merged
         baseURL = baseURL ? baseURL : this.baseConfig.baseURL
-        if (!url.match(_absUrlRe) && !!baseURL) {
+        if (!url.match(absUrlRe) && !!baseURL) {
             url = joinURL(baseURL, url)
         }
         // append query params
