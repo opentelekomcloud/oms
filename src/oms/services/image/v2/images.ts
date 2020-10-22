@@ -15,7 +15,7 @@ import { Page, Pager } from '../../base'
  *
  * **active**: indicates that the image is available for use.
  */
-type imageStatus = 'queued' | 'saving' | 'deleted' | 'killed' | 'active'
+type ImageStatus = 'queued' | 'saving' | 'deleted' | 'killed' | 'active'
 
 /**
  * Specifies the member status.
@@ -28,19 +28,19 @@ type imageStatus = 'queued' | 'saving' | 'deleted' | 'killed' | 'active'
  *
  * **pending** indicates that the image shared by others needs to be confirmed.
  *
- * To use this parameter, set visibility to shared during the query.
+ * To use this parameter, set Visibility to shared during the query.
  */
-type memberStatus = 'accepted' | 'rejected' | 'pending'
+type MemberStatus = 'accepted' | 'rejected' | 'pending'
 
-type visibility = 'public' | 'private' | 'shared'
-type operator = 'gt' | 'gte' | 'lt' | 'lte' | 'eq' | 'neq'
+type Visibility = 'public' | 'private' | 'shared'
+type Operator = 'gt' | 'gte' | 'lt' | 'lte' | 'eq' | 'neq'
 
-interface timeRange {
-    readonly operator: operator
+interface TimeRange {
+    readonly operator: Operator
     readonly date: string | Date
 }
 
-function rangeToString(range?: timeRange): string | undefined {
+function rangeToString(range?: TimeRange): string | undefined {
     if (!range) {
         return range
     }
@@ -49,10 +49,10 @@ function rangeToString(range?: timeRange): string | undefined {
 
 export interface ListImageOpts {
     readonly protected?: boolean
-    readonly visibility?: visibility
+    readonly visibility?: Visibility
     readonly owner?: string
     readonly id?: string
-    readonly status?: imageStatus
+    readonly status?: ImageStatus
     readonly container_format?: string
     readonly disk_format?: string
     readonly min_ram?: number
@@ -61,7 +61,7 @@ export interface ListImageOpts {
     readonly os_bit?: string
     readonly platform?: string
     readonly tag?: string
-    readonly member_status?: memberStatus
+    readonly member_status?: MemberStatus
     // support_*
     readonly support_kvm?: boolean
     readonly support_xen?: boolean
@@ -73,8 +73,8 @@ export interface ListImageOpts {
     readonly support_xen_hana?: boolean
     readonly support_kvm_infiniband?: boolean
     // time ranges
-    readonly created_at?: timeRange
-    readonly updated_at?: timeRange
+    readonly created_at?: TimeRange
+    readonly updated_at?: TimeRange
     // sorting
     readonly sort_key?: string
     readonly sort_dir?: string
@@ -84,9 +84,9 @@ export interface Image {
     readonly id: string
     readonly protected: boolean
     readonly virtual_env_type: 'FusionCompute' | 'DataImage' | 'Ironic'
-    readonly visibility: visibility
+    readonly visibility: Visibility
     readonly owner: string
-    readonly status: imageStatus
+    readonly status: ImageStatus
     readonly name: string
     readonly container_format: string
     readonly disk_format: 'vhd' | 'raw' | 'zvhd' | 'qcow2'

@@ -121,14 +121,11 @@ export class VpcV1 extends Service {
      * @param vpcID - (optional) subnet`s VPC
      */
     async deleteSubnet(subnetID: string, vpcID?: string): Promise<void> {
-        let vpc_id: string
         if (!vpcID) {
             const sn = await this.getSubnet(subnetID)
-            vpc_id = sn.vpc_id
-        } else {
-            vpc_id = vpcID
+            vpcID = sn.vpc_id
         }
-        await deleteSubnet(this.client, vpc_id, subnetID)
+        await deleteSubnet(this.client, vpcID, subnetID)
         await waitForResourceToBeDeleted(() => this.getSubnet(subnetID), 120)
     }
 
