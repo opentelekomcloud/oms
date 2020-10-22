@@ -20,12 +20,12 @@ export interface AuthHeaders {
     /* eslint-enable */
 }
 
-interface sdkQueryString {
+interface QueryString {
     readonly queryString: string,
     readonly yyyymmdd: string
 }
 
-interface queryStringParams {
+interface QueryStringParams {
     readonly accessKeyId: string,
     readonly regionName: string,
     readonly signedHeaders: string,
@@ -33,12 +33,12 @@ interface queryStringParams {
     readonly isoDate: string
 }
 
-interface sdkCanonicalRequest {
+interface CanonicalRequest {
     readonly canonicalRequest: string,
     readonly additionalQueryString: string
 }
 
-interface canonicalRequestParams {
+interface CanonicalRequestParams {
     readonly method: string,
     readonly url: URL,
     readonly stringifiedHeaders: string[],
@@ -46,7 +46,7 @@ interface canonicalRequestParams {
     readonly body: string
 }
 
-interface stringToSignParams {
+interface StringToSignParams {
     readonly iso8601: string,
     readonly yyyymmdd: string,
     readonly regionName: string,
@@ -54,7 +54,7 @@ interface stringToSignParams {
     readonly hash: CryptoJS.lib.WordArray
 }
 
-interface signingKeyParams {
+interface SigningKeyParams {
     readonly secretAccessKey: string,
     readonly dateStamp: string,
     readonly regionName: string,
@@ -140,7 +140,7 @@ function getSignedHeaders(stringifiedHeaders: string[]): string {
 /**
  * Get query string
  */
-function getQueryString(params: queryStringParams): sdkQueryString {
+function getQueryString(params: QueryStringParams): QueryString {
     const yyyymmdd = params.isoDate.slice(0, 8)
     let queryString = SignAlgorithmHMACSHA256
     queryString += ` Credential=${params.accessKeyId}/${yyyymmdd}/${params.regionName}/${params.serviceName}/sdk_request,`
@@ -151,7 +151,7 @@ function getQueryString(params: queryStringParams): sdkQueryString {
 /**
  * Get Canonical request.
  */
-function getCanonicalRequest(params: canonicalRequestParams): sdkCanonicalRequest {
+function getCanonicalRequest(params: CanonicalRequestParams): CanonicalRequest {
     if (!params.url.pathname) {
         params.url.pathname = '/'
     }
@@ -169,11 +169,11 @@ function getCanonicalRequest(params: canonicalRequestParams): sdkCanonicalReques
     return { canonicalRequest, additionalQueryString: '' }
 }
 
-function getStringToSign(params: stringToSignParams): string {
+function getStringToSign(params: StringToSignParams): string {
     return `${SignAlgorithmHMACSHA256}\n${params.iso8601}\n${params.yyyymmdd}/${params.regionName}/${params.serviceName}/sdk_request\n${params.hash.toString()}`
 }
 
-function getSigningKey(params: signingKeyParams) {
+function getSigningKey(params: SigningKeyParams) {
     try {
         const kDate = HmacSHA256(params.dateStamp, `SDK${params.secretAccessKey}`)
         const kRegion = HmacSHA256(params.regionName, kDate)
