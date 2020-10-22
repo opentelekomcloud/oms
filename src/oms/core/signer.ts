@@ -1,16 +1,23 @@
 import { HmacSHA256, SHA256 } from 'crypto-js'
 
-export interface credentialInfo {
+export interface CredentialInfo {
     readonly accessKeyId: string,
     readonly secretAccessKey: string,
     readonly regionName: string
 }
 
-export interface requestInfo {
+export interface RequestInfo {
     readonly method: string,
     readonly url: URL,
     readonly serviceName: string,
     readonly headers?: Headers,
+}
+
+export interface AuthHeaders {
+    /* eslint-disable */
+    readonly 'X-Sdk-Date': string,
+    readonly 'Authorization': string,
+    /* eslint-enable */
 }
 
 interface sdkQueryString {
@@ -54,17 +61,10 @@ interface signingKeyParams {
     readonly serviceName: string
 }
 
-export interface authHeaders {
-    /* eslint-disable */
-    readonly 'X-Sdk-Date': string,
-    readonly 'Authorization': string,
-    /* eslint-enable */
-}
-
 const SignAlgorithmHMACSHA256 = 'SDK-HMAC-SHA256'
 
 
-export function getSignHeaders(credentials: credentialInfo, request: requestInfo, date: Date = new Date(), body = ''): authHeaders {
+export function getSignHeaders(credentials: CredentialInfo, request: RequestInfo, date: Date = new Date(), body = ''): AuthHeaders {
     const dateFormat = /-|:|\..{3}/g
     let currentDate = date.toISOString().replace(dateFormat, '')
     if (!currentDate) {
