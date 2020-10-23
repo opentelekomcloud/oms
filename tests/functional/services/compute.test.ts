@@ -1,4 +1,4 @@
-import { cloudConfig, CloudConfig } from '../../../src/oms/core'
+import { cloud, CloudConfig } from '../../../src/oms/core'
 import { Client } from '../../../src/oms'
 import { ComputeV1, ComputeV2 } from '../../../src/oms/services/compute'
 
@@ -14,7 +14,7 @@ beforeAll(async () => {
     if (!t) {
         throw 'Missing OS_TOKEN required for tests'
     }
-    config = cloudConfig(authUrl).withToken(t).config
+    config = cloud(authUrl).withToken(t).config
     client = new Client(config)
     await client.authenticate()
 })

@@ -2,7 +2,7 @@
 /**
  * @jest-environment node
  */
-import { Client, cloudConfig } from '../../src/oms'
+import { Client, cloud } from '../../src/oms'
 import { IdentityV3 } from '../../src/oms/services/identity/v3'
 import { ImageV2 } from '../../src/oms/services/image'
 import Service from '../../src/oms/services/base'
@@ -14,7 +14,7 @@ const t = process.env.OS_TOKEN
 if (!t) {
     throw 'Missing OS_TOKEN required for tests'
 }
-const config = cloudConfig(authUrl).withToken(t).config
+const config = cloud(authUrl).withToken(t).config
 jest.setTimeout(1000000)
 
 test('Client_auth', async () => {

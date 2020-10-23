@@ -1,10 +1,10 @@
 /// <reference types="jest" />
-import { cloudConfig } from '../../src/oms/core'
+import { cloud } from '../../src/oms/core'
 import { randomString } from '../utils/helpers'
 
 test('CloudConfigHelper_basic', () => {
     const authUrl = randomString(5)
-    const cc = cloudConfig(authUrl)
+    const cc = cloud(authUrl)
     const auth = cc.config.auth
     expect(auth.auth_url).toEqual(authUrl)
     expect(auth.token).toBeUndefined()
@@ -17,12 +17,16 @@ test('CloudConfigHelper_basic', () => {
 })
 
 test('CloudConfigHelper_pwd', () => {
-    const cc = cloudConfig('')
+    const cc = cloud('')
     const domain = randomString(3)
     const username = randomString(3)
     const password = randomString(3)
     const project = randomString(3)
-    const auth = cc.withPassword(domain, username, password, project).config.auth
+    const auth = cc
+        .withPassword(domain, username, password)
+        .withProject(project)
+        .config
+        .auth
     expect(auth.token).toBeUndefined()
     expect(auth.username).toEqual(username)
     expect(auth.password).toEqual(password)
@@ -33,21 +37,21 @@ test('CloudConfigHelper_pwd', () => {
 })
 
 test('CloudConfigHelper_token', () => {
-    const cc = cloudConfig('')
+    const cc = cloud('')
     const token = randomString(10)
     const auth = cc.withToken(token).config.auth
     expect(auth.token).toEqual(token)
 })
 
 test('CloudConfigHelper_region', () => {
-    const cc = cloudConfig('')
+    const cc = cloud('')
     const reg = randomString(4)
     const cfg = cc.withRegion(reg).config
     expect(cfg.region).toEqual(reg)
 })
 
 test('CloudConfigHelper_ak/sk', () => {
-    const cc = cloudConfig('')
+    const cc = cloud('')
     const ak = randomString(5)
     const sk = randomString(10)
     const auth = cc.withAKSK(ak, sk).config.auth
@@ -56,7 +60,7 @@ test('CloudConfigHelper_ak/sk', () => {
 })
 
 test('CloudConfigHelper_appending', () => {
-    const cc = cloudConfig('')
+    const cc = cloud('')
     const reg = randomString(4)
     const token = randomString(10)
     const cfg = cc

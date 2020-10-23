@@ -1,4 +1,4 @@
-import { cloudConfig } from '../../src/oms/core'
+import { cloud } from '../../src/oms/core'
 import { Client } from '../../src/oms'
 
 const authUrl = 'https://iam.eu-de.otc.t-systems.com'
@@ -12,8 +12,9 @@ if (!sk) {
 }
 
 test('Client: ak/sk auth', async () => {
-    const configAkSk = cloudConfig(authUrl)
-        .withAKSK(ak, sk, 'eu-de')
+    const configAkSk = cloud(authUrl)
+        .withAKSK(ak, sk)
+        .withProject('eu-de')
         .config
     const clientAkSk = new Client(configAkSk)
     await clientAkSk.authenticate()

@@ -1,4 +1,4 @@
-import { cloudConfig } from '../../../src/oms/core'
+import { cloud } from '../../../src/oms/core'
 import { Client } from '../../../src/oms'
 import { VpcV1 } from '../../../src/oms/services/network'
 import { randomString } from '../../utils/helpers'
@@ -9,7 +9,7 @@ if (!t) {
     throw 'Missing OS_TOKEN required for tests'
 }
 const authUrl = 'https://iam.eu-de.otc.t-systems.com/v3'
-const config = cloudConfig(authUrl).withToken(t).config
+const config = cloud(authUrl).withToken(t).config
 const client = new Client(config)
 
 const orphans: {

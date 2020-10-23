@@ -1,5 +1,5 @@
 import HttpClient, { mergeHeaders, RequestOpts } from '../../src/oms/core/http'
-import { cloudConfig } from '../../src/oms/core'
+import { cloud } from '../../src/oms/core'
 import { Client } from '../../src/oms'
 
 import { disableFetchMocks, enableFetchMocks } from 'jest-fetch-mock'
@@ -50,7 +50,7 @@ test('Client: header merging', () => {
 
 test('Client: required headers', async () => {
     const authUrl = 'https://google.com/'
-    const config = cloudConfig(authUrl).withToken('t').config
+    const config = cloud(authUrl).withToken('t').config
     const client = new Client(config)
     enableFetchMocks()
     fetchMock.mockOnce(async r => {

@@ -8,8 +8,8 @@ export interface NameOrID {
 /**
  * Simple implementation of OpenStack auth options
  */
-export class AuthOptions {
-    auth_url!: string
+export interface AuthOptions {
+    auth_url: string
     token?: string
     username?: string
     password?: string
@@ -25,36 +25,19 @@ export class AuthOptions {
 /**
  * OpenTelekomCloud cloud configuration
  */
-export class CloudConfig {
+export interface CloudConfig {
     auth: AuthOptions
     region?: string
-
-    constructor() {
-        this.auth = new (AuthOptions)()
-    }
 }
 
 /**
  * CloudConfigHelper provides helper functions to get cloud configurations
  */
-export class CloudConfigHelper {
-    authUrl: string
-
-    private readonly cfg: CloudConfig
-
-    get config(): CloudConfig {
-        return this.cfg
-    }
+class CloudConfigHelper {
+    readonly config: CloudConfig
 
     constructor(authUrl: string) {
-        this.authUrl = authUrl
-        this.cfg = this.baseCfg()
-    }
-
-    private baseCfg(): CloudConfig {
-        const cc = new (CloudConfig)()
-        cc.auth.auth_url = this.authUrl
-        return cc
+        this.config = { auth: { auth_url: authUrl } }
     }
 
     withRegion(region: string): CloudConfigHelper {
@@ -62,11 +45,15 @@ export class CloudConfigHelper {
         return this
     }
 
-    withPassword(domainName: string, username: string, password: string, projectName: string): CloudConfigHelper {
+    withProject(projectName: string): CloudConfigHelper {
+        this.config.auth.project_name = projectName
+        return this
+    }
+
+    withPassword(domainName: string, username: string, password: string): CloudConfigHelper {
         this.config.auth.domain_name = domainName
         this.config.auth.username = username
         this.config.auth.password = password
-        this.config.auth.project_name = projectName
         return this
     }
 
@@ -75,15 +62,19 @@ export class CloudConfigHelper {
         return this
     }
 
-    withAKSK(ak: string, sk: string, projectName?: string): CloudConfigHelper {
+    withAKSK(ak: string, sk: string): CloudConfigHelper {
         this.config.auth.ak = ak
         this.config.auth.sk = sk
-        this.config.auth.project_name = projectName
         return this
     }
 }
 
-export function cloudConfig(authURL: string): CloudConfigHelper {
+/**
+ * Returns cloud configuration helper providing simple configuration
+ * generation witch chained methods
+ * @param authURL
+ */
+export function cloud(authURL: string): CloudConfigHelper {
     return new CloudConfigHelper(authURL)
 }
 
