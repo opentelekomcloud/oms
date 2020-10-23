@@ -16,6 +16,7 @@ const absUrlRe = /^https?:\/\/.+/
 
 export interface JSONResponse<T> extends Response {
     data: T
+    raw: Blob
 }
 
 export class HttpError extends Error {
@@ -181,6 +182,8 @@ export default class HttpClient {
 
     /**
      * Base request method
+     *
+     * #### NB! this method can return object not matching given type value
      */
     async request<T>(opts: RequestOptsAbs): Promise<JSONResponse<T>> {
         let merged = new RequestOpts(opts)
@@ -225,7 +228,7 @@ export default class HttpClient {
             merged.headers.forEach((v, k) => {
                 if (k.toLowerCase().endsWith('-token')) {
                     const tSize = v.length
-                    strHeaders[k] = `${v.substring(0, 10)}...${v.substring(tSize-10, tSize)}`
+                    strHeaders[k] = `${v.substring(0, 10)}...${v.substring(tSize - 10, tSize)}`
                 } else {
                     strHeaders[k] = v
                 }
@@ -240,12 +243,17 @@ export default class HttpClient {
                 + `Request Opts:\n${strOpts}`
             throw new HttpError(response.status, message)
         }
-        const data = await response.text()
-        response.data = data ? JSON.parse(data) : {} as T
-        // will be validated against own 'schema' field, if one is provided
-        const result = validate(response.data, merged.schema)
-        if (!result.valid) {
-            throw Error(`Failed JSON Schema validation: ${result.errors}`)
+        response.data = {} as T
+        response.raw = await response.blob()
+        if (isJsonResponse(response)) {
+            if (response.raw.size) {
+                response.data = JSON.parse(await response.raw.text())
+            }
+            // will be validated against own 'schema' field, if one is provided
+            const result = validate(response.data, merged.schema)
+            if (!result.valid) {
+                throw Error(`Failed JSON Schema validation: ${result.errors}`)
+            }
         }
         return response
     }
@@ -274,6 +282,14 @@ export default class HttpClient {
         opts.method = 'HEAD'
         return await this.request(opts)
     }
+}
+
+function isJsonResponse(r: Response): boolean {
+    const ct = r.headers.get('content-type')
+    if (!ct) {
+        return false
+    }
+    return ct.startsWith('application/json')
 }
 
 const barePartRe = /^\/*(.+?)\/*$/
