@@ -1,5 +1,5 @@
 import { Client } from '../../../src/oms'
-import { cloudConfig } from '../../../src/oms/core'
+import { cloud } from '../../../src/oms/core'
 import { ImageV2 } from '../../../src/oms/services/image'
 
 const authUrl = 'https://iam.eu-de.otc.t-systems.com/v3'
@@ -7,7 +7,7 @@ const t = process.env.OS_TOKEN
 if (!t) {
     throw 'Missing OS_TOKEN required for tests'
 }
-const defaultConfig = cloudConfig(authUrl).withToken(t).config
+const defaultConfig = cloud(authUrl).withToken(t).config
 const defaultClient = new Client(defaultConfig)
 
 jest.setTimeout(1000000)  // for debug

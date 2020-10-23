@@ -1,5 +1,5 @@
-import { cloudConfig, CloudConfig } from '../../src/oms/core'
-import { authServerUrl, fakeAuthServer, fakeRegion, fakeServiceServer, fakeToken } from '../utils/servers'
+import { cloud } from '../../src/oms/core'
+import { authServerUrl, fakeAuthServer, fakeServiceServer, fakeToken } from '../utils/servers'
 import { Client, IdentityV3 } from '../../src/oms'
 import { randomString } from '../utils/helpers'
 import Service from '../../src/oms/services/base'
@@ -19,15 +19,15 @@ afterAll(() => {
 })
 
 test.skip('Client: authToken', async () => {
-    const cfg = cloudConfig(authServerUrl())
-        .withPassword('MYDOMAIN', 'MYNAME', '>>>Super!Secret<<<', fakeRegion)
+    const cfg = cloud(authServerUrl())
+        .withPassword('MYDOMAIN', 'MYNAME', '>>>Super!Secret<<<')
         .config
     const client = new Client(cfg)
     await client.authToken()
 })
 
 test('Client: authAKSK', async () => {
-    const cfg = cloudConfig(authServerUrl())
+    const cfg = cloud(authServerUrl())
         .withAKSK('AK', 'SK')
         .config
     const client = new Client(cfg)
@@ -41,7 +41,7 @@ const srv = {
 }
 
 test('Client: register service', () => {
-    const cfg = cloudConfig(authServerUrl())
+    const cfg = cloud(authServerUrl())
         .withToken(fakeToken)
         .config
     const client = new Client(cfg)
@@ -62,8 +62,8 @@ test('Client: register service', () => {
 })
 
 test.skip('Client: get not registered service', async () => {
-    const cfg = cloudConfig(authServerUrl())
-        .withPassword('MYDOMAIN', 'MYNAME', '>>>Super!Secret<<<', fakeRegion)
+    const cfg = cloud(authServerUrl())
+        .withPassword('MYDOMAIN', 'MYNAME', '>>>Super!Secret<<<')
         .config
     const client = new Client(cfg)
     await client.authenticate()
@@ -81,19 +81,19 @@ test.skip('Client: get not registered service', async () => {
 })
 
 test('Client: no auth opts', async () => {
-    const cfg = new CloudConfig()
+    const cfg = cloud('').config
     const client = new Client(cfg)
     await expect(client.authenticate()).rejects.toThrowError()
 })
 
 test.skip('Client: no ak/sk opts', async () => {
-    const cfg = { auth: { auth_url: 'http://notempty' } }
+    const cfg = cloud('http://notempty').config
     const client = new Client(cfg)
     await expect(client.authAkSk()).rejects.toThrowError()
 })
 
 test.skip('Client: ak/sk opts', async () => {
-    const cfg = cloudConfig('http://nsdfdf')
+    const cfg = cloud('http://nsdfdf')
         .withAKSK(randomString(10), randomString(20))
         .config
     const client = new Client(cfg)
@@ -104,20 +104,20 @@ test.skip('Client: ak/sk opts', async () => {
 })
 
 test('Client: abs URL', async () => {
-    const cfg = cloudConfig(authServerUrl()).config
+    const cfg = cloud(authServerUrl()).config
     const client = new Client(cfg)
     await client.httpClient.get({ url: authServerUrl() })
 })
 
 test('Client: abs URL with base', async () => {
-    const cfg = cloudConfig(authServerUrl())
+    const cfg = cloud(authServerUrl())
         .config
     const client = new Client(cfg)
     await client.httpClient.get({ url: authServerUrl(), baseURL: 'https://google.com' })
 })
 
 test('Client: merge handlers', async () => {
-    const cfg = cloudConfig(authServerUrl()).config
+    const cfg = cloud(authServerUrl()).config
     const client = new Client(cfg)
     const mock1 = jest.fn()
     const mock2 = jest.fn()
@@ -140,14 +140,16 @@ test('Client: merge handlers', async () => {
 test('Client: ak/sk auth; request headers', async () => {
     const ak = randomString(10)
     const sk = randomString(20)
-    const configAkSk = cloudConfig('http://t-systems.com')
-        .withAKSK(ak, sk, 'eu-de')
+    const projectName = randomString(5)
+    const configAkSk = cloud('http://t-systems.com')
+        .withAKSK(ak, sk)
+        .withProject(projectName)
         .config
     const clientAkSk = new Client(configAkSk)
     const projectID = randomString(20)
     const domainID = randomString(20)
     fetchMock.mockOnce(async req => {
-        expect(req.url.endsWith('?name=eu-de')).toBeTruthy()
+        expect(req.url.endsWith(`?name=${projectName}`)).toBeTruthy()
         return `{"projects": [{ "id": "${projectID}", "domain_id": "${domainID}" }]}`
     })
     await clientAkSk.authenticate()
@@ -156,7 +158,7 @@ test('Client: ak/sk auth; request headers', async () => {
         expect(req.headers.get('x-domain-id')).toBe(domainID)
         expect(req.headers.get('x-project-id')).toBe(projectID)
         expect(req.headers.get('authorization')).toBeTruthy()
-        expect(req.headers.get('authorization')!.startsWith('SDK-HMAC-SHA256 Credential=')).toBeTruthy()
+        expect(req.headers.get('authorization')?.startsWith('SDK-HMAC-SHA256 Credential=')).toBeTruthy()
         return ''
     })
     const iam = clientAkSk.getService(IdentityV3)

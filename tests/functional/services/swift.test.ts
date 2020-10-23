@@ -1,4 +1,4 @@
-import { Client, cloudConfig, SwiftV1 } from '../../../src/oms'
+import { Client, cloud, SwiftV1 } from '../../../src/oms'
 import { randomString } from '../../utils/helpers'
 
 jest.setTimeout(10000)  // for debug
@@ -8,7 +8,7 @@ const t = process.env.OS_TOKEN
 if (!t) {
     throw 'Missing OS_TOKEN required for tests'
 }
-const config = cloudConfig(authUrl).withToken(t).config
+const config = cloud(authUrl).withToken(t).config
 const client = new Client(config)
 
 beforeAll(async () => {

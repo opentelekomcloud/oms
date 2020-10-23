@@ -1,4 +1,4 @@
-import { cloudConfig } from '../../../src/oms/core'
+import { cloud } from '../../../src/oms/core'
 import { Client } from '../../../src/oms'
 import { IdentityV3 } from '../../../src/oms/services/identity/v3'
 
@@ -9,7 +9,7 @@ test('Projects: list (token)', async () => {
     if (!t) {
         throw 'Missing OS_TOKEN required for tests'
     }
-    const config = cloudConfig(authUrl).withToken(t).config
+    const config = cloud(authUrl).withToken(t).config
     const client = new Client(config)
     await client.authenticate()
     const iam = client.getService(IdentityV3)
@@ -26,7 +26,7 @@ test('Projects: list (ak sk)', async () => {
     if (!sk) {
         throw 'Missing AWS_SECRET_ACCESS_KEY required for tests'
     }
-    const configAkSk = cloudConfig(authUrl).withAKSK(ak, sk).config
+    const configAkSk = cloud(authUrl).withAKSK(ak, sk).config
     const clientAkSk = new Client(configAkSk)
     await clientAkSk.authenticate()
     const iam = clientAkSk.getService(IdentityV3)
