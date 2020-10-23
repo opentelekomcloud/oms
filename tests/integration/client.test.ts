@@ -1,7 +1,7 @@
 import { cloud } from '../../src/oms/core'
 import { authServerUrl, fakeAuthServer, fakeServiceServer, fakeToken } from '../utils/servers'
 import { Client, IdentityV3 } from '../../src/oms'
-import { randomString } from '../utils/helpers'
+import { json, randomString } from '../utils/helpers'
 import Service from '../../src/oms/services/base'
 import HttpClient from '../../src/oms/core/http'
 import { disableFetchMocks, enableFetchMocks } from 'jest-fetch-mock'
@@ -150,7 +150,7 @@ test('Client: ak/sk auth; request headers', async () => {
     const domainID = randomString(20)
     fetchMock.mockOnce(async req => {
         expect(req.url.endsWith(`?name=${projectName}`)).toBeTruthy()
-        return `{"projects": [{ "id": "${projectID}", "domain_id": "${domainID}" }]}`
+        return json(`{"projects": [{ "id": "${projectID}", "domain_id": "${domainID}" }]}`)
     })
     await clientAkSk.authenticate()
     fetchMock.mockOnce(async req => {
@@ -159,7 +159,7 @@ test('Client: ak/sk auth; request headers', async () => {
         expect(req.headers.get('x-project-id')).toBe(projectID)
         expect(req.headers.get('authorization')).toBeTruthy()
         expect(req.headers.get('authorization')?.startsWith('SDK-HMAC-SHA256 Credential=')).toBeTruthy()
-        return ''
+        return json()
     })
     const iam = clientAkSk.getService(IdentityV3)
     await iam.listProjects()

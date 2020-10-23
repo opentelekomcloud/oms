@@ -3,6 +3,7 @@ import { cloud } from '../../src/oms/core'
 import { Client } from '../../src/oms'
 
 import { disableFetchMocks, enableFetchMocks } from 'jest-fetch-mock'
+import { json } from '../utils/helpers'
 
 test('RequestOpts: nothing', () => {
     expect(() => new RequestOpts({})).toThrowError(/^Request without Method.+/)
@@ -58,7 +59,7 @@ test('Client: required headers', async () => {
         expect(r.headers.get('Content-Type')).toBeDefined()
         expect(r.headers.get('Host')).toBeDefined()
         expect(r.headers.get('User-Agent')).toBeDefined()
-        return '{"token": {"user": {"domain": {"id": ""}}, "catalog": []}}'
+        return json('{"token": {"user": {"domain": {"id": ""}}, "catalog": []}}')
     })
     await client.authenticate()
     disableFetchMocks()
