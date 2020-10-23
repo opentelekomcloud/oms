@@ -1,4 +1,4 @@
-import { CloudConfig, RequestOpts, getSignHeaders } from './core'
+import { CloudConfig, getSignHeaders, RequestOpts } from './core'
 import Service, { ServiceType } from './services/base'
 import HttpClient from './core/http'
 import isEmpty from 'lodash/isEmpty'
@@ -107,7 +107,7 @@ export class Client {
             if (!this.cloud.auth.ak || !this.cloud.auth.sk) {
                 throw Error(`Missing AK/SK: ${JSON.stringify(this.cloud.auth)}`)
             }
-            if (this.projectID !== ''){
+            if (this.projectID !== '') {
                 config.headers.set('X-Project-Id', this.projectID)
             }
             if (this.domainID !== '') {
@@ -118,20 +118,30 @@ export class Client {
                 {
                     accessKeyId: this.cloud.auth.ak,
                     secretAccessKey: this.cloud.auth.sk,
-                    regionName: ''
+                    regionName: '',
                 },
                 {
                     method: config.method,
                     url: url,
                     serviceName: '',
-                    headers: config.headers
-                });
+                    headers: config.headers,
+                })
             if (signedHeaders) {
                 config.headers.set('X-Sdk-Date', signedHeaders['X-Sdk-Date'])
                 config.headers.set('Authorization', signedHeaders.Authorization)
             }
             return config
         })
+        const projectName = this.cloud.auth.project_name
+        if (!this.projectID && projectName) {
+            const iam = this.getIdentity()
+            const proj = await iam.listProjects({ name: projectName })
+            if (!proj.length) {
+                throw Error(`Project with name ${projectName} doesn't exist`)
+            }
+            this.projectID = proj[0].id
+            this.domainID = proj[0].domain_id
+        }
     }
 
     private injectAuthToken() {

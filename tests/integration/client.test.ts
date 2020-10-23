@@ -1,18 +1,21 @@
 import { cloudConfig, CloudConfig } from '../../src/oms/core'
 import { authServerUrl, fakeAuthServer, fakeRegion, fakeServiceServer, fakeToken } from '../utils/servers'
-import { Client } from '../../src/oms'
+import { Client, IdentityV3 } from '../../src/oms'
 import { randomString } from '../utils/helpers'
 import Service from '../../src/oms/services/base'
 import HttpClient from '../../src/oms/core/http'
+import { disableFetchMocks, enableFetchMocks } from 'jest-fetch-mock'
 
 beforeAll(() => {
     fakeAuthServer.listen()
     fakeServiceServer.listen()
+    enableFetchMocks()
 })
 
 afterAll(() => {
     fakeAuthServer.close()
     fakeServiceServer.close()
+    disableFetchMocks()
 })
 
 test.skip('Client: authToken', async () => {
@@ -131,4 +134,31 @@ test('Client: merge handlers', async () => {
     })
     expect(mock1).toBeCalledTimes(1)
     expect(mock2).toBeCalledTimes(1)
+})
+
+
+test('Client: ak/sk auth; request headers', async () => {
+    const ak = randomString(10)
+    const sk = randomString(20)
+    const configAkSk = cloudConfig('http://t-systems.com')
+        .withAKSK(ak, sk, 'eu-de')
+        .config
+    const clientAkSk = new Client(configAkSk)
+    const projectID = randomString(20)
+    const domainID = randomString(20)
+    fetchMock.mockOnce(async req => {
+        expect(req.url.endsWith('?name=eu-de')).toBeTruthy()
+        return `{"projects": [{ "id": "${projectID}", "domain_id": "${domainID}" }]}`
+    })
+    await clientAkSk.authenticate()
+    fetchMock.mockOnce(async req => {
+        expect(req.headers.get('x-sdk-date')).toBeTruthy()
+        expect(req.headers.get('x-domain-id')).toBe(domainID)
+        expect(req.headers.get('x-project-id')).toBe(projectID)
+        expect(req.headers.get('authorization')).toBeTruthy()
+        expect(req.headers.get('authorization')!.startsWith('SDK-HMAC-SHA256 Credential=')).toBeTruthy()
+        return ''
+    })
+    const iam = clientAkSk.getService(IdentityV3)
+    await iam.listProjects()
 })
