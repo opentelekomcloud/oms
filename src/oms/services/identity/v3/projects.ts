@@ -1,6 +1,14 @@
-import HttpClient from '../../../core/http'
+import HttpClient, { QueryParams } from '../../../core/http'
 
-const url = '/v3/auth/projects'
+const url = '/v3/projects'
+
+export interface ListOpts extends QueryParams{
+    readonly domain_id?: string
+    readonly name?: string
+    readonly parent_id?: string
+    readonly enabled?: boolean
+    readonly is_domain?: boolean
+}
 
 export interface Project {
     readonly id: string
@@ -17,7 +25,7 @@ export interface Project {
     }
 }
 
-export async function listProjects(client: HttpClient): Promise<Project[]> {
-    const resp = await client.get<{ projects: Project[] }>({ url: url })
+export async function listProjects(client: HttpClient, opts?: ListOpts): Promise<Project[]> {
+    const resp = await client.get<{ projects: Project[] }>({ url: url, params: opts })
     return resp.data.projects
 }

@@ -3,7 +3,7 @@ import Service, { bareUrl } from '../../base'
 import HttpClient from '../../../core/http'
 import { createToken, ResponseToken, verifyToken } from './tokens'
 import { createCredential, Credential } from './credentials'
-import { listProjects, Project } from './projects'
+import { ListOpts as ProjectListOpts, listProjects, Project } from './projects'
 
 export * from './tokens'
 export * from './endpoints'
@@ -43,8 +43,8 @@ export class IdentityV3 extends Service {
     /**
      * List available projects (tenants)
      */
-    async listProjects(): Promise<Project[]> {
-        return await listProjects(this.client)
+    async listProjects(opts?: ProjectListOpts): Promise<Project[]> {
+        return await listProjects(this.client, opts)
     }
 
 }
