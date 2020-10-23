@@ -9,7 +9,7 @@ export interface NameOrID {
  * Simple implementation of OpenStack auth options
  */
 export interface AuthOptions {
-    readonly auth_url: string
+    auth_url: string
     token?: string
     username?: string
     password?: string
