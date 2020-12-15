@@ -1,6 +1,4 @@
-import { cloud } from '../../../src/oms/core'
-import { Client } from '../../../src/oms'
-import { VpcV1 } from '../../../src/oms/services/network'
+import { Client, cloud, VpcV1 } from '../../../src/oms'
 import { randomString } from '../../utils/helpers'
 import { Subnet, VPC } from '../../../src/oms/services/network/v1'
 
@@ -42,7 +40,7 @@ test('VPC/Subnet: lifecycle', async () => {
     const name = 'oms-test-vpc'
     const cidr = '192.168.0.0/16'
     const description = randomString(10)
-    const vpc = await nw.createVPC({
+    let vpc = await nw.createVPC({
         name: name,
         cidr: cidr,
         description: description,
@@ -54,8 +52,15 @@ test('VPC/Subnet: lifecycle', async () => {
     expect(vpc.name).toBe(name)
     expect(vpc.cidr).toBe(cidr)
     expect(vpc.description).toBe(description)
+    expect(vpc.enable_shared_snat).toBe(false)
     const vpcList = await nw.listVPCs()
     expect(vpcList.find(v => v.id === vpc.id)).toBeDefined()
+
+    const updatedVPC = await nw.updateVPC(vpc.id, { enable_shared_snat: true })
+    expect(updatedVPC.id).toBe(vpc.id)
+    expect(updatedVPC.enable_shared_snat).toBe(true)
+    vpc = await nw.getVPC(vpc.id)
+    expect(vpc.enable_shared_snat).toBe(true)
 
     const opts = {
         vpc_id: vpc.id,

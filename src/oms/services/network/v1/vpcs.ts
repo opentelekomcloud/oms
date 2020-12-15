@@ -35,6 +35,21 @@ export async function createVPC(client: HttpClient, opts: CreateOpts): Promise<V
     return resp.data.vpc
 }
 
+export interface Route {
+    destination?: string
+    nexthop?: string
+}
+
+export interface UpdateOpts extends CreateOpts {
+    routes?: Route[]
+    enable_shared_snat?: boolean
+}
+
+export async function updateVPC(client: HttpClient, vpcID: string, opts: UpdateOpts): Promise<VPC> {
+    const resp = await client.put<{ vpc: VPC }>({ url: joinURL(url, vpcID), json: { vpc: opts } })
+    return resp.data.vpc
+}
+
 export async function deleteVPC(client: HttpClient, vpcID: string): Promise<void> {
     await client.delete({ url: joinURL(url, vpcID) })
 }
