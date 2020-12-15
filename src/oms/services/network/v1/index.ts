@@ -1,6 +1,15 @@
 import Service, { waitFor, waitForResourceToBeDeleted } from '../../base'
 import HttpClient, { HttpError } from '../../../core/http'
-import { CreateOpts as VPCCreateOpts, createVPC, deleteVPC, getVPCStatus, listVPCs, VPC } from './vpcs'
+import {
+    CreateOpts as VPCCreateOpts,
+    createVPC,
+    deleteVPC,
+    getVPCStatus,
+    listVPCs,
+    UpdateOpts,
+    updateVPC,
+    VPC,
+} from './vpcs'
 import {
     CreateOpts as SubnetCreateOpts,
     createSubnet,
@@ -63,6 +72,15 @@ export class VpcV1 extends Service {
      */
     async getVPC(vpcID: string): Promise<VPC> {
         return await getVPCStatus(this.client, vpcID)
+    }
+
+    /**
+     * Update existing VPC
+     * @param vpcID
+     * @param opts
+     */
+    async updateVPC(vpcID: string, opts: UpdateOpts): Promise<VPC> {
+        return await updateVPC(this.client, vpcID, opts)
     }
 
     /**
