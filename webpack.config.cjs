@@ -3,7 +3,7 @@ const LicensePlugin = require('webpack-license-plugin')
 
 module.exports = {
     entry: './dist/index.js',
-    devtool: 'inline-source-map',
+    devtool: 'source-map',
     output: {
         library: 'oms',
         filename: 'client.min.js',
