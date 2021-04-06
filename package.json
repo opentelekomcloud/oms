@@ -57,7 +57,8 @@
     "cov-report:codecov": "nyc report -t coverage --reporter=text-lcov > coverage.lcov && yarn codecov",
     "test": "yarn clean && yarn unit && yarn integration && yarn functional && yarn cov-merge",
     "build": "tsc -p ./src",
-    "clean": "rm -rf ./dist ./coverage"
+    "clean": "rm -rf ./dist ./coverage",
+    "release": "yarn clean && yarn build && webpack"
   },
   "dependencies": {
     "is-cidr": "^4.0.2",
