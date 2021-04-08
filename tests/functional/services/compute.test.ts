@@ -1,6 +1,4 @@
-import { cloud, CloudConfig } from '../../../src/oms/core'
-import { Client } from '../../../src/oms'
-import { ComputeV1, ComputeV2 } from '../../../src/oms/services/compute'
+import { Client, cloud, CloudConfig, ComputeV1, ComputeV2 } from '../../../src/oms'
 
 let config: CloudConfig
 let client: Client

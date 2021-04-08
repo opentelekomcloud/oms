@@ -25,15 +25,6 @@ export default abstract class Service {
 }
 
 /**
- * Return base service url, e.g. https://iam.eu-de.otc.t-systems.com/
- * @param serviceUrl - url from service catalog
- */
-export function bareUrl(serviceUrl: string): string {
-    const url = new URL(serviceUrl)
-    return `${url.protocol}//${url.host}`
-}
-
-/**
  * Abstract page having only default properties
  */
 export interface Page {

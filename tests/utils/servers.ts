@@ -1,7 +1,7 @@
 import { createServer, IncomingMessage, Server, ServerResponse } from 'http'
 import { randomString } from './helpers'
 import { AddressInfo } from 'net'
-import { ResponseToken } from '../../src/oms/services/identity/v3'
+import { ResponseToken } from '../../src/oms'
 
 export const fakeToken = randomString(20)
 

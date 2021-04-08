@@ -1,9 +1,9 @@
 import { AuthOptions } from '../../../core'
-import Service, { bareUrl } from '../../base'
-import HttpClient from '../../../core/http'
+import Service from '../../base'
 import { createToken, ResponseToken, verifyToken } from './tokens'
 import { createCredential, Credential } from './credentials'
 import { ListOpts as ProjectListOpts, listProjects, Project } from './projects'
+import HttpClient from '../../../core/http'
 
 export * from './tokens'
 export * from './endpoints'
@@ -14,7 +14,10 @@ export class IdentityV3 extends Service {
     static readonly type = 'identity'
 
     constructor(url: string, httpClient: HttpClient) {
-        super(bareUrl(url), httpClient)
+        if (url.endsWith('/v3')) {
+            url = url.slice(0, -3)
+        }
+        super(url, httpClient)
     }
 
     /**

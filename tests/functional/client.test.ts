@@ -2,9 +2,7 @@
 /**
  * @jest-environment node
  */
-import { Client, cloud } from '../../src/oms'
-import { IdentityV3 } from '../../src/oms/services/identity/v3'
-import { ImageV2 } from '../../src/oms/services/image'
+import { Client, cloud, IdentityV3, ImageV2 } from '../../src/oms'
 import Service from '../../src/oms/services/base'
 import HttpClient from '../../src/oms/core/http'
 
