@@ -222,7 +222,7 @@ export default class HttpClient {
         if (this.beforeRequest.last) {
             merged = this.beforeRequest.last(merged)
         }
-        const response = await fetch(url, merged) as JSONResponse<T>
+        const response = await fetch(merged.url, merged) as JSONResponse<T>
         if (!response.ok) {
             const strHeaders: Record<string, string> = {}
             merged.headers.forEach((v, k) => {
