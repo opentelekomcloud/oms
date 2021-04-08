@@ -1,6 +1,4 @@
-import { cloud } from '../../../src/oms/core'
-import { Client } from '../../../src/oms'
-import { IdentityV3 } from '../../../src/oms/services/identity/v3'
+import { Client, cloud, IdentityV3 } from '../../../src/oms'
 
 const authUrl = 'https://iam.eu-de.otc.t-systems.com/v3'
 

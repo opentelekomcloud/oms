@@ -1,6 +1,5 @@
-import { cloud } from '../../src/oms/core'
+import { Client, cloud, IdentityV3 } from '../../src/oms'
 import { authServerUrl, fakeAuthServer, fakeServiceServer, fakeToken } from '../utils/servers'
-import { Client, IdentityV3 } from '../../src/oms'
 import { json, randomString } from '../utils/helpers'
 import Service from '../../src/oms/services/base'
 import HttpClient from '../../src/oms/core/http'

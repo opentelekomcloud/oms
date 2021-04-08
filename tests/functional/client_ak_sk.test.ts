@@ -1,5 +1,4 @@
-import { cloud } from '../../src/oms/core'
-import { Client } from '../../src/oms'
+import { Client, cloud } from '../../src/oms'
 
 const authUrl = 'https://iam.eu-de.otc.t-systems.com'
 const ak = process.env.AWS_ACCESS_KEY_ID

@@ -1,6 +1,4 @@
-import { Client } from '../../../src/oms'
-import { cloud } from '../../../src/oms/core'
-import { ImageV2 } from '../../../src/oms/services/image'
+import { Client, cloud, ImageV2 } from '../../../src/oms'
 
 const authUrl = 'https://iam.eu-de.otc.t-systems.com/v3'
 const t = process.env.OS_TOKEN

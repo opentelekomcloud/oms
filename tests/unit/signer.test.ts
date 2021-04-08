@@ -1,4 +1,4 @@
-import { getSignHeaders } from '../../src/oms/core'
+import { getSignHeaders } from '../../src/oms'
 
 
 test('aws-signature test', () => {

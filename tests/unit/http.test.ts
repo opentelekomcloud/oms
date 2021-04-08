@@ -1,6 +1,5 @@
 import HttpClient, { mergeHeaders, RequestOpts } from '../../src/oms/core/http'
-import { cloud } from '../../src/oms/core'
-import { Client } from '../../src/oms'
+import { Client, cloud } from '../../src/oms'
 
 import { disableFetchMocks, enableFetchMocks } from 'jest-fetch-mock'
 import { json } from '../utils/helpers'
@@ -49,6 +48,8 @@ test('Client: header merging', () => {
     expect(merged.get('h3')).toBe('h3')
 })
 
+const simpleBody = '{"token": {"user": {"domain": {"id": ""}}, "catalog": []}}'
+
 test('Client: required headers', async () => {
     const authUrl = 'https://google.com/'
     const config = cloud(authUrl).withToken('t').config
@@ -59,7 +60,20 @@ test('Client: required headers', async () => {
         expect(r.headers.get('Content-Type')).toBeDefined()
         expect(r.headers.get('Host')).toBeDefined()
         expect(r.headers.get('User-Agent')).toBeDefined()
-        return json('{"token": {"user": {"domain": {"id": ""}}, "catalog": []}}')
+        return json(simpleBody)
+    })
+    await client.authenticate()
+    disableFetchMocks()
+})
+
+test('Client: complex URL', async () => {
+    const authUrl = 'https://rtest.outcatcher.com/meta/proxy/https:/iam.eu-de.otc.t-systems.com/v3'
+    const config = cloud(authUrl).withToken('t').config
+    const client = new Client(config)
+    enableFetchMocks()
+    fetchMock.mockOnce(async r => {
+        expect(r.url).toBe(authUrl + '/auth/tokens')
+        return json(simpleBody)
     })
     await client.authenticate()
     disableFetchMocks()
