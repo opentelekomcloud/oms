@@ -1,4 +1,3 @@
-/// <reference types="jest" />
 import { cloud } from '../../src/oms'
 import { randomString } from '../utils/helpers'
 

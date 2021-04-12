@@ -2,7 +2,7 @@ import { CloudConfig, getSignHeaders, RequestOpts } from './core'
 import Service, { ServiceType } from './services/base'
 import HttpClient from './core/http'
 import isEmpty from 'lodash/isEmpty'
-import { CatalogEntity, IdentityV3, ResponseToken } from './services/identity/v3'
+import { CatalogEntity, IdentityV3, ResponseToken } from './services'
 
 export * from './core'
 export * from './services'
