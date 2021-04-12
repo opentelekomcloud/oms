@@ -1,9 +1,0 @@
-{
-  "preset": "ts-jest",
-  "collectCoverage": true,
-  "coverageReporters": ["json"],
-  "collectCoverageFrom": [
-    "src/**/*.ts"
-  ],
-  "testEnvironment": "node"
-}
