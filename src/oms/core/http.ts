@@ -150,6 +150,7 @@ function prepareConfig(base?: RequestOptsAbs) {
 export class Handlers implements Iterable<RequestConfigHandler> {
     first?: RequestConfigHandler
     private readonly peloton: RequestConfigHandler[] = []
+    signing?: RequestConfigHandler  // special case for ak/sk signing, it's executed before the last one
     last?: RequestConfigHandler
 
     * [Symbol.iterator](): Iterator<RequestConfigHandler> {
@@ -219,10 +220,17 @@ export default class HttpClient {
         }
         merged.url = url
         merged.baseURL = ''
+
+        if (this.beforeRequest.signing) {
+            merged = this.beforeRequest.signing(merged)
+        }
+
         if (this.beforeRequest.last) {
             merged = this.beforeRequest.last(merged)
         }
-        const response = await fetch(merged.url, merged) as JSONResponse<T>
+        url = merged.url
+
+        const response = await fetch(url, merged) as JSONResponse<T>
         if (!response.ok) {
             const strHeaders: Record<string, string> = {}
             merged.headers.forEach((v, k) => {
