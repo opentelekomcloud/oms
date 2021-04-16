@@ -19,6 +19,8 @@ export class Client {
     httpClient: HttpClient
     cloud: CloudConfig
 
+    akskAuthHeader = 'Authorization'
+
     set tokenID(v: string) {
         this.cloud.auth.token = v
     }
@@ -128,7 +130,7 @@ export class Client {
                 })
             if (signedHeaders) {
                 config.headers.set('X-Sdk-Date', signedHeaders['X-Sdk-Date'])
-                config.headers.set('Authorization', signedHeaders.Authorization)
+                config.headers.set(this.akskAuthHeader, signedHeaders.Authorization)
             }
             return config
         })
