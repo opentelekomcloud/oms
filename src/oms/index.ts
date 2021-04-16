@@ -105,7 +105,7 @@ export class Client {
      * Authenticate with AK/SK
      */
     async authAkSk(): Promise<void> {
-        this.httpClient.beforeRequest.last = (config => {
+        this.httpClient.beforeRequest.signing = (config => {
             if (!this.cloud.auth.ak || !this.cloud.auth.sk) {
                 throw Error(`Missing AK/SK: ${JSON.stringify(this.cloud.auth)}`)
             }
