@@ -1,9 +1,10 @@
 import { AuthOptions } from '../../../core'
 import Service from '../../base'
-import { createToken, ResponseToken, verifyToken } from './tokens'
+import { CatalogEntity, createToken, ResponseToken, verifyToken } from './tokens'
 import { createCredential, Credential } from './credentials'
 import { ListOpts as ProjectListOpts, listProjects, Project } from './projects'
 import HttpClient from '../../../core/http'
+import { listCatalog } from './catalog'
 
 export * from './tokens'
 export * from './endpoints'
@@ -48,6 +49,13 @@ export class IdentityV3 extends Service {
      */
     async listProjects(opts?: ProjectListOpts): Promise<Project[]> {
         return await listProjects(this.client, opts)
+    }
+
+    /**
+     * List available service endpoints
+     */
+    async listCatalog(): Promise<CatalogEntity[]> {
+        return await listCatalog(this.client)
     }
 
 }

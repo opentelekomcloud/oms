@@ -135,8 +135,10 @@ export class Client {
             return config
         })
         const projectName = this.cloud.auth.project_name
+        const iam = this.getIdentity()
+        const catalog = await iam.listCatalog()
+        this.saveServiceCatalog(catalog)
         if (!this.projectID && projectName) {
-            const iam = this.getIdentity()
             const proj = await iam.listProjects({ name: projectName })
             if (!proj.length) {
                 throw Error(`Project with name ${projectName} doesn't exist`)
