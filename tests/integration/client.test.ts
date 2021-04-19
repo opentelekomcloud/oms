@@ -25,7 +25,7 @@ test.skip('Client: authToken', async () => {
     await client.authToken()
 })
 
-test('Client: authAKSK', async () => {
+test.skip('Client: authAKSK', async () => {
     const cfg = cloud(authServerUrl())
         .withAKSK('AK', 'SK')
         .config
@@ -147,6 +147,9 @@ test('Client: ak/sk auth; request headers', async () => {
     const clientAkSk = new Client(configAkSk)
     const projectID = randomString(20)
     const domainID = randomString(20)
+    fetchMock.mockOnce(async () => {
+        return json('{"catalog": []}')
+    })
     fetchMock.mockOnce(async req => {
         expect(req.url.endsWith(`?name=${projectName}`)).toBeTruthy()
         return json(`{"projects": [{ "id": "${projectID}", "domain_id": "${domainID}" }]}`)

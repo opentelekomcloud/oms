@@ -1,4 +1,4 @@
-import { Client, cloud } from '../../src/oms'
+import { Client, cloud, ComputeV1 } from '../../src/oms'
 
 const authUrl = 'https://iam.eu-de.otc.t-systems.com'
 const ak = process.env.AWS_ACCESS_KEY_ID
@@ -19,4 +19,7 @@ test('Client: ak/sk auth', async () => {
     await clientAkSk.authenticate()
     expect(clientAkSk.projectID).toBeTruthy()
     expect(clientAkSk.domainID).toBeTruthy()
+
+    expect(clientAkSk.serviceMap.size).toBeGreaterThan(1)
+    expect(clientAkSk.getService(ComputeV1)).toBeDefined()
 })
