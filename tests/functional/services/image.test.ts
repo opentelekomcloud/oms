@@ -1,53 +1,56 @@
-import { Client, cloud, ImageV2 } from '../../../src/oms'
+import { Client, ImageV2 } from '../../../src/oms'
+import { authCases, commonBeforeAll } from '../helpers'
 
-const authUrl = 'https://iam.eu-de.otc.t-systems.com/v3'
-const t = process.env.OS_TOKEN
-if (!t) {
-    throw 'Missing OS_TOKEN required for tests'
-}
-const defaultConfig = cloud(authUrl).withToken(t).config
-const defaultClient = new Client(defaultConfig)
+jest.setTimeout(30000)
 
-jest.setTimeout(1000000)  // for debug
+describe.each(authCases)(
+    '%s client',
+    authType => {
 
-beforeAll(async () => {
-    await defaultClient.authenticate()
-})
+        let client: Client
 
-test('List Images: basic', async () => {
-    await defaultClient.authenticate()
-    const ims = defaultClient.getService(ImageV2)
-    ims.listImages()
-})
+        beforeAll(async () => {
+            client = await commonBeforeAll(authType)
+        })
 
-test('List Images: first page', async () => {
-    await defaultClient.authenticate()
-    const ims = defaultClient.getService(ImageV2)
-    const pager = ims.listImages({})
-    const result = await pager.next()
-    expect(result.value).toBeDefined()
-    expect(result.value?.images.length).toBe(25)
-})
 
-test('List Images: pagination', async () => {
-    await defaultClient.authenticate()
-    const ims = defaultClient.getService(ImageV2)
-    const pager = ims.listImages({ created_at: { date: new Date(), operator: 'lt' } })
-    for await (const page of pager) {
-        expect(page.images.length <= 25).toBeTruthy()
-        expect(page.images.length > 0).toBeTruthy()
-        const image0 = page.images[0]
-        expect(image0).toHaveProperty('id')
-    }
-})
+        test('List Images: basic', async () => {
+            await client.authenticate()
+            const ims = client.getService(ImageV2)
+            ims.listImages()
+        })
 
-test('List Images: all', async () => {
-    await defaultClient.authenticate()
-    const ims = defaultClient.getService(ImageV2)
-    let totalCount = 0
-    for await (const page of ims.listImages()) {
-        totalCount += page.images.length
-    }
-    const allPages = await ims.listImages().all()
-    expect(allPages.images.length).toBe(totalCount)
-})
+        test('List Images: first page', async () => {
+            await client.authenticate()
+            const ims = client.getService(ImageV2)
+            const pager = ims.listImages({})
+            const result = await pager.next()
+            expect(result.value).toBeDefined()
+            expect(result.value?.images.length).toBe(25)
+        })
+
+        test('List Images: pagination', async () => {
+            await client.authenticate()
+            const ims = client.getService(ImageV2)
+            const pager = ims.listImages({ created_at: { date: new Date(), operator: 'lt' } })
+            for await (const page of pager) {
+                expect(page.images.length <= 25).toBeTruthy()
+                expect(page.images.length > 0).toBeTruthy()
+                const image0 = page.images[0]
+                expect(image0).toHaveProperty('id')
+            }
+        })
+
+        test('List Images: all', async () => {
+            await client.authenticate()
+            const ims = client.getService(ImageV2)
+            let totalCount = 0
+            for await (const page of ims.listImages()) {
+                totalCount += page.images.length
+            }
+            const allPages = await ims.listImages().all()
+            expect(allPages.images.length).toBe(totalCount)
+        })
+    },
+)
+

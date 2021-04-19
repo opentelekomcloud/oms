@@ -109,12 +109,6 @@ export class Client {
             if (!this.cloud.auth.ak || !this.cloud.auth.sk) {
                 throw Error(`Missing AK/SK: ${JSON.stringify(this.cloud.auth)}`)
             }
-            if (this.projectID !== '') {
-                config.headers.set('X-Project-Id', this.projectID)
-            }
-            if (this.domainID !== '') {
-                config.headers.set('X-Domain-Id', this.domainID)
-            }
             const url = new URL(config.url)
             const signedHeaders = getSignHeaders(
                 {
@@ -132,20 +126,24 @@ export class Client {
                 config.headers.set('X-Sdk-Date', signedHeaders['X-Sdk-Date'])
                 config.headers.set(this.akskAuthHeader, signedHeaders.Authorization)
             }
+            if (this.projectID !== '') {
+                config.headers.set('X-Project-Id', this.projectID)
+            }
             return config
         })
         const projectName = this.cloud.auth.project_name
         const iam = this.getIdentity()
-        const catalog = await iam.listCatalog()
-        this.saveServiceCatalog(catalog)
         if (!this.projectID && projectName) {
             const proj = await iam.listProjects({ name: projectName })
-            if (!proj.length) {
+            if (!proj || !proj.length) {
                 throw Error(`Project with name ${projectName} doesn't exist`)
             }
             this.projectID = proj[0].id
             this.domainID = proj[0].domain_id
         }
+
+        const catalog = await iam.listCatalog()
+        this.saveServiceCatalog(catalog)
     }
 
     private injectAuthToken() {

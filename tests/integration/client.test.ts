@@ -140,24 +140,24 @@ test('Client: ak/sk auth; request headers', async () => {
     const ak = randomString(10)
     const sk = randomString(20)
     const projectName = randomString(5)
-    const configAkSk = cloud('http://t-systems.com')
+    const configAkSk = cloud('https://devstack.example.com/identity')
         .withAKSK(ak, sk)
         .withProject(projectName)
         .config
     const clientAkSk = new Client(configAkSk)
     const projectID = randomString(20)
     const domainID = randomString(20)
-    fetchMock.mockOnce(async () => {
-        return json('{"catalog": []}')
-    })
-    fetchMock.mockOnce(async req => {
-        expect(req.url.endsWith(`?name=${projectName}`)).toBeTruthy()
-        return json(`{"projects": [{ "id": "${projectID}", "domain_id": "${domainID}" }]}`)
-    })
+    fetchMock
+        .once(async req => {
+            expect(req.url.endsWith(`?name=${projectName}`)).toBeTruthy()
+            return json(`{"projects": [{ "id": "${projectID}", "domain_id": "${domainID}" }]}`)
+        })
+        .once(async () => {
+            return json('{"catalog": []}')
+        })
     await clientAkSk.authenticate()
     fetchMock.mockOnce(async req => {
         expect(req.headers.get('x-sdk-date')).toBeTruthy()
-        expect(req.headers.get('x-domain-id')).toBe(domainID)
         expect(req.headers.get('x-project-id')).toBe(projectID)
         expect(req.headers.get('authorization')).toBeTruthy()
         expect(req.headers.get('authorization')?.startsWith('SDK-HMAC-SHA256 Credential=')).toBeTruthy()
