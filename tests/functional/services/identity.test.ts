@@ -1,6 +1,5 @@
 import { Client, cloud, IdentityV3 } from '../../../src/oms'
-
-const authUrl = 'https://iam.eu-de.otc.t-systems.com/v3'
+import { authUrl } from '../helpers'
 
 test('Projects: list (token)', async () => {
     const t = process.env.OS_TOKEN
