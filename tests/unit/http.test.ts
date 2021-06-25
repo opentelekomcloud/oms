@@ -1,7 +1,7 @@
 import HttpClient, { mergeHeaders, RequestOpts } from '../../src/oms/core/http'
 import { Client, cloud } from '../../src/oms'
 
-import { disableFetchMocks, enableFetchMocks } from 'jest-fetch-mock'
+import fetchMock from 'jest-fetch-mock'
 import { json } from '../utils/helpers'
 
 test('RequestOpts: nothing', () => {
@@ -50,31 +50,41 @@ test('Client: header merging', () => {
 
 const simpleBody = '{"token": {"user": {"domain": {"id": ""}}, "catalog": []}}'
 
-test('Client: required headers', async () => {
-    const authUrl = 'https://google.com/'
-    const config = cloud(authUrl).withToken('t').config
-    const client = new Client(config)
-    enableFetchMocks()
-    fetchMock.mockOnce(async r => {
-        expect(r.headers.get('Accept')).toBeDefined()
-        expect(r.headers.get('Content-Type')).toBeDefined()
-        expect(r.headers.get('Host')).toBeDefined()
-        expect(r.headers.get('User-Agent')).toBeDefined()
-        return json(simpleBody)
+describe('Test requests', () => {
+    beforeAll(() => {
+        fetchMock.enableMocks()
     })
-    await client.authenticate()
-    disableFetchMocks()
+    beforeEach(() => {
+        fetchMock.resetMocks()
+    })
+    afterAll(() => {
+        fetchMock.disableMocks()
+    })
+
+
+    test('Client: required headers', async () => {
+        const authUrl = 'https://acme.com/'
+        const config = cloud(authUrl).withToken('t').config
+        const client = new Client(config)
+        fetchMock.mockOnce(async r => {
+            expect(r.headers.get('Accept')).toBeDefined()
+            expect(r.headers.get('Content-Type')).toBeDefined()
+            expect(r.headers.get('Host')).toBeDefined()
+            expect(r.headers.get('User-Agent')).toBeDefined()
+            return json(simpleBody)
+        })
+        await client.authenticate()
+    })
+
+    test('Client: complex URL', async () => {
+        const authUrl = 'https://rtest.outcatcher.com/meta/proxy/https:/iam.eu-de.otc.t-systems.com/v3'
+        const config = cloud(authUrl).withToken('t').config
+        const client = new Client(config)
+        fetchMock.mockOnce(async r => {
+            expect(r.url).toBe(authUrl + '/auth/tokens')
+            return json(simpleBody)
+        })
+        await client.authenticate()
+    })
 })
 
-test('Client: complex URL', async () => {
-    const authUrl = 'https://rtest.outcatcher.com/meta/proxy/https:/iam.eu-de.otc.t-systems.com/v3'
-    const config = cloud(authUrl).withToken('t').config
-    const client = new Client(config)
-    enableFetchMocks()
-    fetchMock.mockOnce(async r => {
-        expect(r.url).toBe(authUrl + '/auth/tokens')
-        return json(simpleBody)
-    })
-    await client.authenticate()
-    disableFetchMocks()
-})

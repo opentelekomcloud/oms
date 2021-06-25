@@ -1,6 +1,7 @@
 import HttpClient, { joinURL } from '../../../../core/http'
 import { Metadata } from '../../../../core'
 import { Container, ContainerMetadata, ObjectEntity, ObjectListOpts } from './types'
+import { Headers } from 'cross-fetch'
 
 const url = ''
 

@@ -7,8 +7,7 @@ import isEmpty from 'lodash/isEmpty'
 import { ParsedQuery, stringifyUrl } from 'query-string'
 import { validate } from 'json-schema'
 import { JSONSchema } from './types'
-
-require('isomorphic-fetch')
+import fetch, { Headers } from 'cross-fetch'
 
 export type RequestConfigHandler = (i: RequestOpts) => RequestOpts
 
