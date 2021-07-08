@@ -25,8 +25,8 @@ export class ComputeV1 extends Service {
         }
         // AZ filtering is not working on server side, so still need to filter it
         return flavors.filter(f => {
-            const azs = f.os_extra_specs['cond:operation:az'].split(',')
-            return azs.find(a => {
+            const azs = f.os_extra_specs['cond:operation:az'] || ''
+            return azs.split(',').find(a => {
                 const items = a.match(groupInfoRe)
                 return (!!items) &&
                     (items.length === 3) &&
