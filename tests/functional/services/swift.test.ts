@@ -7,6 +7,7 @@ jest.setTimeout(30000)  // for debug
 describe.each(authCases)(
     '%s client',
     authType => {
+        const onlyToken = authType !== 'token' ? test.skip : test
 
         let client: Client
 
@@ -21,7 +22,7 @@ describe.each(authCases)(
             expect(account.domainID).toBe(client.domainID)
         })
 
-        test('Account: update metadata', async () => {
+        onlyToken('Account: update metadata', async () => {
             const srv = client.getService(SwiftV1)
             const testMeta = {
                 meta: 'data',
@@ -51,7 +52,7 @@ describe.each(authCases)(
             expect(containers).toHaveProperty('length')
         })
 
-        test('Containers: workflow', async () => {
+        onlyToken('Containers: workflow', async () => {
             const srv = client.getService(SwiftV1)
             const name = randomString(10)
             await srv.createContainer(name, undefined, { 'container-meta': 'yes' })

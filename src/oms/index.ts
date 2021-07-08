@@ -121,7 +121,9 @@ export class Client {
                     url: url,
                     serviceName: '',
                     headers: config.headers,
-                })
+                },
+                undefined, config.body,
+            )
             if (signedHeaders) {
                 config.headers.set('X-Sdk-Date', signedHeaders['X-Sdk-Date'])
                 config.headers.set(this.akskAuthHeader, signedHeaders.Authorization)
