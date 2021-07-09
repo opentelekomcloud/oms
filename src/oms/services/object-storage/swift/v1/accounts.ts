@@ -1,6 +1,7 @@
 import HttpClient from '../../../../core/http'
-import { AccountMetadata, Account, ContainerMetadata } from './types'
+import { Account, AccountMetadata, ContainerMetadata } from './types'
 import { Metadata } from '../../../../core'
+import { Headers } from 'cross-fetch'
 
 const url = ''
 

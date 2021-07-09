@@ -1,4 +1,5 @@
 import sha256, { hmac } from 'fast-sha256'
+import { Headers } from 'cross-fetch'
 
 export interface CredentialInfo {
     readonly accessKeyId: string,

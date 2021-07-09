@@ -3,18 +3,22 @@ import { authServerUrl, fakeAuthServer, fakeServiceServer, fakeToken } from '../
 import { json, randomString } from '../utils/helpers'
 import Service from '../../src/oms/services/base'
 import HttpClient from '../../src/oms/core/http'
-import { disableFetchMocks, enableFetchMocks } from 'jest-fetch-mock'
+import fetchMock from 'jest-fetch-mock'
 
 beforeAll(() => {
     fakeAuthServer.listen()
     fakeServiceServer.listen()
-    enableFetchMocks()
+    fetchMock.enableMocks()
+})
+
+beforeEach(() => {
+    fetchMock.resetMocks()
 })
 
 afterAll(() => {
     fakeAuthServer.close()
     fakeServiceServer.close()
-    disableFetchMocks()
+    fetchMock.disableMocks()
 })
 
 test.skip('Client: authToken', async () => {
