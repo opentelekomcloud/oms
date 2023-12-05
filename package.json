@@ -80,11 +80,12 @@
     "release": "yarn clean && yarn build && webpack --mode production"
   },
   "dependencies": {
+    "@types/json-schema": "^7.0.15",
     "cross-fetch": "^3.1.4",
     "is-cidr": "^4.0.2",
+    "json-schema": "^0.4.0",
     "lodash": "^4.17.20",
-    "query-string": "^6.13.2",
-    "@types/json-schema": "^7.0.15"
+    "query-string": "^6.13.2"
   },
   "bugs": {
     "url": "https://github.com/opentelekomcloud/oms/issues"
