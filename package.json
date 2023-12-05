@@ -83,7 +83,8 @@
     "cross-fetch": "^3.1.4",
     "is-cidr": "^4.0.2",
     "lodash": "^4.17.20",
-    "query-string": "^6.13.2"
+    "query-string": "^6.13.2",
+    "@types/json-schema": "^7.0.15"
   },
   "bugs": {
     "url": "https://github.com/opentelekomcloud/oms/issues"
