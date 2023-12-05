@@ -526,18 +526,13 @@
     "jest-diff" "^26.0.0"
     "pretty-format" "^26.0.0"
 
-"@types/json-schema@*", "@types/json-schema@^7.0.3":
-  "version" "7.0.7"
+"@types/json-schema@*", "@types/json-schema@^7.0.15", "@types/json-schema@^7.0.3":
+  "integrity" "sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA=="
+  "resolved" "https://registry.npmjs.org/@types/json-schema/-/json-schema-7.0.15.tgz"
+  "version" "7.0.15"
 
 "@types/json5@^0.0.29":
   "version" "0.0.29"
-
-"@types/jsonwebtoken@^9.0.5":
-  "integrity" "sha512-VRLSGzik+Unrup6BsouBeHsf4d1hOEgYWTm/7Nmw1sXoN1+tRly/Gy/po3yeahnP4jfnQWWAhQAqcNfH7ngOkA=="
-  "resolved" "https://registry.npmjs.org/@types/jsonwebtoken/-/jsonwebtoken-9.0.5.tgz"
-  "version" "9.0.5"
-  dependencies:
-    "@types/node" "*"
 
 "@types/keyv@*":
   "version" "3.1.1"
@@ -1662,9 +1657,6 @@
   dependencies:
     "node-int64" "^0.4.0"
 
-"buffer-equal-constant-time@1.0.1":
-  "version" "1.0.1"
-
 "buffer-from@^1.0.0", "buffer-from@1.x":
   "version" "1.1.1"
 
@@ -2284,11 +2276,6 @@
   dependencies:
     "jsbn" "~0.1.0"
     "safer-buffer" "^2.1.0"
-
-"ecdsa-sig-formatter@1.0.11":
-  "version" "1.0.11"
-  dependencies:
-    "safe-buffer" "^5.0.1"
 
 "electron-to-chromium@^1.3.712":
   "version" "1.3.712"
@@ -3891,20 +3878,6 @@
     "jsonparse" "^1.2.0"
     "through" ">=2.2.7 <3"
 
-"jsonwebtoken@^9.0.2":
-  "version" "9.0.2"
-  dependencies:
-    "jws" "^3.2.2"
-    "lodash.includes" "^4.3.0"
-    "lodash.isboolean" "^3.0.3"
-    "lodash.isinteger" "^4.0.4"
-    "lodash.isnumber" "^3.0.3"
-    "lodash.isplainobject" "^4.0.6"
-    "lodash.isstring" "^4.0.1"
-    "lodash.once" "^4.0.0"
-    "ms" "^2.1.1"
-    "semver" "^7.5.4"
-
 "jsprim@^1.2.2":
   "version" "1.4.1"
   dependencies:
@@ -3912,19 +3885,6 @@
     "extsprintf" "1.3.0"
     "json-schema" "0.2.3"
     "verror" "1.10.0"
-
-"jwa@^1.4.1":
-  "version" "1.4.1"
-  dependencies:
-    "buffer-equal-constant-time" "1.0.1"
-    "ecdsa-sig-formatter" "1.0.11"
-    "safe-buffer" "^5.0.1"
-
-"jws@^3.2.2":
-  "version" "3.2.2"
-  dependencies:
-    "jwa" "^1.4.1"
-    "safe-buffer" "^5.0.1"
 
 "keyv@^4.0.0":
   "version" "4.0.3"
@@ -4035,29 +3995,8 @@
 "lodash.flattendeep@^4.4.0":
   "version" "4.4.0"
 
-"lodash.includes@^4.3.0":
-  "version" "4.3.0"
-
-"lodash.isboolean@^3.0.3":
-  "version" "3.0.3"
-
-"lodash.isinteger@^4.0.4":
-  "version" "4.0.4"
-
-"lodash.isnumber@^3.0.3":
-  "version" "3.0.3"
-
-"lodash.isplainobject@^4.0.6":
-  "version" "4.0.6"
-
-"lodash.isstring@^4.0.1":
-  "version" "4.0.1"
-
 "lodash.memoize@~3.0.3":
   "version" "3.0.4"
-
-"lodash.once@^4.0.0":
-  "version" "4.1.1"
 
 "lodash.truncate@^4.4.2":
   "version" "4.4.2"
@@ -5156,11 +5095,6 @@
 
 "semver@^7.1.2", "semver@^7.2.1", "semver@^7.3.2", "semver@^7.3.4", "semver@7.x":
   "version" "7.3.5"
-  dependencies:
-    "lru-cache" "^6.0.0"
-
-"semver@^7.5.4":
-  "version" "7.5.4"
   dependencies:
     "lru-cache" "^6.0.0"
 
