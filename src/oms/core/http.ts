@@ -185,7 +185,8 @@ export default class HttpClient {
      *
      * #### NB! this method can return object not matching given type value
      */
-    async request<T>(opts: RequestOptsAbs): Promise<JSONResponse<T>> {
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    async request<T extends {}>(opts: RequestOptsAbs): Promise<JSONResponse<T>> {
         let merged = new RequestOpts(opts)
         if (!merged.baseURL) {
             merged.baseURL = this.baseConfig.baseURL
@@ -265,17 +266,20 @@ export default class HttpClient {
         return response
     }
 
-    async get<T>(opts: RequestOptsAbs): Promise<JSONResponse<T>> {
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    async get<T extends {}>(opts: RequestOptsAbs): Promise<JSONResponse<T>> {
         opts.method = 'GET'
         return await this.request(opts)
     }
 
-    async post<T>(opts: RequestOptsAbs): Promise<JSONResponse<T>> {
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    async post<T extends {}>(opts: RequestOptsAbs): Promise<JSONResponse<T>> {
         opts.method = 'POST'
         return await this.request(opts)
     }
 
-    async put<T>(opts: RequestOptsAbs): Promise<JSONResponse<T>> {
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    async put<T extends {}>(opts: RequestOptsAbs): Promise<JSONResponse<T>> {
         opts.method = 'PUT'
         return await this.request(opts)
     }

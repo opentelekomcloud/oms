@@ -27,11 +27,21 @@ describe.each(authCases)(
             const all = await ecs.listFlavors()
             expect(all).toBeDefined()
             expect(all[0]).toHaveProperty('id')
-            const az02flavs = await ecs.listFlavors('eu-de-02')
+            const az02flavs = await ecs.listFlavors('eu-de-01')
             expect(az02flavs).toBeDefined()
             expect(az02flavs[0]).toHaveProperty('id')
             expect(az02flavs.length < all.length).toBeTruthy()
         })
 
+        test('ECS: list flavors in swiss region', async () => {
+            const ecs = client.getService(ComputeV1)
+            const all = await ecs.listFlavors()
+            expect(all).toBeDefined()
+            expect(all[0]).toHaveProperty('id')
+            const az02flavs = await ecs.listFlavors('eu-ch2b')
+            expect(az02flavs).toBeDefined()
+            expect(az02flavs[0]).toHaveProperty('id')
+            expect(az02flavs.length = all.length).toBeTruthy()
+        })
     },
 )

@@ -182,8 +182,13 @@ function getSigningKey(params: SigningKeyParams) {
         const kRegion = hmac(kDate, encoder.encode(params.regionName))
         const kService = hmac(kRegion, encoder.encode(params.serviceName))
         return hmac(kService, encoder.encode('sdk_request'))
-    } catch (e) {
-        throw new Error(`Failed to generate signature key: ${e.message}`)
+    } catch (e: unknown) {
+        if (e instanceof Error) {
+            throw new Error(`Failed to generate signature key: ${e.message}`)
+        } else {
+            // Handle the unknown error case
+            throw new Error('An unknown error occurred');
+        }
     }
 }
 

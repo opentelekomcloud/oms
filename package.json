@@ -17,6 +17,7 @@
   "devDependencies": {
     "@types/eslint": "^7",
     "@types/jest": "^26.0.22",
+    "@types/json-schema": "^7.0.15",
     "@types/lodash": "^4",
     "@types/node": "^14.11.2",
     "@types/query-string": "^6",
@@ -79,8 +80,10 @@
     "release": "yarn clean && yarn build && webpack --mode production"
   },
   "dependencies": {
+    "@types/json-schema": "^7.0.15",
     "cross-fetch": "^3.1.4",
     "is-cidr": "^4.0.2",
+    "json-schema": "^0.4.0",
     "lodash": "^4.17.20",
     "query-string": "^6.13.2"
   },

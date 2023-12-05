@@ -1,16 +1,24 @@
-import { Client, cloud } from '../../src/oms'
+import { Client, cloud, defaultRegion } from '../../src/oms'
 
-export const authUrl = 'https://iam.eu-de.otc.t-systems.com/v3'
+export let authUrl = 'https://iam.eu-de.otc.t-systems.com/v3'
 
-export const authCases = ['ak/sk', 'token']
+export const authCases = ['ak/sk', 'token', 'cloud']
 
 export async function commonBeforeAll(authType: string): Promise<Client> {
+    let region = defaultRegion
+    if (process.env.OS_REGION) {
+        region = String(process.env.OS_REGION)
+    }
+    authUrl = 'https://iam.' + region + '.otc.t-systems.com/v3'
+    if (region === 'eu-ch2'){
+        authUrl = 'https://iam-pub.' + region + '.sc.otc.t-systems.com/v3'
+    }
+    const projectName = process.env.OS_PROJECT_NAME
     const config = cloud(authUrl)
     switch (authType) {
     case 'ak/sk':
         const ak = process.env.AWS_ACCESS_KEY_ID
         const sk = process.env.AWS_SECRET_ACCESS_KEY
-        const projectName = process.env.OS_PROJECT_NAME
         if (!ak || !sk || !projectName) {
             throw 'Missing AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY and OS_PROJECT_NAME required for tests'
         }
@@ -23,7 +31,20 @@ export async function commonBeforeAll(authType: string): Promise<Client> {
         }
         config.withToken(t)
         break
+    case 'cloud':
+        const domainName = process.env.OS_DOMAIN_NAME
+        const password = process.env.OS_PASSWORD
+        const username = process.env.OS_USERNAME
+        if (!username || !password || !domainName || !projectName) {
+            throw 'Missing OS_DOMAIN_NAME, OS_PASSWORD, OS_USERNAME and OS_PROJECT_NAME required for tests'
+        }
+        config
+            .withRegion(region)
+            .withProject(projectName)
+            .withPassword(domainName, username, password)
+        break
     }
+
     const client = new Client(config.config)
     await client.authenticate()
     return client

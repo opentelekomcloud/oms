@@ -2,7 +2,7 @@ import Service from '../../base'
 import HttpClient from '../../../core/http'
 import { Flavor, listFlavors } from './flavors'
 
-const groupInfoRe = /([\w-]+\d+)\((\w+)\)/
+const groupInfoRe = /^(.*?)\((.*?)\)$/
 const normal = 'normal'
 
 /**
