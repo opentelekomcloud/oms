@@ -7,7 +7,7 @@ import { CatalogEntity, IdentityV3, ResponseToken } from './services'
 export * from './core'
 export * from './services'
 
-const defaultRegion = 'eu-de'
+export const defaultRegion = 'eu-de'
 
 /**
  * Client is base provider client
