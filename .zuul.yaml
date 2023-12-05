@@ -13,7 +13,7 @@
     parent: "simpleton"
     nodeset: ubuntu-jammy
     vars:
-      simple_source_image: "node:latest"
+      simple_source_image: "node:16"
       simple_prerun:
         - yarn install
       simple_run:
