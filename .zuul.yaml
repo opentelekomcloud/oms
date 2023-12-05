@@ -11,6 +11,7 @@
 - job:
     name: "simple"
     parent: "simpleton"
+    nodeset: ubuntu-jammy
     vars:
       simple_source_image: "node:latest"
       simple_prerun:
